@@ -1,0 +1,15 @@
+#
+# Ignore .spec files, as they are generated from templates ending in .spec.in:
+#
+*.spec
+
+#
+# Ignore source tarballs, as they are downloaded from their web sites as part
+# of the build process:
+#
+*.tar.gz
+
+#
+# Ignore the created .rpm files:
+#
+*.rpm

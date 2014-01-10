@@ -1,0 +1,37 @@
+Name: httpcomponents-core
+Summary: Apache HTTP components core
+Version: @VERSION@
+Release: 1%{?dist}.ovirt
+License: ASL 2.0
+URL: http://hc.apache.org
+Source: @SRC@
+BuildArch: noarch
+
+Requires: jakarta-commons-logging
+Requires: java >= 1:1.7.0
+Requires: jpackage-utils
+
+%description
+Apache HTTP components core.
+
+%prep
+%setup -q
+
+%build
+mvn package -DskipTests
+
+%install
+install -d %{buildroot}/%{_javadir}/httpcomponents
+install httpcore/target/httpcore-%{version}.jar %{buildroot}%{_javadir}/httpcomponents/httpcore.jar
+install httpcore-nio/target/httpcore-nio-%{version}.jar %{buildroot}%{_javadir}/httpcomponents/httpcore-nio.jar
+
+%files
+%doc LICENSE.txt
+%doc NOTICE.txt
+%doc README.txt
+%doc RELEASE_NOTES.txt
+%{_javadir}/httpcomponents
+
+%changelog
+* Fri Jan 10 2014 Juan Hernandez <juan.hernandez@redhat.com> - 4.2-1
+- Initial version.

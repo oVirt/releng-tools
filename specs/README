@@ -1,0 +1,24 @@
+This directory contains .spec files and build scripts for packages that
+are needed by oVirt components but that aren't available in the
+distributions that we support.
+
+Each package has a subdirectory containing the template for the .spec
+file (named .spec.in) and a build script (usually build.sh). The build
+script should dowload the artifacts required for the build (usually only
+the source code) and invoke the rpmbuild command to produce the .rpm
+files in the same directory.
+
+For example, to build the "httpcompones-core" RPM the sequence of
+commands should be this one:
+
+  $ git clone git://gerrit.ovirt.org/releng-tools.git
+  $ cd specs
+  $ cd httpcomponents-core
+  $ ./build.sh
+
+Note that the Java packages that require Maven to build expect to find
+the "mvn" command in the path, so make sure to install it propertly
+before trying to build. If your operating system doesn't include Maven
+then you will need to dowload it from the Maven website, install it and
+adjust your PATH environment variable so that the "mvn" command is in
+the path.
