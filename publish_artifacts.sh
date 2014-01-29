@@ -53,6 +53,7 @@ publish_artifacts() {
 	local dst_dir="${2}"
 
 	find "${src_dir}" -name '*.rpm' | while read pkg; do
+		pkg_dst_dir="${dst_dir}"
 		eval "$(
 			rpm -qp --queryformat '
 				arch="%{ARCH}"
@@ -60,16 +61,35 @@ publish_artifacts() {
 				sourcerpm="%{SOURCERPM}"
 			' ${pkg}
 		)"
-		distro="$(echo "${release}" | sed 's/.*\.\([^.]*\)$/\1/g')"
+		distro="$(echo "${release}" | sed -n 's/.*\.\([a-z][^.]*\)$/\1/gp')"
+		if [ -z "${distro}" ]; then
+			distro="any"
+			pkg_dst_dir="${ANY_DIR}"
+		fi
+
 		if [ "${sourcerpm}" = "(none)" ]; then
-			dir="${dst_dir}/rpm/${distro}/SRPMS"
+			dir="${pkg_dst_dir}/rpm/${distro}/SRPMS"
 		else
-			dir="${dst_dir}/rpm/${distro}/${arch}"
+			dir="${pkg_dst_dir}/rpm/${distro}/${arch}"
 		fi
 		mkdir -p "${dir}"
 		mv "${pkg}" "${dir}"
 	done
 
+	#
+	# copy distro non-specific into all
+	# distro repositories
+	#
+	if [ -d "${ANY_DIR}/rpm/any" ]; then
+		for distro in "${dst_dir}/rpm/"*; do
+			distro="$(basename "${distro}")"
+			for dir in "${ANY_DIR}/rpm/any"/*; do
+				arch="$(basename "${dir%*/}")"
+				mkdir -p "${dst_dir}/rpm/${distro}/${arch}"
+				cp "${ANY_DIR}/rpm/any/${arch}"/* "${dst_dir}/rpm/${distro}/${arch}"
+			done
+		done
+	fi
 	echo "${LOCATIONS}" | while IFS=" " read dir suffix; do
 		mkdir -p "${dst_dir}/${dir}"
 		find "${src_dir}" -regex ".*\.${suffix}\(\|\.gz\|\.bz2\|\.lzma\)$" \
@@ -81,9 +101,16 @@ publish_artifacts() {
 	done
 }
 
+ANY_DIR=""
+cleanup() {
+	[ -n "${ANY_DIR}" ] && rm -fr "${ANY_DIR}"
+}
+trap cleanup 0
+
 main() {
 	get_opts "${@}"
 	validate
+	ANY_DIR="$(mktemp -d)"
 
 	publish_artifacts "${SRC_REPO}" "${DST_REPO}"
 
