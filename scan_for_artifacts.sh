@@ -11,9 +11,8 @@ die() {
 usage() {
 	cat << __EOF__
 ${0} [options]
-    --repository-path=REPO_PATH
-    --artifacts-source=SRC_DIR
-    --repository-version=REPO_VERSION
+    --repository-path=REPO_PATH    where to publish rpms
+    --artifacts-source=SRC_DIR     from where to take rpms
 __EOF__
 }
 
@@ -28,9 +27,6 @@ get_opts() {
 				;;
 			--artifacts-source=*)
 				SRC_DIR=${v}
-				;;
-			--repository-version=*)
-				REPO_VERSION=${v}
 				;;
 			--help)
 				usage
@@ -47,19 +43,20 @@ get_opts() {
 validate() {
 	[ -n "${REPO_PATH}" ] || die "Please specify --repository-path"
 	[ -n "${SRC_DIR}" ] || die "Please specify --artifacts-source"
-	[ -n "${REPO_VERSION}" ] || die "Please specify --repository-version"
 	[ -d "${SRC_DIR}" ] || die "Directory ${SRC_DIR} does not exists"
 	[ -d "${REPO_PATH}" ] || die "Directory ${REPO_PATH} does not exists"
 }
 
 scan_for_artifacts() {
-	find "${SRC_DIR}" -maxdepth 1 -type d -name '*.ready' | while read dir; do
+	find "${SRC_DIR}" -maxdepth 1 -mindepth 1 -type d -name '*.ready' | while read dir; do
+		repo_version="$(basename "${dir}")"
+		repo_version="${repo_version%.*}"
 		"${SCRIPTDIR}/publish_artifacts.sh" --source-repository="${dir}" \
-				--destination-repository="${REPO_PATH}/${REPO_VERSION}" \
+				--destination-repository="${REPO_PATH}/${repo_version}" \
 				|| die "Cannot publish artifacts for ${dir}"
 
-		[ "$(find "${SRC_DIR}" -type f | wc -l)" -eq 0 ] \
-			|| die "We still have files under ${SRC_DIR}. Please recheck"
+		[ "$(find "${dir}" -type f | wc -l)" -eq 0 ] \
+			|| die "We still have files under ${dir}. Please recheck"
 		rm -rf "${dir}"
 	done || die "Failed inside the loop"
 }
