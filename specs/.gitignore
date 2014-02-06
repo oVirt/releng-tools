@@ -1,7 +1,8 @@
 #
 # Ignore .spec files, as they are generated from templates ending in .spec.in:
 #
-*.spec
+httpcomponents-core/httpcomponents-core.spec
+httpcomponents-client/httpcomponents-client.spec
 
 #
 # Ignore source tarballs, as they are downloaded from their web sites as part
