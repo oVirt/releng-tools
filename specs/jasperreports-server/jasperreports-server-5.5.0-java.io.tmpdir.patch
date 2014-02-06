@@ -1,0 +1,33 @@
+From 67d395c459cd69c2f03a9550c1baf63d6ae1524a Mon Sep 17 00:00:00 2001
+From: Alon Bar-Lev <alon.barlev@gmail.com>
+Date: Wed, 5 Feb 2014 14:04:59 +0200
+Subject: [PATCH 2/2] buildomatic: delegate java.io.tmpdir to import/export
+
+jasper uses TMPDIR/jasperserver/ TMPDIR/dataSnapshots for cache.
+
+if run by different users we end up with permission conflict.
+
+setting java.io.tmpdir should effect the build to allow to alter cache
+location.
+
+Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
+---
+ buildomatic/bin/import-export.xml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
+index bd2157f..45afda5 100755
+--- a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
++++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
+@@ -159,6 +159,8 @@ Make sure you have compiled the jasperserver source code.
+                 <arg value="--@{type}"/>
+                 <arg value="${archiveArg}"/>
+                 <args/>
++                <!-- delegate tmpdir as jasper uses hardcoded path for cache -->
++                <jvmarg value="-Djava.io.tmpdir=${java.io.tmpdir}"/>
+                 <!-- add arg that tells oracle JDBC driver to use utf-8 types; won't hurt anyone else -->
+                 <jvmarg value="-Doracle.jdbc.defaultNChar=true"/>
+                 <!-- add this to handle properly import catalogs with utf-8 names -->
+-- 
+1.8.3.2
+

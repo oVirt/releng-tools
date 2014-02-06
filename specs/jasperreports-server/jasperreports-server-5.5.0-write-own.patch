@@ -1,0 +1,36 @@
+build: do not write into own files
+
+js.quartz.properties is modified in-place instead of using
+temp file or file within configuration.
+
+luckily, the default within js.quartz.properties is already
+PostgreSQLDelegate, so we can just avoid this workaround for.
+
+Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
+
+diff -urNp a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
+--- a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml	2013-10-24 20:04:05.000000000 +0300
++++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml	2014-01-26 20:24:57.069301474 +0200
+@@ -120,22 +120,6 @@ Make sure you have compiled the jasperse
+             <echo> importExportConfig = ${importExportConfig}</echo>
+             <echo> </echo>
+ 
+-            <!-- todo: fixed bug 15479 - postgresql fails on export on scheduled report       -->
+-            <!-- todo: better fix would be to pull in the js.quartz.properties file from the  -->
+-            <!--       buildomatic/build_conf dir in the run-import-export macrodef           -->
+-            <!-- tweaking conf_source/import_export_config*/js.quartz.properties for quartz delegate if postgresql -->
+-            <if>
+-                <equals arg1="${dbType}" arg2="postgresql" />
+-                <then>
+-                    <replace file="${importExportConfig}/js.quartz.properties"
+-                             token="StdJDBCDelegate" value="PostgreSQLDelegate"/>
+-                </then>
+-                <else>
+-                    <replace file="${importExportConfig}/js.quartz.properties"
+-                             token="PostgreSQLDelegate" value="StdJDBCDelegate"/>
+-                </else>
+-            </if>
+-
+             <set-import-export-lib-dir importExportConfig="${importExportConfig}"/>
+ 
+             <if>

@@ -1,0 +1,27 @@
+From 9e95c8ebb8dd0445d203412c09fc022b470afad9 Mon Sep 17 00:00:00 2001
+From: Alon Bar-Lev <alon.barlev@gmail.com>
+Date: Wed, 5 Feb 2014 13:59:28 +0200
+Subject: [PATCH 1/2] buildomatic: do not overwrite ANT_OPT
+
+enable passing misc options to java/ant.
+
+Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
+---
+ buildomatic/js-ant | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant b/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant
+index d616774..5775cb9 100755
+--- a/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant
++++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-ANT_OPTS="-Xms128m -Xmx512m -XX:MaxPermSize=512m"
++ANT_OPTS="${ANT_OPTS} -Xms128m -Xmx512m -XX:MaxPermSize=512m"
+ 
+ #
+ # setup to use bundled of ant
+-- 
+1.8.3.2
+

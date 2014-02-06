@@ -1,0 +1,35 @@
+build: install_resources are releative to base and not to the configuration
+
+Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
+
+---
+
+--- a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/app-server.xml	2014-01-16 01:42:56.247859589 +0200
++++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/app-server.xml	2014-01-16 01:43:41.345874121 +0200
+@@ -830,7 +830,7 @@ tomcat copies to this location from the
+                         <if>
+                             <equals arg1="${app-server_AppServer}" arg2="jboss_EAP6orAS7" />
+                             <then>
+-                                <copy file="${currentConf}/../../install_resources/jboss7/jboss-deployment-structure.xml" toDir="${warTargetDir}/META-INF" overwrite="true"/>
++                                <copy file="${basedir}/install_resources/jboss7/jboss-deployment-structure.xml" toDir="${warTargetDir}/META-INF" overwrite="true"/>
+                                 <copy file="${currentConf}/js-jboss7-ds.xml" toDir="${warTargetDir}/WEB-INF" overwrite="true"/>
+                                 <touch file="${jbossDeployDir}/${webAppName}.war.dodeploy"/>
+                             </then>
+@@ -973,7 +973,7 @@ tomcat copies to this location from the
+                         </if>
+ 
+ 
+-                        <copy file="${currentConf}/../../install_resources/jboss7/module_descriptors/module_org_apache_batik.xml"
++                        <copy file="${basedir}/install_resources/jboss7/module_descriptors/module_org_apache_batik.xml"
+                               tofile="${fixedAppServerDir}/modules/jaspersoft/org/apache/batik/main/module.xml"
+                               overwrite="true"/>
+                         <copy toDir="${fixedAppServerDir}/modules/jaspersoft/org/apache/batik/main">
+@@ -1286,7 +1286,7 @@ tomcat copies to this location from the
+ 
+         <mkdir dir="${fixedAppServerDir}/modules/${MOD_DIR}"/>
+ 
+-        <copy file="${currentConf}/../../install_resources/jboss7/module_descriptors/${CONFIG_NAME}"
++        <copy file="${basedir}/install_resources/jboss7/module_descriptors/${CONFIG_NAME}"
+           tofile="${fixedAppServerDir}/modules/${MOD_DIR}"
+           overwrite="true"/>
+ 
