@@ -1,0 +1,2 @@
+This package is needed by the ovirt-log-collector on Fedora > 20 and EL7
+until they'll deliver it themselves.

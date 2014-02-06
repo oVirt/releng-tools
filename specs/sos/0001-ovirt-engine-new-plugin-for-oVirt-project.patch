@@ -1,0 +1,174 @@
+From 3114f07c3f57adbe8051e15bac77d425d0bef4bb Mon Sep 17 00:00:00 2001
+From: Sandro Bonazzola <sbonazzo@redhat.com>
+Date: Tue, 4 Feb 2014 15:56:57 +0100
+Subject: [PATCH] ovirt-engine: new plugin for oVirt project
+
+Change-Id: Ibaaba06e74def721946d9db76327280ef27f3678
+Signed-off-by: Sandro Bonazzola <sbonazzo@redhat.com>
+---
+ sos/plugins/ovirt-engine.py | 153 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
+ create mode 100644 sos/plugins/ovirt-engine.py
+
+diff --git a/sos/plugins/ovirt-engine.py b/sos/plugins/ovirt-engine.py
+new file mode 100644
+index 0000000..3ffe1f5
+--- /dev/null
++++ b/sos/plugins/ovirt-engine.py
+@@ -0,0 +1,153 @@
++## Copyright (C) 2014 Red Hat, Inc., Sandro Bonazzola <sbonazzo@redhat.com>
++
++### This program is free software; you can redistribute it and/or modify
++## it under the terms of the GNU General Public License as published by
++## the Free Software Foundation; either version 2 of the License, or
++## (at your option) any later version.
++
++## This program is distributed in the hope that it will be useful,
++## but WITHOUT ANY WARRANTY; without even the implied warranty of
++## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++## GNU General Public License for more details.
++
++## You should have received a copy of the GNU General Public License
++## along with this program; if not, write to the Free Software
++## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++
++import os
++import re
++import signal
++
++
++from sos.plugins import Plugin, RedHatPlugin
++
++
++# Class name must be the same as file name and method names must not change
++class OvirtEngine(Plugin, RedHatPlugin):
++    """oVirt Engine related information"""
++
++    DB_PASS_FILES = re.compile(
++        flags=re.VERBOSE,
++        pattern=r"""
++        ^
++        /etc/
++        (rhevm|ovirt-engine)/
++        engine.conf
++        (\.d/.+.conf)?
++        $
++        """
++    )
++
++    DEFAULT_SENSITIVE_KEYS = (
++        'ENGINE_DB_PASSWORD:ENGINE_PKI_TRUST_STORE_PASSWORD:'
++        'ENGINE_PKI_ENGINE_STORE_PASSWORD'
++    )
++
++    plugin_name = "ovirt-engine"
++
++    option_list = [
++        (
++            'jbosstrace',
++            'Enable oVirt Engine JBoss stack trace generation',
++            '',
++            True
++        ),
++        (
++            'sensitive_keys',
++            'Sensitive keys to be masked',
++            '',
++            DEFAULT_SENSITIVE_KEYS
++        ),
++    ]
++
++    def setup(self):
++        if self.get_option('jbosstrace'):
++            returncode, output, _runtime = self.call_ext_prog(
++                'pgrep -f jboss'
++            )
++            jboss_pids = set()
++            if returncode == 0:
++                jboss_pids = set([int(x) for x in output.splitlines()])
++                _returncode, engine_output, _runtime = self.call_ext_prog(
++                    'pgrep -f ovirt-engine',
++                )
++                if returncode == 0:
++                    engine_pids = set(
++                        [int(x) for x in engine_output.splitlines()]
++                    )
++                    jboss_pids.intersection_update(engine_pids)
++                else:
++                    self.soslog.error('Unable to get engine pids')
++                    self.add_alert('Unable to get engine pids')
++            else:
++                self.soslog.error('Unable to get jboss pid')
++                self.add_alert('Unable to get jboss pid')
++            for pid in jboss_pids:
++                try:
++                    os.kill(pid, signal.SIGQUIT)
++                except OSError as e:
++                    self.soslog.error('Unable to send signal to %d' % pid, e)
++
++        self.add_forbidden_path('/etc/ovirt-engine/.pgpass')
++        self.add_forbidden_path('/etc/rhevm/.pgpass')
++        # Copy engine config files.
++        self.add_copy_spec("/etc/ovirt-engine")
++        self.add_copy_spec("/etc/rhevm")
++        self.add_copy_spec("/var/log/ovirt-engine")
++        self.add_copy_spec("/var/log/rhevm")
++        self.add_copy_spec("/etc/sysconfig/ovirt-engine")
++        self.add_copy_spec("/usr/share/ovirt-engine/conf")
++        self.add_copy_spec("/var/log/ovirt-guest-agent")
++        self.add_copy_spec("/var/lib/ovirt-engine/setup-history.txt")
++        self.add_copy_spec("/var/lib/ovirt-engine/setup/answers")
++        self.add_copy_spec("/var/lib/ovirt-engine/external_truststore")
++        self.add_copy_spec("/var/tmp/ovirt-engine/config")
++
++    def postproc(self):
++        """
++        Obfuscate sensitive keys.
++        """
++        self.do_file_sub(
++            "/etc/ovirt-engine/engine-config/engine-config.properties",
++            r"Password.type=(.*)",
++            r'Password.type=********'
++        )
++        self.do_file_sub(
++            "/etc/rhevm/rhevm-config/rhevm-config.properties",
++            r"Password.type=(.*)",
++            r'Password.type=********'
++        )
++        for filename in (
++            'ovirt-engine.xml',
++            'ovirt-engine_history/current/ovirt-engine.v1.xml',
++            'ovirt-engine_history/ovirt-engine.boot.xml',
++            'ovirt-engine_history/ovirt-engine.initial.xml',
++            'ovirt-engine_history/ovirt-engine.last.xml',
++        ):
++            self.do_file_sub(
++                "/var/tmp/ovirt-engine/config/%s" % filename,
++                r"<password>(.*)</password>",
++                r'<password>********</password>'
++            )
++
++        if self.get_option('sensitive_keys'):
++            sensitive_keys = self.get_option('sensitive_keys')
++            if self.get_option('sensitive_keys') is True:
++                #Handle --alloptions case which set this to True.
++                sensitive_keys = self.DEFAULT_SENSITIVE_KEYS
++            key_list = [x for x in sensitive_keys.split(':') if x]
++            for filename in self.copied_files:
++                if self.DB_PASS_FILES.match(filename['srcpath']):
++                    for key in key_list:
++                        self.do_file_sub(
++                            filename['srcpath'],
++                            r'{key}=(.*)'.format(
++                                key=key,
++                            ),
++                            r'{key}=********'.format(
++                                key=key,
++                            )
++                        )
++
++
++# vim: expandtab tabstop=4 shiftwidth=4
+-- 
+1.8.1.4
+
