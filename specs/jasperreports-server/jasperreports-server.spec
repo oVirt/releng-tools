@@ -2,20 +2,19 @@
 
 Name:		jasperreports-server
 Version:	5.5.0
-Release:	6%{?dist}
+Release:	7%{?dist}
 License:	AGPLv3
 Summary:	JasperReports Server
 URL:		http://community.jaspersoft.com
 BuildArch:	noarch
 Source:		http://downloads.sourceforge.net/project/jasperserver/JasperServer/JasperReports%20Server%20Community%20Edition%20%{version}/%{name}-cp-%{version}-bin.zip
-Patch0:		%{name}-%{version}-additional-config.patch
-Patch1:		%{name}-%{version}-install_resources.patch
-Patch2:		%{name}-%{version}-write-own.patch
-Patch3:		%{name}-%{version}-ANT_OPTS.patch
-Patch4:		%{name}-%{version}-java.io.tmpdir.patch
+Patch0:		jasperreports-server-5.5.0-additional-config.patch
+Patch1:		jasperreports-server-5.5.0-install_resources.patch
+Patch2:		jasperreports-server-5.5.0-write-own.patch
+Patch3:		jasperreports-server-5.5.0-ANT_OPTS.patch
+Patch4:		jasperreports-server-5.5.0-java.io.tmpdir.patch
 
 AutoReqProv:	no
-BuildRequires:	java-1.7.0-openjdk-devel
 Requires:	bash
 Requires:	java
 
@@ -28,23 +27,45 @@ dashboards.
 
 %prep
 %setup -c -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch0 -p2 -d jasperreports-server*
+%patch1 -p2 -d jasperreports-server*
+%patch2 -p2 -d jasperreports-server*
+%patch3 -p2 -d jasperreports-server*
+%patch4 -p2 -d jasperreports-server*
 
 %build
 
 %install
-install -d %{buildroot}%{_datadir}/%{name}
-cp -r %{name}-cp-%{version}-bin/* %{buildroot}%{_datadir}/%{name}
+install -d "%{buildroot}%{_datadir}/%{name}"
+
+#
+# must use cp -r and preserve timestamp
+# as jasper tries to overwrite its own
+# files, ant protects that if timestamp
+# is the same.
+#
+cp -r jasperreports-server*/* "%{buildroot}%{_datadir}/%{name}"
+
+#
+# jasper provide plain zip, bad for attributes
+#
+find "%{buildroot}%{_datadir}/%{name}" -type d -exec chmod 0755 {} +
+find "%{buildroot}%{_datadir}/%{name}" -type f -exec chmod 0644 {} +
+chmod a+x "%{buildroot}%{_datadir}/%{name}/apache-ant/bin/ant"
+chmod a+x "%{buildroot}%{_datadir}/%{name}/buildomatic/js-ant"
+chmod a+x "%{buildroot}%{_datadir}/%{name}/buildomatic"/*.sh
+chmod a+x "%{buildroot}%{_datadir}/%{name}/buildomatic/bin"/*.sh
 
 %files
 %defattr(-,root,root,-)
 %{_datadir}/%{name}
 
 %changelog
+* Wed Feb 5 2014 Alon Bar-Lev <alonbl@redhat.com> - 5.5.0-7
+- Set correct file attributes.
+- Remove java build dependency.
+- Make it easier to use the commercial version.
+
 * Wed Feb 5 2014 Alon Bar-Lev <alonbl@redhat.com> - 5.5.0-6
 - Make jasper respect ANT_OPTS.
 - Make jasper delegate java.io.tmpdir to sub processes.
