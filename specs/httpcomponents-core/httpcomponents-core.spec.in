@@ -1,7 +1,7 @@
 Name: httpcomponents-core
 Summary: Apache HTTP components core
 Version: @VERSION@
-Release: 1%{?dist}.ovirt
+Release: 1.ovirt%{?dist}
 License: ASL 2.0
 URL: http://hc.apache.org
 Source: @SRC@
