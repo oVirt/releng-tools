@@ -2,7 +2,7 @@
 
 Name:		jasperreports-server
 Version:	5.5.0
-Release:	7%{?dist}
+Release:	8%{?dist}
 License:	AGPLv3
 Summary:	JasperReports Server
 URL:		http://community.jaspersoft.com
@@ -34,6 +34,11 @@ dashboards.
 %patch4 -p2 -d jasperreports-server*
 
 %build
+#
+# here we remove orig files resulting of
+# patching the package.
+#
+find . -name '*.orig' -exec rm -f {} \;
 
 %install
 install -d "%{buildroot}%{_datadir}/%{name}"
@@ -61,6 +66,9 @@ chmod a+x "%{buildroot}%{_datadir}/%{name}/buildomatic/bin"/*.sh
 %{_datadir}/%{name}
 
 %changelog
+* Tue Mar 11 2014 Alon Bar-Lev <alonbl@redhat.com> - 5.5.0-8
+- added removal of patch orig files at build time.
+
 * Wed Feb 5 2014 Alon Bar-Lev <alonbl@redhat.com> - 5.5.0-7
 - Set correct file attributes.
 - Remove java build dependency.
