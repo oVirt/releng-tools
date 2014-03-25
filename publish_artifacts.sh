@@ -29,6 +29,7 @@ usage() {
 ${0} [options]
     --source-repository=SRC_REPO
     --destination-repository=DST_REPO
+    --sources-destination=SOURCES_DST
 __EOF__
 }
 
@@ -44,7 +45,10 @@ get_opts() {
 			--destination-repository=*)
 				DST_REPO=${v}
 				;;
-			--help)
+			--sources-destination=*)
+				SOURCES_DST=${v}
+				;;
+			--help|-h)
 				usage
 				exit 0
 				;;
@@ -106,14 +110,28 @@ publish_artifacts() {
 		done
 	fi
 	echo "${LOCATIONS}" | while IFS=" " read dir suffix; do
-		mkdir -p "${dst_dir}/${dir}"
-		find "${src_dir}" -regex ".*\.${suffix}\(\|\.gz\|\.bz2\|\.lzma\)$" \
-			-exec mv "{}" "${dst_dir}/${dir}" \; || die "Failed to move files"
+		find "${src_dir}" -regex ".*\.${suffix}\(\|\.gz\|\.bz2\|\.lzma\)$" | while read file; do
+			name="$(basename $(echo "${file}" | sed 's/-[0-9].*//'))"
+			mkdir -p "${dst_dir}/${dir}/${name}"
+			mv "${file}" "${dst_dir}/${dir}/${name}" || die "Failed to move files"
+		done
 	done
 
 	for repo in "${dst_dir}"/rpm/*; do
 		createrepo -q "${repo}" || die "Cannot create repository under ${repo}"
 	done
+
+	#
+	# Copy sources to non default directory SOURCES_DST
+	#
+	if [ -n "${SOURCES_DST}" ]; then
+		find "${dst_dir}/src" -mindepth 1 -type d | while read dir; do
+			name="$(basename "${dir}")"
+			mkdir -p "${SOURCES_DST}/${name}"
+			mv "${dir}"/* "${SOURCES_DST}/${name}"
+		done
+		rm -rf "${dst_dir}/src"
+	fi
 }
 
 ANY_DIR=""
