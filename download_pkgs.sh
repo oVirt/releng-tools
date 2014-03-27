@@ -19,8 +19,8 @@ SCRIPTDIR="$(dirname "${0}")"
 REPO_PATH="/var/www/html/pub"
 
 die() {
-	local m="${1}"
-	echo "FATAL: ${m}"
+	local msg="${1}"
+	echo "FATAL: ${msg}"
 	exit 1
 }
 
@@ -64,22 +64,22 @@ __EOF__
 }
 
 get_opts() {
-	while [ -n "${1}" ]; do
+	while [[ -n "${1}" ]]; do
 		opt="${1}"
-		v="${opt#*=}"
+		val="${opt#*=}"
 		shift
 		case "${opt}" in
 			--conf-file=*)
-				CONF_FILE="${v}"
+				CONF_FILE="${val}"
 				;;
 			--output-directory=*)
-				OUTPUT_DIR="${v}"
+				OUTPUT_DIR="${val}"
 				;;
 			--destination-repository=*)
-				DST_REPO="${v}"
+				DST_REPO="${val}"
 				;;
 			--sources-destination=*)
-				SOURCES_DST="${v}"
+				SOURCES_DST="${val}"
 				;;
 			--help|-h)
 				usage
@@ -90,16 +90,18 @@ get_opts() {
 				;;
 		esac
 	done
+	return 0
 }
 
 validation() {
-	[ -n "${CONF_FILE}" ] || die "Please specify --conf-file= option"
-	[ -f "${CONF_FILE}" ] || die "Cannot find configuration file"
-	[ -n "${OUTPUT_DIR}" ] || die "Please specify --output-directory= option"
-	[ "${OUTPUT_DIR}" != "/" ] || die "--output-directory= can not be /"
-	[ -n "${DST_REPO}" ] || die "Please specify --destination-repository= option"
-	[ -e "${OUTPUT_DIR}" ] && die "${OUTPUT_DIR} should not exist"
-	[ -e "${OUTPUT_DIR}" ] || mkdir -p "${OUTPUT_DIR}"
+	[[ -n "${CONF_FILE}" ]] || die "Please specify --conf-file= option"
+	[[ -f "${CONF_FILE}" ]] || die "Cannot find configuration file"
+	[[ -n "${OUTPUT_DIR}" ]] || die "Please specify --output-directory= option"
+	[[ "${OUTPUT_DIR}" != "/" ]] || die "--output-directory= can not be /"
+	[[ -n "${DST_REPO}" ]] || die "Please specify --destination-repository= option"
+	[[ -e "${OUTPUT_DIR}" ]] && die "${OUTPUT_DIR} should not exist"
+	[[ -e "${OUTPUT_DIR}" ]] || mkdir -p "${OUTPUT_DIR}"
+	return 0
 }
 
 get_packages_from_koji_2lvl() {
@@ -116,7 +118,32 @@ get_packages_from_koji_2lvl() {
 			echo "${package}"
 		done
 	done
-	exit
+}
+
+get_packages_from_jenkins_2lvl() {
+	local url="${1?}"
+	local builds json_data parse_json
+	json_data="$(wget -q -O - "${url}/api/json?pretty=true")"
+	parse_json="
+import json
+import sys
+def get_parents(run):
+    parents=[]
+    for action in run['actions']:
+        if 'causes' in action:
+            for cause in action['causes']:
+                if 'upstreamBuild' in cause:
+                    parents.append(cause['upstreamBuild'])
+    return parents
+res=json.loads(sys.stdin.read())
+for run in res['runs']:
+    url=run['url']
+    if res['number'] not in get_parents(run):
+        continue
+    for artifact in run['artifacts']:
+        print '%s/artifact/%s' % (url, artifact['relativePath'])
+"
+	echo "${json_data}" | python -c "${parse_json}"
 }
 
 download_package() {
@@ -138,15 +165,21 @@ download_package() {
 	#
 	# Handle koji 2level pages
 	#
-	if [ "${#packages[@]}" -eq 0 ] \
-		&& [[ "${url}" =~ ^.*koji.*$ ]]; then
-		packages=($(get_packages_from_koji_2lvl "${url}"))
+	if [[ "${#packages[@]}" -eq 0 ]]; then
+		case "${url}" in
+			*koji*)
+				packages=($(get_packages_from_koji_2lvl "${url}"))
+				;;
+			*jenkins*)
+				packages=($(get_packages_from_jenkins_2lvl "${url}"))
+				;;
+		esac
 	fi
 
 	for package in "${packages[@]}"; do
 		## handle relative links
 		[[ "${package}" =~ ^http.*$ ]] \
-			|| package="$url/$package"
+			|| package="${url}/${package}"
 		wget -qnc "${package}" || die "Cannot download pkgs ${package}"
 		echo "Got package ${package}"
 	done
@@ -165,11 +198,11 @@ download_pkgs() {
 }
 
 publish_artifacts() {
-	local src_dir="${1}"
-	local dst_dir="${2}"
+	local src_dir="${1?}"
+	local dst_dir="${2?}"
 
 	local opts="--source-repository=${src_dir} --destination-repository=${dst_dir}"
-	[ -z "${SOURCES_DST}" ] || opts="${opts} --sources-destination=${SOURCES_DST}"
+	[[ -z "${SOURCES_DST}" ]] || opts="${opts} --sources-destination=${SOURCES_DST}"
 	"${SCRIPTDIR}/publish_artifacts.sh" ${opts}
 }
 
