@@ -30,6 +30,7 @@ usage() {
     --conf-file=               - configuration file
     --output-directory=        - tmp directory where to download pkgs
     --destination-repository   - destination repository
+    --sources-destination=     - destination for sources
 
     CONF_FILE
     The configuration file must be a plain text file with one package
@@ -76,6 +77,9 @@ get_opts() {
 				;;
 			--destination-repository=*)
 				DST_REPO="${v}"
+				;;
+			--sources-destination=*)
+				SOURCES_DST="${v}"
 				;;
 			--help|-h)
 				usage
@@ -163,9 +167,10 @@ download_pkgs() {
 publish_artifacts() {
 	local src_dir="${1}"
 	local dst_dir="${2}"
-	"${SCRIPTDIR}/publish_artifacts.sh" \
-		--source-repository="${src_dir}" \
-		--destination-repository="${dst_dir}"
+
+	local opts="--source-repository=${src_dir} --destination-repository=${dst_dir}"
+	[ -z "${SOURCES_DST}" ] || opts="${opts} --sources-destination=${SOURCES_DST}"
+	"${SCRIPTDIR}/publish_artifacts.sh" ${opts}
 }
 
 clean() {
