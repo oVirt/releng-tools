@@ -74,7 +74,7 @@ validate() {
 
 clean_pkgs() {
 	for snapshot in "${REPO_PATH[@]}"; do
-		find "${snapshot}" -type f -mtime +"${DAYS_TO_KEEP}" -exec rm -f {} \;
+		find "${snapshot}" -type f -mtime +"${DAYS_TO_KEEP}" ! -name "*.xml" -exec rm -f {} \;
 		for repo in "${snapshot}/rpm"/*; do
 			createrepo "${repo}" || die "Cannot createrepo for ${repo}"
 		done
