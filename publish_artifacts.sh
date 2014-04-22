@@ -111,7 +111,7 @@ publish_artifacts() {
 	fi
 	echo "${LOCATIONS}" | while IFS=" " read dir suffix; do
 		find "${src_dir}" -regex ".*\.${suffix}\(\|\.gz\|\.bz2\|\.lzma\)$" | while read file; do
-			name="$(basename $(echo "${file}" | sed 's/-[0-9].*//'))"
+			name="$(basename "${file}" | sed 's/-[0-9].*//')"
 			mkdir -p "${dst_dir}/${dir}/${name}"
 			mv "${file}" "${dst_dir}/${dir}/${name}" || die "Failed to move files"
 		done
