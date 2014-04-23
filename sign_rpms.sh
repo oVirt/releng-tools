@@ -27,7 +27,6 @@ usage() {
 	cat << __EOF__
 ${0} [options]
     --repository=REPO
-    --key=KEY
 __EOF__
 }
 
@@ -39,9 +38,6 @@ get_opts() {
 		case ${opt} in
 			--repository=*)
 				REPO="${val}"
-				;;
-			--key=*)
-				KEY="${val}"
 				;;
 			--help|-h)
 				usage
@@ -58,16 +54,13 @@ get_opts() {
 
 validate() {
 	[[ -n "${REPO}" ]] || die "Please specify --repository="
-	[[ -n "${KEY}" ]] || die "Please specify --key="
 	[[ -d "${REPO}" ]] || die "${REPO} does not exist"
-	if ! rpm -q rpm-sign >& /dev/null; then
-		die "Please install rpm-sign pkg and try once again"
-	fi
+	[[ -e "$(which rpmsign)" ]] || die "Please install rpm-sign pkg and try once again"
 }
 
 sign_pkgs() {
 	local pkgs="$(find "${REPO}" -type f -name "*.rpm")"
-	rpmsign --resign --key-id="${KEY}" -D "_signature gpg" -D "_gpg_name ${GPG_NAME}" ${pkgs}
+	rpmsign --resign -D "_signature gpg" -D "_gpg_name ${GPG_NAME}" ${pkgs}
 }
 
 main() {
