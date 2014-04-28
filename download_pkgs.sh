@@ -187,12 +187,23 @@ download_package() {
 	popd >& /dev/null
 }
 
+copy_pkg() {
+	local conf_param="${1?}"
+	local output_dir="${2?}"
+	local pkg_dir="${conf_param%%:*}"
+	local pkg_name="${conf_param#*:}"
+
+	find "${pkg_dir}" -type f -name "${pkg_name}*" | while read pkg; do
+		cp "${pkg}" "${output_dir}/${pkg##*/}"
+	done
+}
+
 download_pkgs() {
 	cat "${CONF_FILE}" | while read url; do
 		if [[ "${url}" =~ ^http ]]; then
 			download_package "${url}" "${OUTPUT_DIR}"
 		else
-			link_pkg "${url}" "${OUTPUT_DIR}"
+			copy_pkg "${url}" "${OUTPUT_DIR}"
 		fi
 	done
 }
