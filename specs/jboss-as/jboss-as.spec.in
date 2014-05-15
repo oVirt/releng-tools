@@ -10,6 +10,7 @@ URL: http://jbossas.jboss.org
 Source: @SRC@
 
 BuildRequires: unzip
+BuildRequires: chrpath
 
 # Prevent breaking packages that require e.g. libapr-1.so
 AutoReqProv: no
@@ -20,6 +21,15 @@ JBoss Application Server for oVirt Engine.
 %install
 mkdir -p %{buildroot}%{_datadir}
 unzip -d %{buildroot}%{_datadir} %{SOURCE0}
+%ifarch x86_64
+chrpath --delete %{buildroot}%{_datadir}/jboss-as-7.1.1.Final/modules/org/jboss/as/web/main/lib/linux-x86_64/libtcnative-1.so
+rm -rf %{buildroot}%{_datadir}/jboss-as-7.1.1.Final/modules/org/jboss/as/web/main/lib/linux-i686
+%endif
+
+%ifarch %{ix86}
+chrpath --delete %{buildroot}%{_datadir}/jboss-as-7.1.1.Final/modules/org/jboss/as/web/main/lib/linux-i686/libtcnative-1.so
+rm -rf %{buildroot}%{_datadir}/jboss-as-7.1.1.Final/modules/org/jboss/as/web/main/lib/linux-x86_64
+%endif
 
 %files
 %{_datadir}
