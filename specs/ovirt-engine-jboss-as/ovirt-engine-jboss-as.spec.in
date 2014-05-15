@@ -1,0 +1,40 @@
+%global __jar_repack 0
+Name: ovirt-engine-jboss-as
+Version: @VERSION@
+Release: 1%{?dist}
+Summary: JBoss Application Server for oVirt Engine
+Group: Virtualization/Management
+License: ASL 2.0
+URL: http://jbossas.jboss.org
+Source: @SRC@
+
+BuildRequires: unzip
+BuildRequires: chrpath
+
+# Prevent breaking packages that require e.g. libapr-1.so
+AutoReqProv: no
+
+%description
+JBoss Application Server for oVirt Engine.
+
+%install
+mkdir -p %{buildroot}%{_datadir}
+unzip -d %{buildroot}%{_datadir} %{SOURCE0}
+mv %{buildroot}%{_datadir}/jboss-as-%{version}.Final %{buildroot}%{_datadir}/%{name}
+
+%ifarch x86_64
+chrpath --delete %{buildroot}%{_datadir}/%{name}/modules/org/jboss/as/web/main/lib/linux-x86_64/libtcnative-1.so
+rm -rf %{buildroot}%{_datadir}/%{name}/modules/org/jboss/as/web/main/lib/linux-i686
+%endif
+
+%ifarch %{ix86}
+chrpath --delete %{buildroot}%{_datadir}/%{name}/modules/org/jboss/as/web/main/lib/linux-i686/libtcnative-1.so
+rm -rf %{buildroot}%{_datadir}/%{name}/modules/org/jboss/as/web/main/lib/linux-x86_64
+%endif
+
+%files
+%{_datadir}
+
+%changelog
+* Fri May 16 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 7.1.1-1
+- Initial release based on existing jboss-as spec file

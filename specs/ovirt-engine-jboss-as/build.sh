@@ -1,10 +1,10 @@
 #!/bin/sh -e
 
 # The name, version and source of the package:
-name="jboss-as"
+name="ovirt-engine-jboss-as"
 version="7.1.1"
-src="${name}-${version}.Final.zip"
-url="http://download.jboss.org/jbossas/7.1/${name}-${version}.Final/${src}"
+src="jboss-as-${version}.Final.zip"
+url="http://download.jboss.org/jbossas/7.1/jboss-as-${version}.Final/${src}"
 
 # Download the source:
 if [ ! -f "${src}" ]
