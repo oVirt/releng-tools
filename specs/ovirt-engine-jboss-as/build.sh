@@ -21,9 +21,8 @@ sed \
 
 # Build the source and binary packages:
 rpmbuild \
-    -ba \
+    -bs \
     --define="_sourcedir ${PWD}" \
     --define="_srcrpmdir ${PWD}" \
     --define="_rpmdir ${PWD}" \
-    --define="_rpmfilename %{name}-%{version}-%{release}.%{arch}.rpm" \
     "${name}.spec"
