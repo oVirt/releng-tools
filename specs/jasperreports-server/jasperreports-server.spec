@@ -1,13 +1,14 @@
 %global __jar_repack 0
+%global no_suffix_version 5.5.0
 
 Name:		jasperreports-server
-Version:	5.5.0
-Release:	8%{?dist}
+Version:	%{no_suffix_version}a
+Release:	1%{?dist}
 License:	AGPLv3
 Summary:	JasperReports Server
 URL:		http://community.jaspersoft.com
 BuildArch:	noarch
-Source:		http://downloads.sourceforge.net/project/jasperserver/JasperServer/JasperReports%20Server%20Community%20Edition%20%{version}/%{name}-cp-%{version}-bin.zip
+Source:		http://downloads.sourceforge.net/project/jasperserver/JasperServer/JasperReports%20Server%20Community%20Edition%20%{no_suffix_version}/%{name}-cp-%{version}-bin.zip
 Patch0:		jasperreports-server-5.5.0-additional-config.patch
 Patch1:		jasperreports-server-5.5.0-install_resources.patch
 Patch2:		jasperreports-server-5.5.0-write-own.patch
@@ -66,6 +67,9 @@ chmod a+x "%{buildroot}%{_datadir}/%{name}/buildomatic/bin"/*.sh
 %{_datadir}/%{name}
 
 %changelog
+* Thu Jun 10 2014 David Caro <dcaro@redhat.com> - 5.5.0a-1
+- Update to 5.5.0a
+
 * Tue Mar 11 2014 Alon Bar-Lev <alonbl@redhat.com> - 5.5.0-8
 - added removal of patch orig files at build time.
 
