@@ -1,0 +1,71 @@
+%if 0%{?fedora:1}
+%global _use_maven 1
+%endif
+%if 0%{?rhel:1}
+%if %{rhel} >= 7
+%global _use_maven 1
+%else
+%global _use_maven 0
+%endif
+%endif
+
+Name:		@NAME@
+Version:	@VERSION@
+Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
+License:	GPLv2 or LGPLv2+ or UnboundID-LDAPSDK
+Summary:	UnboundID LDAP SDK for Java
+URL:		https://www.unboundid.com/products/ldap-sdk/
+BuildArch:	noarch
+Source:		@TARBALL@
+
+BuildRequires:	ant
+BuildRequires:	jpackage-utils
+BuildRequires:	unzip
+
+%description
+UnboundID LDAP SDK for Java.
+
+%package	javadoc
+Summary:	Javadoc for %{name}
+
+%description	javadoc
+This package contains the API documentation for %{name}.
+
+%prep
+%setup -q -n %{name}
+rm -fr ext
+
+%build
+ant -Dcheckstyle.enabled=false -f build-se.xml package
+
+%install
+unzip -q build/package/unboundid-ldapsdk-*-maven.jar
+mkdir javadoc
+cd javadoc
+unzip -q ../unboundid-ldapsdk-*-javadoc.jar
+cd ..
+
+install -d -m 755 "%{buildroot}%{_javadir}"
+install -p -m 644 "%{name}-%{version}.jar" "%{buildroot}%{_javadir}/%{name}.jar"
+%if 0%{?_use_maven}
+install -d -m 755 "%{buildroot}%{_mavenpomdir}"
+install -p -m 644 "%{name}-%{version}.pom" "%{buildroot}%{_mavenpomdir}/JPP-%{name}.pom"
+%add_maven_depmap "JPP-%{name}.pom" "%{name}.jar"
+%else
+cat > .mfiles << __EOF__
+%{_javadir}/%{name}.jar
+__EOF__
+%endif
+
+install -d -m 755 "%{buildroot}%{_javadocdir}/%{name}"
+cp -pr javadoc/* "%{buildroot}%{_javadocdir}/%{name}"
+cat > .mfiles-javadoc << __EOF__
+%doc %{_javadocdir}/%{name}/
+__EOF__
+
+%files -f .mfiles
+%files javadoc -f .mfiles-javadoc
+
+%changelog
+* Sun May 4 2014 Alon Bar-Lev <alonbl@redhat.com> 2.3.7-0.0.snap.r530
+- Initial.

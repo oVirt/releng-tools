@@ -1,0 +1,8 @@
+LDAP Framework for ovirt-engine-extension-aaa-ldap
+
+NOTE:
+Until release of 2.3.7 and util upstream actually
+releases source tarballs, we use svn snapshots from
+svn at[1]
+
+[1] http://svn.code.sf.net/p/ldap-sdk/code/trunk
