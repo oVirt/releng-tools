@@ -1,0 +1,24 @@
+--- a/kexec-tools.spec
++++ b/kexec-tools.spec
+@@ -1,6 +1,6 @@
+ Name: kexec-tools
+ Version: 2.0.0 
+-Release: 273%{?dist}
++Release: 273.1%{?dist}
+ License: GPLv2
+ Group: Applications/System
+ Summary: The kexec/kdump userspace component.
+@@ -426,6 +426,12 @@
+ 
+ 
+ %changelog
++* Thu Jun 26 2014 Martin Perina <mperina@redhat.com> - 2.0.0-273.1
++- Add fence_kdump support for generic clusters
++- Add function setup_cluster_nodes_and_options
++- Add function get_pcs_cluster_nodes
++- Add function is_pcs_fence_kdump
++
+ * Tue Oct 22 2013 Baoquan He <bhe@redhat.com> - 2.0.0-273
+ - Fix max_mapnr issue on system has over 44-bit addressing, resolves bug 1008543
+ - makedumpfile: fails phys_base calculation on sadump format, resolves bug 1010103
+

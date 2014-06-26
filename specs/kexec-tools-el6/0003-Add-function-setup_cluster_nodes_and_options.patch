@@ -1,0 +1,118 @@
+From fdd8309b626a28771eaf8d7a620b8cd35e01d6a0 Mon Sep 17 00:00:00 2001
+From: Martin Perina <mperina@redhat.com>
+Date: Tue, 15 Apr 2014 13:37:43 +0200
+Subject: [RHEL6.6 PATCH 3/4 v2] Add function setup_cluster_nodes_and_options
+
+Extracts parts of code containing logic to configure fence_kdump nodes
+and options from cluster configuration into function
+setup_cluster_nodes_and_options.
+This is part of code cleanup prior to introduction of fence_kdump
+configuration for generic clusters.
+
+Related: rhbz#1083938
+Signed-off-by: Martin Perina <mperina@redhat.com>
+---
+ mkdumprd | 80 ++++++++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 48 insertions(+), 32 deletions(-)
+
+diff --git a/mkdumprd b/mkdumprd
+index 1f81bc6..5d6fbcf 100644
+--- a/mkdumprd
++++ b/mkdumprd
+@@ -1530,6 +1530,53 @@ get_pcs_cluster_nodes()
+         | xmllint --shell $CLUSTER_CONFIG_FILE | grep content | cut -d'=' -f2
+ }
+ 
++# Reads list of cluster nodes, filters local IPs and setups network for them.
++# Nodes to send fence_kdump notification to are stored in CLUSTER_NODE_LIST.
++# Other arguments for fence_kdump_send are stored in FENCE_KDUMP_OPTS.
++setup_cluster_nodes_and_options()
++{
++    # setup fence_kdump
++    local nodelist=""
++
++    if is_pcs_fence_kdump; then
++        # fence_kdump setup for Pacemaker clusters
++        nodelist=$(get_pcs_cluster_nodes)
++
++        # read fence_kdump_send options and store them to FENCE_KDUMP_OPTS
++        if [ -f "$FENCE_KDUMP_CONFIG" ]; then
++            . "$FENCE_KDUMP_CONFIG"
++        fi
++    fi
++
++    if [ -n "$nodelist" ]; then
++        for node in ${nodelist}; do
++            addr=`getent hosts $node | cut -d' ' -f1`
++            netdev=`/sbin/ip route get to $addr 2>&1`
++
++            if echo $netdev | grep -q ^local; then
++                continue
++            fi
++
++            # add node ip address to node list
++            CLUSTER_NODE_LIST="$CLUSTER_NODE_LIST $addr"
++
++            if echo $netdev | grep -q via; then
++                netdev=`echo $netdev | awk '{print $5}' | head -n 1`
++            else
++                netdev=`echo $netdev | awk '{print $3}' | head -n 1`
++            fi
++
++            mkdir -p $MNTIMAGE/etc/network/
++            handlenetdev $netdev
++            echo $netdev >> $MNTIMAGE/etc/iface_to_activate
++        done
++
++        if [ -n "$CLUSTER_NODE_LIST" ]; then
++            bin="$bin /usr/sbin/fence_kdump_send"
++        fi
++    fi
++}
++
+ if [ -z "$MNTIMAGE" -o -z "$IMAGE" ]; then
+     error "Error creating temporaries.  Try again"
+     cleanup_and_exit 1
+@@ -1783,38 +1830,7 @@ if [ "$DEFAULT_ACTION" == "mount_root_run_init" ];then
+     add_rootfs
+ fi
+ 
+-# handle cluster node if CLUSTER_CONFIG_FILE and fence_kudmp_send exist
+-if is_pcs_fence_kdump; then
+-    # get cluster nodes from CLUSTER_CONFIG_FILE, get interface and ip addresses
+-    nodelist=$(get_pcs_cluster_nodes)
+-    for node in ${nodelist}; do
+-	addr=`getent hosts $node | cut -d' ' -f1`
+-	netdev=`/sbin/ip route get to $addr 2>&1`
+-
+-	if echo $netdev | grep -q ^local; then
+-	    continue
+-	fi
+-
+-	# add node ip address to node list
+-	CLUSTER_NODE_LIST="$CLUSTER_NODE_LIST $addr"
+-
+-	if echo $netdev | grep -q via; then
+-	    netdev=`echo $netdev | awk '{print $5}' | head -n 1`
+-	else
+-	    netdev=`echo $netdev | awk '{print $3}' | head -n 1`
+-	fi
+-
+-	mkdir -p $MNTIMAGE/etc/network/
+-	handlenetdev $netdev
+-	echo $netdev >> $MNTIMAGE/etc/iface_to_activate
+-    done
+-    if [ -f "$FENCE_KDUMP_CONFIG" ]; then
+-	. "$FENCE_KDUMP_CONFIG"
+-    fi
+-    if [ -n "$CLUSTER_NODE_LIST" ]; then
+-	bin="$bin /usr/sbin/fence_kdump_send"
+-    fi
+-fi
++setup_cluster_nodes_and_options
+ 
+ # if no method was specified default to the currently booted filesystem
+ if [ -z "$USING_METHOD" ]
+-- 
+1.8.3.1
+

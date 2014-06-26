@@ -1,0 +1,154 @@
+From 15564bd5a31f740ddf434e5f6351e4eeffff4c44 Mon Sep 17 00:00:00 2001
+From: Martin Perina <mperina@redhat.com>
+Date: Tue, 15 Apr 2014 13:42:46 +0200
+Subject: [RHEL6.6 PATCH 4/4 v2] Add fence_kdump support for generic clusters
+
+Adds two new options to kdump.conf to be able to configure fence_kdump
+support for generic clusters:
+
+  fence_kdump_args <arg(s)>
+    - Command line arguments for fence_kdump_send (it can contain all
+      valid arguments except hosts to send notification to)
+
+  fence_kdump_nodes <node(s)>
+    - List of cluster node(s) separated by space to send fence_kdump
+      notification to (this option is mandatory to enable fence_kdump)
+
+Generic clusters fence_kdump configuration take precedence over older
+method of fence_kdump configuration for Pacemaker clusters. It means
+that if fence_kdump is configured using above options in kdump.conf, old
+Pacemaker configuration is not used even if it exists.
+
+Resolves: rhbz#1083938
+Signed-off-by: Martin Perina <mperina@redhat.com>
+---
+ kdump.conf   | 11 +++++++++++
+ kdump.conf.5 | 12 ++++++++++++
+ kdump.init   |  8 ++++++--
+ mkdumprd     | 28 +++++++++++++++++++++++++++-
+ 4 files changed, 56 insertions(+), 3 deletions(-)
+
+diff --git a/kdump.conf b/kdump.conf
+index b4721c3..1275a28 100644
+--- a/kdump.conf
++++ b/kdump.conf
+@@ -160,6 +160,15 @@
+ #			- By default, kdump initrd only will be rebuilt when
+ #			  necessary. Specify 1 here to force rebuilding kdump
+ #			  initrd every time when kdump service starts.
++#
++# fence_kdump_args <arg(s)>
++#			- Command line arguments for fence_kdump_send (it can contain
++#			all valid arguments except hosts to send notification to).
++#
++# fence_kdump_nodes <node(s)>
++# 			- List of cluster node(s) separated by space to send fence_kdump
++# 			notification to (this option is mandatory to enable fence_kdump).
++
+ 
+ #raw /dev/sda5
+ #ext4 /dev/sda3
+@@ -182,3 +191,5 @@ core_collector makedumpfile -c --message-level 1 -d 31
+ #debug_mem_level 0
+ #force_rebuild 1
+ #sshkey /root/.ssh/kdump_id_rsa
++#fence_kdump_args -p 7410 -f auto -c 0 -i 10
++#fence_kdump_nodes node1 node2
+diff --git a/kdump.conf.5 b/kdump.conf.5
+index e5d0704..77acf3b 100644
+--- a/kdump.conf.5
++++ b/kdump.conf.5
+@@ -207,6 +207,18 @@ By default, kdump initrd only will be rebuilt when necessary.
+ Specify 1 here to force rebuilding kdump initrd every time when kdump service starts.
+ .RE
+ 
++.B fence_kdump_args <arg(s)>
++.RS
++Command line arguments for fence_kdump_send (it can contain all valid
++arguments except hosts to send notification to).
++.RE
++
++.B fence_kdump_nodes <node(s)>
++.RS
++List of cluster node(s) separated by space to send fence_kdump notification
++to (this option is mandatory to enable fence_kdump).
++.RE
++
+ .SH EXAMPLES
+ 
+ see 
+diff --git a/kdump.init b/kdump.init
+index 05a6702..cfda283 100644
+--- a/kdump.init
++++ b/kdump.init
+@@ -206,8 +206,12 @@ function check_config()
+ 		FORCE_REBUILD=`grep ^extra_modules $KDUMP_CONFIG_FILE`
+ 		files="$KDUMP_CONFIG_FILE $kdump_kernel $EXTRA_FILES"
+ 
+-		#check to see if cluster is configured to use fence_kdump
+-		if [ -f "$CLUSTER_CONFIG_FILE" ] && grep -q fence_kdump "$CLUSTER_CONFIG_FILE"
++		# changes in CLUSTER_CONFIG_FILE should be monitored only if fence_kdump
++		# is not configured using fence_kdump_nodes option in /etc/kdump.conf
++		# and fence_kdump is configured in Pacemaker cluster
++		if ! grep -q ^fence_kdump_nodes /etc/kdump.conf \
++			&& [ -f "$CLUSTER_CONFIG_FILE" ] \
++			&& grep -q fence_kdump "$CLUSTER_CONFIG_FILE"
+ 		then
+ 		    files="$files $CLUSTER_CONFIG_FILE"
+ 		    if [ -f "$FENCE_KDUMP_CONFIG" ]; then
+diff --git a/mkdumprd b/mkdumprd
+index 5d6fbcf..ad8291f 100644
+--- a/mkdumprd
++++ b/mkdumprd
+@@ -1530,6 +1530,21 @@ get_pcs_cluster_nodes()
+         | xmllint --shell $CLUSTER_CONFIG_FILE | grep content | cut -d'=' -f2
+ }
+ 
++# get_option_value <option_name>
++# Retrieves value of option defined in /etc/kdump.conf.
++get_option_value()
++{
++    echo $(strip_comments `grep ^$1 /etc/kdump.conf | tail -1 | cut -d\  -f2-`)
++}
++
++# Tests if fence_kdump is configured using options in /etc/kdump.conf.
++is_generic_fence_kdump()
++{
++    [ -x /usr/sbin/fence_kdump_send ] || return 1
++
++    grep -q "^fence_kdump_nodes" /etc/kdump.conf
++}
++
+ # Reads list of cluster nodes, filters local IPs and setups network for them.
+ # Nodes to send fence_kdump notification to are stored in CLUSTER_NODE_LIST.
+ # Other arguments for fence_kdump_send are stored in FENCE_KDUMP_OPTS.
+@@ -1538,7 +1553,14 @@ setup_cluster_nodes_and_options()
+     # setup fence_kdump
+     local nodelist=""
+ 
+-    if is_pcs_fence_kdump; then
++    if is_generic_fence_kdump; then
++        # fence_kdump setup for generic clusters
++        nodelist=$(get_option_value "fence_kdump_nodes")
++
++        # read fence_kdump_send options and store them to FENCE_KDUMP_OPTS
++        FENCE_KDUMP_OPTS=$(get_option_value "fence_kdump_args")
++
++    elif is_pcs_fence_kdump; then
+         # fence_kdump setup for Pacemaker clusters
+         nodelist=$(get_pcs_cluster_nodes)
+ 
+@@ -1771,6 +1793,10 @@ This kdump.conf marker may now be removed on supported configurations.
+ See KCS Solution 92943 for more details.
+ HERE
+             ;;
++        fence_kdump_nodes)
++            ;;
++        fence_kdump_args)
++            ;;
+         *)
+             IS_COMMENT=`echo $config_opt | grep "^#.*$"`
+             if [ -n "$IS_COMMENT" -o -z "$config_opt" ]
+-- 
+1.8.3.1
+
