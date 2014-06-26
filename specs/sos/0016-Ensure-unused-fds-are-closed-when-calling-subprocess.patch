@@ -1,0 +1,81 @@
+From a96a5e8397b465f556c5a10274a4c7248e737fbf Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Tue, 4 Feb 2014 11:37:15 +0000
+Subject: [PATCH 16/72] Ensure unused fds are closed when calling subprocesses
+ via Popen
+
+When sos communicates with a child process using Popen all IO
+takes place on stdin/stdout/stderr (or a subset). No other open
+file descriptors should be inherited by the child.
+
+Make all calls to Popen set close_fds=True.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/archive.py         | 6 +++++-
+ sos/plugins/emc.py     | 3 ++-
+ sos/policies/redhat.py | 3 ++-
+ sos/utilities.py       | 2 +-
+ 4 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/sos/archive.py b/sos/archive.py
+index f1d4d1f..9e6029b 100644
+--- a/sos/archive.py
++++ b/sos/archive.py
+@@ -252,7 +252,11 @@ class TarFileArchive(FileCacheArchive):
+                 cmd = "%s -1" % cmd
+             try:
+                 command = shlex.split("%s %s" % (cmd, self.name()))
+-                p = Popen(command, stdout=PIPE, stderr=PIPE, bufsize=-1)
++                p = Popen(command,
++                          stdout=PIPE,
++                          stderr=PIPE,
++                          bufsize=-1,
++                          close_fds=True)
+                 stdout, stderr = p.communicate()
+                 if stdout:
+                     log.info(stdout.decode('utf-8'))
+diff --git a/sos/plugins/emc.py b/sos/plugins/emc.py
+index 6eac7d0..5a2495e 100644
+--- a/sos/plugins/emc.py
++++ b/sos/plugins/emc.py
+@@ -196,7 +196,8 @@ class Emc(Plugin, RedHatPlugin):
+             while CLARiiON_IP_loop == "stay_in":
+                 ans = raw_input("CLARiiON SP IP Address or [Enter] to exit: ")
+                 ## Check to make sure the CLARiiON SP IP address provided is valid
+-                p = Popen("navicli -h %s getsptime" % (ans,), shell=True, stdout=PIPE, stderr=PIPE)
++                p = Popen("navicli -h %s getsptime" % (ans,),
++                            shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
+                 out, err = p.communicate()
+                 if p.returncode == 0:
+                     CLARiiON_IP_address_list.append(ans)
+diff --git a/sos/policies/redhat.py b/sos/policies/redhat.py
+index 5b3a446..4e5b363 100644
+--- a/sos/policies/redhat.py
++++ b/sos/policies/redhat.py
+@@ -68,7 +68,8 @@ class RedHatPolicy(LinuxPolicy):
+                   shell=True,
+                   stdout=PIPE,
+                   stderr=PIPE,
+-                  bufsize=-1)
++                  bufsize=-1,
++                  close_fds=True)
+         out, err = p.communicate()
+         if err:
+             return ret
+diff --git a/sos/utilities.py b/sos/utilities.py
+index 7a8674a..a9aca74 100644
+--- a/sos/utilities.py
++++ b/sos/utilities.py
+@@ -159,7 +159,7 @@ def sos_get_command_output(command, timeout=300):
+ 
+         p = Popen(command, shell=True,
+                 stdout=PIPE, stderr=STDOUT,
+-                bufsize=-1, env = cmd_env)
++                bufsize=-1, env = cmd_env, close_fds = True)
+         stdout, stderr = p.communicate()
+         return (p.returncode, stdout.decode('utf-8'), 0)
+     else:
+-- 
+1.9.3
+

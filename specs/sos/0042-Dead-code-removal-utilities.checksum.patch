@@ -1,0 +1,72 @@
+From 9c88a8ff071c9a74e3b412bd4f4ef19cd9248611 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Wed, 26 Mar 2014 12:40:17 +0000
+Subject: [PATCH 42/72] Dead code removal: utilities.checksum()
+
+Has test case but no callers. Delete it.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/utilities.py         | 15 ---------------
+ tests/utilities_tests.py | 12 ------------
+ 2 files changed, 27 deletions(-)
+
+diff --git a/sos/utilities.py b/sos/utilities.py
+index 8602a52..1a56f9f 100644
+--- a/sos/utilities.py
++++ b/sos/utilities.py
+@@ -63,19 +63,6 @@ def fileobj(path_or_file, mode='r'):
+     else:
+         return closing(path_or_file)
+ 
+-def checksum(file_, chunk_size=128, algorithm=None):
+-    """Returns the checksum of the supplied filename. The file is read in
+-    chunk_size blocks"""
+-    if not algorithm:
+-        algorithm = get_hash_name()
+-    digest = hashlib.new(algorithm)
+-    with fileobj(file_, 'rb') as fd:
+-        data = fd.read(chunk_size)
+-        while data:
+-            digest.update(six.b(data))
+-            data = fd.read(chunk_size)
+-        return digest.hexdigest()
+-
+ def get_hash_name():
+     """Returns the algorithm used when computing a hash"""
+     import sos.policies
+@@ -101,8 +88,6 @@ def convert_bytes(bytes_, K=1 << 10, M=1 << 20, G=1 << 30, T=1 << 40):
+     else:
+         return '%d' % bytes_
+ 
+-
+-
+ def find(file_pattern, top_dir, max_depth=None, path_pattern=None):
+     """generator function to find files recursively. Usage:
+ 
+diff --git a/tests/utilities_tests.py b/tests/utilities_tests.py
+index da0987f..395fde1 100644
+--- a/tests/utilities_tests.py
++++ b/tests/utilities_tests.py
+@@ -43,18 +43,6 @@ class TailTest(unittest.TestCase):
+         self.assertEquals(t, six.b(expected))
+ 
+ 
+-class ChecksumTest(unittest.TestCase):
+-
+-    def test_simple_hash(self):
+-        self.assertEquals(checksum(StringIO('this is a test'), algorithm="sha256"),
+-                '2e99758548972a8e8822ad47fa1017ff72f06f3ff6a016851f45c398732bc50c')
+-
+-    def test_hash_loading(self):
+-       # not the greatest test, since we are asking the policy to pick for us
+-       name = get_hash_name()
+-       self.assertTrue(name in ('md5', 'sha256'))
+-
+-
+ class ExecutableTest(unittest.TestCase):
+ 
+     def test_nonexe_file(self):
+-- 
+1.9.3
+

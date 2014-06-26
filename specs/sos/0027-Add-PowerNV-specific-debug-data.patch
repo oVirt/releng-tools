@@ -1,0 +1,33 @@
+From a66d4fccfe093dfa29dfaa4808f361bc7063c742 Mon Sep 17 00:00:00 2001
+From: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+Date: Tue, 11 Mar 2014 12:18:26 +0000
+Subject: [PATCH 27/72] Add PowerNV specific debug data
+
+This patch adds support to collect more debug files on
+PowerNV platform.
+
+Signed-off-by: Vasant Hegde <hegdevasant linux vnet ibm com>
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/powerpc.py |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+---
+ sos/plugins/powerpc.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/sos/plugins/powerpc.py b/sos/plugins/powerpc.py
+index 8fd6b4f..9681094 100644
+--- a/sos/plugins/powerpc.py
++++ b/sos/plugins/powerpc.py
+@@ -72,4 +72,7 @@ class PowerPC(Plugin, RedHatPlugin, UbuntuPlugin, DebianPlugin):
+ 
+         if isPowerNV:
+             self.add_copy_spec("/proc/ppc64/")
+-            
++            self.add_copy_spec("/sys/kernel/debug/powerpc/")
++            if os.path.isdir("/var/log/dump"):
++                self.add_cmd_output("ls -l /var/log/dump")
++
+-- 
+1.9.3
+

@@ -1,0 +1,48 @@
+From 0bedab23f3eb86878d894419614e1728c395a84e Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Thu, 27 Mar 2014 21:06:24 +0000
+Subject: [PATCH 60/72] Raise a TypeError if add_copy_specs() is called with a
+ string
+
+Since strings are iterable a plugin attempting to call
+add_copy_specs("/something") results in a plugin calling
+add_copy_spec("/"). Raise a TypeError if this happens.
+
+Fixes Issue #141.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/__init__.py | 2 ++
+ tests/plugin_tests.py   | 3 +++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/sos/plugins/__init__.py b/sos/plugins/__init__.py
+index 7b6180c..7e865cd 100644
+--- a/sos/plugins/__init__.py
++++ b/sos/plugins/__init__.py
+@@ -394,6 +394,8 @@ class Plugin(object):
+                 self.name(), strfile), _file)
+ 
+     def add_copy_specs(self, copyspecs):
++        if isinstance(copyspecs, six.string_types):
++            raise TypeError("Plugin.add_copy_specs called with string argument")
+         for copyspec in copyspecs:
+             self.add_copy_spec(copyspec)
+ 
+diff --git a/tests/plugin_tests.py b/tests/plugin_tests.py
+index a4905cf..c44c162 100644
+--- a/tests/plugin_tests.py
++++ b/tests/plugin_tests.py
+@@ -243,6 +243,9 @@ class AddCopySpecTests(unittest.TestCase):
+         self.mp.add_copy_specs(["tests/tail_test.txt"])
+         self.assert_expect_paths()
+ 
++    def test_add_copy_spec_nostrings(self):
++        self.assertRaises(TypeError, self.mp.add_copy_specs,"stringsarebadmkay?")
++
+     # add_copy_spec_limit()
+ 
+     def test_single_file_over_limit(self):
+-- 
+1.9.3
+

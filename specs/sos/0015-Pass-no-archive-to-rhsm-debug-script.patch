@@ -1,0 +1,31 @@
+From f57c793a07e86c1659b2f5c6b49b93f5007c139c Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Tue, 4 Feb 2014 15:43:56 +0000
+Subject: [PATCH 15/72] Pass --no-archive to rhsm-debug script
+
+Versions of subscription-manager since 1.10.11-2.el7 support the
+--no-archive option to disable creation of a zip archive. Pass
+this to the script to have the output stored in a directory in
+the archive.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/yum.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sos/plugins/yum.py b/sos/plugins/yum.py
+index a9ae4e4..81788f1 100644
+--- a/sos/plugins/yum.py
++++ b/sos/plugins/yum.py
+@@ -48,7 +48,7 @@ class Yum(Plugin, RedHatPlugin):
+             "/var/log/rhsm/rhsmcertd.log"])
+         self.add_cmd_output("subscription-manager list --installed")
+         self.add_cmd_output("subscription-manager list --consumed")
+-        self.add_cmd_output("rhsm-debug system --destination %s"
++        self.add_cmd_output("rhsm-debug system --no-archive --destination %s"
+                 % self.get_cmd_dir())
+ 
+         if self.get_option("yumlist"):
+-- 
+1.9.3
+

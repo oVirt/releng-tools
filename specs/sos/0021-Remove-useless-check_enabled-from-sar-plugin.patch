@@ -1,0 +1,38 @@
+From 2591ac0719c256af3ed3b392f5bc5972ed3a1104 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Fri, 14 Feb 2014 16:54:15 +0000
+Subject: [PATCH 21/72] Remove useless check_enabled() from sar plugin
+
+The sar plugin implemented a check_enabled() to catch cases where
+the plugin is force-enabled on a system with no sar installation.
+
+This is better handled by runtime checking in setup() which the
+plugin also does. Kill the check and its annoying error message.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/sar.py | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/sos/plugins/sar.py b/sos/plugins/sar.py
+index 1086208..cf53d5b 100644
+--- a/sos/plugins/sar.py
++++ b/sos/plugins/sar.py
+@@ -28,14 +28,6 @@ class Sar(Plugin,):
+     # size-limit SAR data collected by default (MB)
+     sa_size = 20
+ 
+-    def check_enabled(self):
+-        # check to see if we are force-enabled with no sar installation
+-        if not os.path.exists(self.sa_path) or not os.path.isdir(self.sa_path):
+-            self.soslog.info("sar directory %s does not exist" % self.sa_path
+-                            + " or is not a directory")
+-            return False
+-        return True
+-
+     def setup(self):
+         if self.get_option("all_sar"):
+             self.sa_size = 0
+-- 
+1.9.3
+

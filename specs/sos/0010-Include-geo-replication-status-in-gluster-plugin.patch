@@ -1,0 +1,34 @@
+From 722f87787eaf8b50d16a3964892b16880c8bdbbb Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Mon, 3 Feb 2014 15:17:55 +0000
+Subject: [PATCH 10/72] Include geo-replication status in gluster plugin
+
+Add the output of 'gluster volume geo-replication status' for
+each discovered gluster volume to the report.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/gluster.py | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/sos/plugins/gluster.py b/sos/plugins/gluster.py
+index 7c54fa0..02dbac3 100644
+--- a/sos/plugins/gluster.py
++++ b/sos/plugins/gluster.py
+@@ -102,6 +102,13 @@ class Gluster(Plugin, RedHatPlugin):
+         self.add_copy_spec('/tmp/glusterdump.options')
+         self.add_copy_spec(self.statedump_dir)
+ 
++        volume_file = self.get_cmd_output_now("gluster volume info",
++                        "gluster_volume_info")
++        if volume_file:
++            for volname in self.get_volume_names(volume_file):
++                self.add_cmd_output("gluster volume geo-replication %s status"
++                                    % volname)
++
+         self.add_cmd_output("gluster volume status")
+         # collect this last as some of the other actions create log entries
+         self.add_copy_spec("/var/log/glusterfs")
+-- 
+1.9.3
+

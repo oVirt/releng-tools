@@ -1,0 +1,33 @@
+From 3f742644ebbf27b7b024a2f7061c347196312308 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Thu, 27 Mar 2014 11:39:30 +0000
+Subject: [PATCH 46/72] Convert infiniband to package list
+
+Remove infiniband's open-coded check_enabled() and use a package
+list to control plugin activation.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/infiniband.py | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/sos/plugins/infiniband.py b/sos/plugins/infiniband.py
+index 2c890a5..d3ec982 100644
+--- a/sos/plugins/infiniband.py
++++ b/sos/plugins/infiniband.py
+@@ -21,11 +21,7 @@ class Infiniband(Plugin, RedHatPlugin, DebianPlugin, UbuntuPlugin):
+     """
+ 
+     plugin_name = 'infiniband'
+-
+-    def check_enabled(self):
+-         if self.commons["policy"].pkg_by_name("libibverbs-utils"):
+-             return True
+-         return False
++    packages = ('libibverbs-utils',)
+ 
+     def setup(self):
+         self.add_copy_specs([
+-- 
+1.9.3
+

@@ -1,0 +1,31 @@
+From 6182367ec0672721d1381e40aaa97c3d2f504a95 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Wed, 26 Mar 2014 17:39:43 +0000
+Subject: [PATCH 45/72] Dead code removal: PluginException
+
+Defined but never used. Delete.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/__init__.py | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/sos/plugins/__init__.py b/sos/plugins/__init__.py
+index 4de8c0d..0c4b9b4 100644
+--- a/sos/plugins/__init__.py
++++ b/sos/plugins/__init__.py
+@@ -60,11 +60,6 @@ def mangle_command(command):
+     mangledname = re.sub(r"/", ".", mangledname).strip(" ._-")[0:64]
+     return mangledname
+ 
+-
+-class PluginException(Exception):
+-    pass
+-
+-
+ class Plugin(object):
+     """ This is the base class for sosreport plugins. Plugins should subclass
+     this and set the class variables where applicable.
+-- 
+1.9.3
+

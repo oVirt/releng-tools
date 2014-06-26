@@ -1,0 +1,150 @@
+From 4d1351efbd09220c36e889e222c40fe3ae68958a Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Wed, 12 Mar 2014 20:25:19 +0000
+Subject: [PATCH 35/72] Match plugins against policies
+
+Fixes Issue #238.
+
+When tagging classes are used to enable plugins on multiple
+platforms it is possible for there to be more than one valid class
+instance for a given policy. For e.g.:
+
+  class DebianFooPlugin(Plugin, DebianPlugin):
+  ///
+  class UbuntuFooPlugin(Plugin, UbuntuPlugin):
+  ///
+
+Since UbuntuPolicy includes both DebianPlugin and UbuntuPlugin in
+its valid_subclasses list both classes pass the validity test and
+both are added to the loaded_plugins list. This causes plugins
+to run twice:
+
+2014-03-12 19:57:50,974 DEBUG: copying file /var/log/mail.log to /var/log/mail.log
+2014-03-12 19:57:50,975 DEBUG: added /var/log/mail.log to FileCacheArchive /tmp/sosreport-u1210-vm1-20140312195750
+2014-03-12 19:57:51,293 DEBUG: copying file /var/log/mail.log to /var/log/mail.log
+2014-03-12 19:57:51,294 DEBUG: added /var/log/mail.log to FileCacheArchive /tmp/sosreport-u1210-vm1-20140312195750
+
+Fix this by adding a match_plugin() method to the policy base
+class and prefer plugins that are subclasses of the first entry
+in the list. This patch also reverses the order of the
+valid_subclasses list for the UbuntuPolicy to ensure preference
+is given to native plugins:
+
+  self.valid_subclasses = [UbuntuPlugin, DebianPlugin]
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/policies/__init__.py | 10 +++++++++
+ sos/policies/ubuntu.py   |  2 +-
+ sos/sosreport.py         | 53 +++++++++++++++++++++++++-----------------------
+ 3 files changed, 39 insertions(+), 26 deletions(-)
+
+diff --git a/sos/policies/__init__.py b/sos/policies/__init__.py
+index b91d0fd..08ce8b4 100644
+--- a/sos/policies/__init__.py
++++ b/sos/policies/__init__.py
+@@ -198,6 +198,16 @@ No changes will be made to system configuration.
+             return tempfile.gettempdir()
+         return opt_tmp_dir
+ 
++    def match_plugin(self, plugin_classes):
++        if len(plugin_classes) > 1:
++            for p in plugin_classes:
++                # Give preference to the first listed tagging class
++                # so that e.g. UbuntuPlugin is chosen over DebianPlugin
++                # on an Ubuntu installation.
++                if issubclass(p, self.valid_subclasses[0]):
++                    return p
++        return plugin_classes[0]
++
+     def validate_plugin(self, plugin_class):
+         """
+         Verifies that the plugin_class should execute under this policy
+diff --git a/sos/policies/ubuntu.py b/sos/policies/ubuntu.py
+index c9a8177..3039f43 100644
+--- a/sos/policies/ubuntu.py
++++ b/sos/policies/ubuntu.py
+@@ -12,7 +12,7 @@ class UbuntuPolicy(DebianPolicy):
+ 
+     def __init__(self):
+         super(UbuntuPolicy, self).__init__()
+-        self.valid_subclasses = [DebianPlugin, UbuntuPlugin]
++        self.valid_subclasses = [UbuntuPlugin, DebianPlugin]
+ 
+     @classmethod
+     def check(self):
+diff --git a/sos/sosreport.py b/sos/sosreport.py
+index fe78abd..13a46bf 100644
+--- a/sos/sosreport.py
++++ b/sos/sosreport.py
+@@ -761,39 +761,42 @@ class SoSReport(object):
+             try:
+                 plugin_classes = import_plugin(plugbase,
+                         tuple(self.policy.valid_subclasses))
+-
+-                for plugin_class in plugin_classes:
+-                    if not self.policy.validate_plugin(plugin_class):
+-                        self.soslog.warning(_("plugin %s does not validate, skipping") % plug)
+-                        if self.opts.verbosity > 0:
+-                            self._skip(plugin_class, _("does not validate"))
++                if not len(plugin_classes):
++                    # no valid plugin classes for this policy
++                    continue
++
++                plugin_class = self.policy.match_plugin(plugin_classes)
++                if not self.policy.validate_plugin(plugin_class):
++                    self.soslog.warning(_("plugin %s does not validate, skipping") % plug)
++                    if self.opts.verbosity > 0:
++                        self._skip(plugin_class, _("does not validate"))
+                         continue
+ 
+-                    if plugin_class.requires_root and not self._is_root:
+-                        self.soslog.info(_("plugin %s requires root permissions to execute, skipping") % plug)
+-                        self._skip(plugin_class, _("requires root"))
+-                        continue
++                if plugin_class.requires_root and not self._is_root:
++                    self.soslog.info(_("plugin %s requires root permissions to execute, skipping") % plug)
++                    self._skip(plugin_class, _("requires root"))
++                    continue
+ 
+-                    # plug-in is valid, let's decide whether run it or not
+-                    self.plugin_names.append(plugbase)
++                # plug-in is valid, let's decide whether run it or not
++                self.plugin_names.append(plugbase)
+ 
+-                    if  self._is_skipped(plugbase):
+-                        self._skip(plugin_class, _("skipped"))
+-                        continue
++                if  self._is_skipped(plugbase):
++                    self._skip(plugin_class, _("skipped"))
++                    continue
+ 
+-                    if  self._is_inactive(plugbase, plugin_class):
+-                        self._skip(plugin_class, _("inactive"))
+-                        continue
++                if  self._is_inactive(plugbase, plugin_class):
++                    self._skip(plugin_class, _("inactive"))
++                    continue
+ 
+-                    if  self._is_not_default(plugbase, plugin_class):
+-                        self._skip(plugin_class, _("not default"))
+-                        continue
++                if  self._is_not_default(plugbase, plugin_class):
++                    self._skip(plugin_class, _("not default"))
++                    continue
+ 
+-                    if  self._is_not_specified(plugbase):
+-                        self._skip(plugin_class, _("not specified"))
+-                        continue
++                if  self._is_not_specified(plugbase):
++                    self._skip(plugin_class, _("not specified"))
++                    continue
+ 
+-                    self._load(plugin_class)
++                self._load(plugin_class)
+             except Exception as e:
+                 self.soslog.warning(_("plugin %s does not install, skipping: %s") % (plug, e))
+                 if self.raise_plugins:
+-- 
+1.9.3
+

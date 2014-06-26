@@ -1,0 +1,33 @@
+From 03662edf4405ab66c0284a76bf68662c1657d5ab Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Mon, 3 Feb 2014 12:26:45 +0000
+Subject: [PATCH 07/72] Always treat rhevm vdsmlogs option as string
+
+The rhevm plugin has a 'vdsmlogs' option to pass in a set of log
+files to be collected. When run with '-a' (or with
+'-krhevm.vdsmlogs) this evaluates to 'True' (a bool) and causes
+an exception when this is passed to add_copy_specs().
+
+Always treat the value as a string.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/rhevm.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sos/plugins/rhevm.py b/sos/plugins/rhevm.py
+index 39b32f4..8068e05 100644
+--- a/sos/plugins/rhevm.py
++++ b/sos/plugins/rhevm.py
+@@ -13,7 +13,7 @@ class RhevM(Plugin, RedHatPlugin):
+         self.add_copy_spec("/etc/rhevm")
+         self.add_copy_spec("/var/log/rhevm")
+         if self.get_option("vdsmlogs"):
+-            self.add_copy_spec(self.get_option("vdsmlogs"))
++            self.add_copy_spec(str(self.get_option("vdsmlogs")))
+ 
+     def postproc(self):
+         """
+-- 
+1.9.3
+

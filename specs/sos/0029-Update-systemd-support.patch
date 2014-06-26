@@ -1,0 +1,35 @@
+From 7146472eb85bb4ea39a244ca252e66478b3e30dd Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Wed, 12 Mar 2014 13:02:39 +0000
+Subject: [PATCH 29/72] Update systemd support
+
+- Drop support for 'systemctl dump' as this no longer exists.
+- Add 'systemctl list-units' for convenience
+- add systemctl show-environment
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/systemd.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sos/plugins/systemd.py b/sos/plugins/systemd.py
+index 915c8fc..38be63e 100644
+--- a/sos/plugins/systemd.py
++++ b/sos/plugins/systemd.py
+@@ -27,10 +27,11 @@ class Systemd(Plugin, RedHatPlugin):
+ 
+     def setup(self):
+         self.add_cmd_output("systemctl show --all")
++        self.add_cmd_output("systemctl list-units")
+         self.add_cmd_output("systemctl list-units --failed")
+-        self.add_cmd_output("systemctl list-unit-files")
+         self.add_cmd_output("systemctl list-units --all")
+-        self.add_cmd_output("systemctl dump")
++        self.add_cmd_output("systemctl list-unit-files")
++        self.add_cmd_output("systemctl show-environment")
+         self.add_cmd_output("systemd-delta")
+         self.add_cmd_output("journalctl --verify")
+         self.add_cmd_output("journalctl --all --this-boot --no-pager")
+-- 
+1.9.3
+

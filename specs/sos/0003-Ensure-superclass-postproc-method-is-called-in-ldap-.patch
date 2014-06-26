@@ -1,0 +1,39 @@
+From 3c52bbd14c881748998c0edfb328c8c0ca92842f Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Fri, 31 Jan 2014 15:43:44 +0000
+Subject: [PATCH 03/72] Ensure superclass postproc method is called in ldap
+ plugin
+
+Since the ldap plugins add files and post-processing methods at
+multiple class levels (Ldap, RedHatLdap etc.) derived classes
+must explicitly call their parent class's postproc() method to
+apply all substitutions to collected data.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/ldap.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sos/plugins/ldap.py b/sos/plugins/ldap.py
+index f1032a9..79d8394 100644
+--- a/sos/plugins/ldap.py
++++ b/sos/plugins/ldap.py
+@@ -45,6 +45,7 @@ class RedHatLdap(Ldap, RedHatPlugin):
+         ])
+ 
+     def postproc(self):
++        super(RedHatLdap, self).postproc()
+         self.do_file_sub("/etc/nslcd.conf",
+                         r"(\s*bindpw\s*)\S+", r"\1********")
+         self.do_file_sub("/etc/pam_ldap.conf",
+@@ -77,6 +78,7 @@ class DebianLdap(Ldap, DebianPlugin, UbuntuPlugin):
+             suggest_filename="access_control_lists")
+ 
+     def postproc(self):
++        super(RedHatLdap, self).postproc()
+         self.do_cmd_output_sub(
+         "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config '(!(objectClass=olcSchemaConfig))'",
+             r"(olcRootPW\: \s*)\S+", r"\1********")
+-- 
+1.9.3
+

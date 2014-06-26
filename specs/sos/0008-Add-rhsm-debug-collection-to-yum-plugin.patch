@@ -1,0 +1,26 @@
+From 3b727c296b86172a64dae83cb02a42fe4c5c6af9 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Mon, 3 Feb 2014 13:03:04 +0000
+Subject: [PATCH 08/72] Add rhsm-debug collection to yum plugin
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/yum.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sos/plugins/yum.py b/sos/plugins/yum.py
+index 867302c..a9ae4e4 100644
+--- a/sos/plugins/yum.py
++++ b/sos/plugins/yum.py
+@@ -48,6 +48,8 @@ class Yum(Plugin, RedHatPlugin):
+             "/var/log/rhsm/rhsmcertd.log"])
+         self.add_cmd_output("subscription-manager list --installed")
+         self.add_cmd_output("subscription-manager list --consumed")
++        self.add_cmd_output("rhsm-debug system --destination %s"
++                % self.get_cmd_dir())
+ 
+         if self.get_option("yumlist"):
+             # List various information about available packages
+-- 
+1.9.3
+

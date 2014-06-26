@@ -1,0 +1,61 @@
+From efc3b09c2b41c166e54593f0956b9f0eaf374925 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Fri, 28 Mar 2014 16:29:38 +0000
+Subject: [PATCH 61/72] Add collection of grub configuration for UEFI systems
+
+UEFI systems store the grub configuration at:
+
+  /boot/efi/EFI/*/grub.conf [grub 1.x]
+  /boot/efi/EFI/*/grub.cfg [grub 2.x]
+
+Add these paths to the respective modules.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/grub.py  |  2 +-
+ sos/plugins/grub2.py | 11 ++++++-----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/sos/plugins/grub.py b/sos/plugins/grub.py
+index cc4d593..3911041 100644
+--- a/sos/plugins/grub.py
++++ b/sos/plugins/grub.py
+@@ -23,11 +23,11 @@ class Grub(Plugin, RedHatPlugin, DebianPlugin, UbuntuPlugin):
+ 
+     def setup(self):
+         self.add_copy_specs([
++            "/boot/efi/EFI/*/grub.conf",
+             "/boot/grub/grub.conf",
+             "/boot/grub/device.map",
+             "/etc/grub.conf",
+             "/etc/grub.d"
+         ])
+ 
+-
+ # vim: et ts=4 sw=4
+diff --git a/sos/plugins/grub2.py b/sos/plugins/grub2.py
+index c9f64b0..95c1218 100644
+--- a/sos/plugins/grub2.py
++++ b/sos/plugins/grub2.py
+@@ -23,12 +23,13 @@ class Grub2(Plugin, RedHatPlugin, DebianPlugin, UbuntuPlugin):
+ 
+     def setup(self):
+         self.add_copy_specs([
+-            "/etc/grub.d",
+-            "/etc/grub2.cfg",
+-            "/etc/default/grub",
+-            "/boot/grub/grub.cfg",
++            "/boot/efi/EFI/*/grub.cfg",
+             "/boot/grub2/grub.cfg",
+-            "/boot/grub2/grubenv"
++            "/boot/grub2/grubenv",
++            "/boot/grub/grub.cfg",
++            "/etc/default/grub",
++            "/etc/grub2.cfg",
++            "/etc/grub.d"
+         ])
+         self.add_cmd_output("ls -lanR /boot")
+         self.add_cmd_output("grub2-mkconfig")
+-- 
+1.9.3
+

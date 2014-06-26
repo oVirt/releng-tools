@@ -1,0 +1,29 @@
+From 691e1811a2c6557c062a76e754a3b5228ce40fbf Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Thu, 27 Mar 2014 13:05:41 +0000
+Subject: [PATCH 49/72] Pythonify Plugin._path_in_pathlist()
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/__init__.py | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/sos/plugins/__init__.py b/sos/plugins/__init__.py
+index 0c4b9b4..55c2d48 100644
+--- a/sos/plugins/__init__.py
++++ b/sos/plugins/__init__.py
+@@ -195,10 +195,7 @@ class Plugin(object):
+         return regex_findall(regex, fname)
+ 
+     def _path_in_path_list(self, path, path_list):
+-        for p in path_list:
+-            if p in path:
+-                return True
+-        return False
++        return any(p in path for p in path_list)
+ 
+     def copy_symlink(self, srcpath, sub=None):
+         # the target stored in the original symlink
+-- 
+1.9.3
+

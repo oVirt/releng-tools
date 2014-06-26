@@ -1,0 +1,44 @@
+From 0338a955a930286beaa7b66c5167be9b15d34d78 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Mon, 3 Feb 2014 12:09:57 +0000
+Subject: [PATCH 06/72] Fix verbose file logging
+
+Prior versions of sos enable debug logging to the embedded log
+file (sos_logs/sos.log) when a single '-v' is given. Restore this
+behaviour and ensure that command-not-found messages are reported
+at 'info' rather than 'warning' level.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/__init__.py | 2 +-
+ sos/sosreport.py        | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sos/plugins/__init__.py b/sos/plugins/__init__.py
+index 7c63631..8df430d 100644
+--- a/sos/plugins/__init__.py
++++ b/sos/plugins/__init__.py
+@@ -488,7 +488,7 @@ class Plugin(object):
+             self.soslog.warning("command '%s' timed out after %ds"
+                     % (prog, timeout))
+         if status == 127:
+-            self.soslog.warning("could not run '%s': command not found" % prog)
++            self.soslog.info("could not run '%s': command not found" % prog)
+         return (status, output, runtime)
+ 
+     def call_ext_prog(self, prog, timeout=300):
+diff --git a/sos/sosreport.py b/sos/sosreport.py
+index 4b52572..0faa364 100644
+--- a/sos/sosreport.py
++++ b/sos/sosreport.py
+@@ -659,6 +659,7 @@ class SoSReport(object):
+                 flog.setLevel(logging.DEBUG)
+             elif self.opts.verbosity and self.opts.verbosity > 0:
+                 console.setLevel(logging.INFO)
++                flog.setLevel(logging.DEBUG)
+             else:
+                 console.setLevel(logging.WARNING)
+             self.soslog.addHandler(console)
+-- 
+1.9.3
+

@@ -1,0 +1,68 @@
+From 7c53bbe37e1841777a95331ccaf6a43f39e23f86 Mon Sep 17 00:00:00 2001
+From: Sandro Bonazzola <sbonazzo@redhat.com>
+Date: Tue, 4 Feb 2014 15:15:51 +0000
+Subject: [PATCH 12/72] postgresql: add logs about errors / warnings
+
+give more info to support about what happened while
+collecting the report.
+
+Signed-off-by: Sandro Bonazzola <sbonazzo@redhat.com>
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/postgresql.py | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/sos/plugins/postgresql.py b/sos/plugins/postgresql.py
+index 478faff..0aa67a1 100644
+--- a/sos/plugins/postgresql.py
++++ b/sos/plugins/postgresql.py
+@@ -33,10 +33,13 @@ class PostgreSQL(Plugin):
+             )
+         )
+         if old_env_pgpassword is not None:
+-            os.environ["PGPASSWORD"] = old_env_pgpassword
++            os.environ["PGPASSWORD"] = str(old_env_pgpassword)
+         if (status == 0):
+             self.add_copy_spec(dest_file)
+         else:
++            self.soslog.error(
++                "Unable to execute pg_dump. Error(%s)" % (output)
++            )
+             self.add_alert(
+                 "ERROR: Unable to execute pg_dump.  Error(%s)" % (output)
+             )
+@@ -47,14 +50,30 @@ class PostgreSQL(Plugin):
+                 self.tmp_dir = tempfile.mkdtemp()
+                 self.pg_dump()
+             else:
++                self.soslog.warning(
++                    "password must be supplied to dump a database."
++                )
+                 self.add_alert(
+                     "WARN: password must be supplied to dump a database."
+                 )
++        else:
++            self.soslog.warning(
++                "dbname must be supplied to dump a database."
++            )
++            self.add_alert(
++                "WARN: dbname must be supplied to dump a database."
++            )
+ 
+     def postproc(self):
+         import shutil
+         if self.tmp_dir:
+-            shutil.rmtree(self.tmp_dir)
++            try:
++                shutil.rmtree(self.tmp_dir)
++            except shutil.Error:
++                self.soslog.exception(
++                    "Unable to remove %s." % (self.tmp_dir)
++                )
++                self.add_alert("ERROR: Unable to remove %s." % (self.tmp_dir))
+ 
+ 
+ class RedHatPostgreSQL(PostgreSQL, RedHatPlugin):
+-- 
+1.9.3
+

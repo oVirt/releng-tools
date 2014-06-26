@@ -1,0 +1,36 @@
+From 03920dfdb250ceaed5f3162276fcf4f0d0c3020d Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Thu, 5 Jun 2014 16:04:01 -0400
+Subject: [PATCH 71/72] [ovirt] Add dwh and reports packages to plugin package
+ list
+
+Allows the plugin to collect data on standalone dwh and reports
+installations.
+
+Related: Issue #236, Issue #237
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/ovirt.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/sos/plugins/ovirt.py b/sos/plugins/ovirt.py
+index 472664c..cc8daaf 100644
+--- a/sos/plugins/ovirt.py
++++ b/sos/plugins/ovirt.py
+@@ -28,7 +28,11 @@ from sos.plugins import Plugin, RedHatPlugin
+ class Ovirt(Plugin, RedHatPlugin):
+     """oVirt Engine related information"""
+ 
+-    packages = ('ovirt-engine',)
++    packages = (
++        'ovirt-engine',
++        'ovirt-engine-dwh',
++        'ovirt-engine-reports'
++    )
+ 
+     DB_PASS_FILES = re.compile(
+         flags=re.VERBOSE,
+-- 
+1.9.3
+

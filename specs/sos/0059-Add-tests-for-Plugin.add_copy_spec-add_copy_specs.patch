@@ -1,0 +1,61 @@
+From c613b172a44c98f40919c763eb4bf088476cbefa Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Thu, 27 Mar 2014 21:04:42 +0000
+Subject: [PATCH 59/72] Add tests for Plugin.add_copy_spec()/add_copy_specs()
+
+Give add_copy_spec() and add_copy_specs() their own test cases.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ tests/plugin_tests.py | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/tests/plugin_tests.py b/tests/plugin_tests.py
+index 5074cbf..a4905cf 100644
+--- a/tests/plugin_tests.py
++++ b/tests/plugin_tests.py
+@@ -211,7 +211,9 @@ class PluginTests(unittest.TestCase):
+         self.assertEquals(p.archive.m, {})
+ 
+ 
+-class AddCopySpecLimitTests(unittest.TestCase):
++class AddCopySpecTests(unittest.TestCase):
++
++    expect_paths = set(['tests/tail_test.txt'])
+ 
+     def setUp(self):
+         self.mp = MockPlugin({
+@@ -219,9 +221,29 @@ class AddCopySpecLimitTests(unittest.TestCase):
+         })
+         self.mp.archive = MockArchive()
+ 
++    def assert_expect_paths(self):
++        self.assertEquals(self.mp.copy_paths, self.expect_paths)
++        
++    # add_copy_spec()
++
++    def test_single_file(self):
++        self.mp.add_copy_spec('tests/tail_test.txt')
++        self.assert_expect_paths()
++    def test_glob_file(self):
++        self.mp.add_copy_spec('tests/tail_test.*')
++        self.assert_expect_paths()
++
+     def test_single_file_under_limit(self):
+         self.mp.add_copy_spec_limit("tests/tail_test.txt", 1)
+-        self.assertEquals(self.mp.copy_paths, set(['tests/tail_test.txt']))
++        self.assert_expect_paths()
++
++    # add_copy_specs()
++
++    def test_add_copy_specs(self):
++        self.mp.add_copy_specs(["tests/tail_test.txt"])
++        self.assert_expect_paths()
++
++    # add_copy_spec_limit()
+ 
+     def test_single_file_over_limit(self):
+         fn = create_file(2) # create 2MB file, consider a context manager
+-- 
+1.9.3
+

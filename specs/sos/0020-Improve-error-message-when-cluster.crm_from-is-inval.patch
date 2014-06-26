@@ -1,0 +1,38 @@
+From 61e8147e436533c5ccb75a6061a4fcc7368970b6 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Tue, 11 Feb 2014 16:56:37 +0000
+Subject: [PATCH 20/72] Improve error message when cluster.crm_from is invalid
+
+If a user passes a non-date string value as the crm_from parameter
+of the cluster plugin an error message is logged:
+
+  crm_from parameter 'True' is not a valid date
+
+The plugin continues to run and uses the default value (T-72hrs)
+as the value of crm_from. Make this clear in the message displayed
+to users:
+
+  crm_from parameter 'True' is not a valid date: using default
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/cluster.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sos/plugins/cluster.py b/sos/plugins/cluster.py
+index eeacdab..8d73dc1 100644
+--- a/sos/plugins/cluster.py
++++ b/sos/plugins/cluster.py
+@@ -93,7 +93,8 @@ class Cluster(Plugin, RedHatPlugin):
+                         str(self.get_option('crm_from'))):
+                 crm_from = self.get_option('crm_from')
+             else:
+-                self.soslog.error("crm_from parameter '%s' is not a valid date"
++                self.soslog.error(
++                    "crm_from parameter '%s' is not a valid date: using default"
+                             % self.get_option('crm_from'))
+ 
+         crm_dest = os.path.join(self.get_cmd_dir(), 'crm_report')
+-- 
+1.9.3
+

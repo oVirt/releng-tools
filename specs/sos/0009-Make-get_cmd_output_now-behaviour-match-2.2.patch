@@ -1,0 +1,35 @@
+From a9bf294a6898bb1defb396c0c0bca29234855db6 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Mon, 3 Feb 2014 14:36:46 +0000
+Subject: [PATCH 09/72] Make get_cmd_output_now() behaviour match 2.2
+
+The equivalent method in sos-2.2, collectOutputNow() returned an
+absolute path to the collected file. Since the archive changes in
+3.0 this now returns a path relative to the root of the archive.
+
+This breaks existing users of the interface that try to open and
+process the content of the collected file (e.g. gluster).
+
+Return a join of the archive path and file path to the caller.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/__init__.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sos/plugins/__init__.py b/sos/plugins/__init__.py
+index 8df430d..7130c7a 100644
+--- a/sos/plugins/__init__.py
++++ b/sos/plugins/__init__.py
+@@ -593,7 +593,7 @@ class Plugin(object):
+             time_passed = time() - start_time
+             self.proflog.debug("output: %-75s time: %f" % (exe, time_passed))
+ 
+-        return outfn
++        return os.path.join(self.archive.get_archive_path(), outfn)
+ 
+     # For adding output
+     def add_alert(self, alertstring):
+-- 
+1.9.3
+

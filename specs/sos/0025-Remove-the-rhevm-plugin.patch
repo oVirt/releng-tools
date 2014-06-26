@@ -1,0 +1,51 @@
+From 3758b10e367117945148c797b4b709d77277b84b Mon Sep 17 00:00:00 2001
+From: Lee Yarwood <lyarwood@redhat.com>
+Date: Tue, 4 Mar 2014 16:18:00 +0000
+Subject: [PATCH 25/72] Remove the rhevm plugin.
+
+This functionality is now provided by the ovirt-log-collector project [1] and independently shipped
+VDSM sos plugin [2].
+
+[1] http://gerrit.ovirt.org/gitweb?p=ovirt-log-collector.git
+[2] http://gerrit.ovirt.org/gitweb?p=vdsm.git;a=tree;f=vdsm/sos;hb=HEAD
+
+Signed-off-by: Lee Yarwood <lyarwood@redhat.com>
+---
+ sos/plugins/rhevm.py | 25 -------------------------
+ 1 file changed, 25 deletions(-)
+ delete mode 100644 sos/plugins/rhevm.py
+
+diff --git a/sos/plugins/rhevm.py b/sos/plugins/rhevm.py
+deleted file mode 100644
+index 8068e05..0000000
+--- a/sos/plugins/rhevm.py
++++ /dev/null
+@@ -1,25 +0,0 @@
+-from sos.plugins import Plugin, RedHatPlugin
+-
+-# Class name must be the same as file name and method names must not change
+-class RhevM(Plugin, RedHatPlugin):
+-    """RHEV-Manager related information"""
+-
+-    plugin_name = 'rhevm'
+-
+-    option_list = [("vdsmlogs",  'Directory containing all of the SOS logs from the RHEV hypervisor(s)', '', False)]
+-
+-    def setup(self):
+-        # Copy rhevm config files.
+-        self.add_copy_spec("/etc/rhevm")
+-        self.add_copy_spec("/var/log/rhevm")
+-        if self.get_option("vdsmlogs"):
+-            self.add_copy_spec(str(self.get_option("vdsmlogs")))
+-
+-    def postproc(self):
+-        """
+-        Obfuscate passwords.
+-        """
+-
+-        self.do_file_sub("/etc/rhevm/rhevm-config/rhevm-config.properties",
+-                        r"Password.type=(.*)",
+-                        r'Password.type=********')
+-- 
+1.9.3
+

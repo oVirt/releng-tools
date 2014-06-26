@@ -1,0 +1,49 @@
+From c48b762c2e98ee05a17375af7427af702f9c9925 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Tue, 11 Feb 2014 16:53:16 +0000
+Subject: [PATCH 19/72] Fix command output substitution exception
+
+If a comand has a substitution registered via do_cmd_output_sub()
+but no data was collected (e.g. command not found) the postproc
+code will throw an exception as the return value ('replacements')
+is never assigned.
+
+Initialise replacements to None before scanning the list of run
+commands and return this if no substitutions were made.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/__init__.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/sos/plugins/__init__.py b/sos/plugins/__init__.py
+index 7130c7a..9b643ab 100644
+--- a/sos/plugins/__init__.py
++++ b/sos/plugins/__init__.py
+@@ -181,6 +181,7 @@ class Plugin(object):
+         if not self.executed_commands:
+             return 0
+ 
++        replacements = None
+         try:
+             for called in self.executed_commands:
+                 # was anything collected?
+@@ -194,12 +195,12 @@ class Plugin(object):
+                             regexp, subst, readable.read())
+                     if replacements:
+                         self.archive.add_string(result, path)
+-                    else:
+-                        replacements = 0
++
+         except Exception as e:
+             msg = 'regex substitution failed for %s in plugin %s with: "%s"'
+             self.soslog.error(msg % (called['exe'], self.name(), e))
+-            replacements = 0
++            replacements = None
++
+         if self.commons['cmdlineopts'].profiler:
+             time_passed = time() - start_time
+             self.proflog.debug("subst: %-75s time: %f"
+-- 
+1.9.3
+

@@ -1,0 +1,84 @@
+From 035b9989e7bb194227751c00b45b62f1d4af8858 Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Sun, 6 Apr 2014 16:34:14 +0100
+Subject: [PATCH 73/77] Restore generic UI preamble text
+
+The generic UI text in the policy base class was replaced with
+the Red Hat Enterprise Linux wording in commit c59877c. The
+wording isn't suitable for all distributions so revert this part
+of the commit and move the RHEL text back to the RHEL-specific
+policy class.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/policies/__init__.py | 18 +++++++-----------
+ sos/policies/redhat.py   | 20 ++++++++++++++++++++
+ 2 files changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/sos/policies/__init__.py b/sos/policies/__init__.py
+index 3ae3979..e92b9dd 100644
+--- a/sos/policies/__init__.py
++++ b/sos/policies/__init__.py
+@@ -117,21 +117,17 @@ class PackageManager(object):
+ class Policy(object):
+ 
+     msg = _("""\
+-This command will collect diagnostic and configuration \
+-information from this %(distro)s system and installed \
+-applications.
++This command will collect system configuration and diagnostic information \
++from this %(distro)s system. An archive containing the collected information \
++will be generated in %(tmpdir)s.
+ 
+-An archive containing the collected information will be \
+-generated in %(tmpdir)s and may be provided to a %(vendor)s \
+-support representative.
++For more information on %(vendor)s visit:
+ 
+-Any information provided to %(vendor)s will be treated in \
+-accordance with the published support policies at:\n
+   %(vendor_url)s
+ 
+-The generated archive may contain data considered sensitive \
+-and its content should be reviewed by the originating \
+-organization before being passed to any third party.
++The generated archive may contain data considered sensitive and its content \
++should be reviewed by the originating organization before being passed to \
++any third party.
+ 
+ No changes will be made to system configuration.
+ %(vendor_text)s
+diff --git a/sos/policies/redhat.py b/sos/policies/redhat.py
+index 2eade3a..6959e20 100644
+--- a/sos/policies/redhat.py
++++ b/sos/policies/redhat.py
+@@ -95,6 +95,26 @@ class RHELPolicy(RedHatPolicy):
+     distro = "Red Hat Enterprise Linux"
+     vendor = "Red Hat"
+     vendor_url = "https://access.redhat.com/support/"
++    msg = _("""\
++This command will collect diagnostic and configuration \
++information from this %(distro)s system and installed \
++applications.
++
++An archive containing the collected information will be \
++generated in %(tmpdir)s and may be provided to a %(vendor)s \
++support representative.
++
++Any information provided to %(vendor)s will be treated in \
++accordance with the published support policies at:\n
++  %(vendor_url)s
++
++The generated archive may contain data considered sensitive \
++and its content should be reviewed by the originating \
++organization before being passed to any third party.
++
++No changes will be made to system configuration.
++%(vendor_text)s
++""")
+ 
+     def __init__(self):
+         super(RHELPolicy, self).__init__()
+-- 
+1.9.3
+

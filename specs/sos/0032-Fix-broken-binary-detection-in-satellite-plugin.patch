@@ -1,0 +1,35 @@
+From 15f46d44afa055edc169670303c81fb97dcfd0ae Mon Sep 17 00:00:00 2001
+From: "Bryn M. Reeves" <bmr@redhat.com>
+Date: Wed, 12 Mar 2014 17:57:34 +0000
+Subject: [PATCH 32/72] Fix broken binary detection in satellite plugin
+
+The satellite plugin attempts to check for the existence of the
+'satellite-debug' binary before running it. This was broken by
+the mass conversion to PATH for running external commands.
+
+Remove the check and just attempt to run the command regardless.
+
+Signed-off-by: Bryn M. Reeves <bmr@redhat.com>
+---
+ sos/plugins/satellite.py | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/sos/plugins/satellite.py b/sos/plugins/satellite.py
+index 474933a..28c8bca 100644
+--- a/sos/plugins/satellite.py
++++ b/sos/plugins/satellite.py
+@@ -76,9 +76,8 @@ class Satellite(Plugin, RedHatPlugin):
+         if self.satellite:
+             self.add_copy_specs(["/etc/tnsnames.ora", "/etc/jabberd",
+                                 "/etc/tomcat6/", "/var/log/tomcat6/"])
+-            if os.path.exists("spacewalk-debug"):
+-                self.add_cmd_output("spacewalk-debug --dir %s"
+-                        % self.get_cmd_output_path(name="spacewalk-debug"))
++            self.add_cmd_output("spacewalk-debug --dir %s"
++                    % self.get_cmd_output_path(name="spacewalk-debug"))
+ 
+         if self.proxy:
+             self.add_copy_specs(["/etc/squid", "/var/log/squid"])
+-- 
+1.9.3
+
