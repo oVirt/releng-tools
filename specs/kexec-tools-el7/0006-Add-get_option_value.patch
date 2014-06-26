@@ -1,0 +1,31 @@
+From 63936f159662ff6ca778b97cb9770c7a77c8c7ca Mon Sep 17 00:00:00 2001
+From: Martin Perina <mperina@redhat.com>
+Date: Mon, 14 Apr 2014 08:39:02 +0200
+Subject: [RHEL7 PATCH 6/7] Add get_option_value()
+
+Adds get_option_value() function to retrieve value of specified option
+from /etc/kdump.conf.
+
+Related: rhbz#1086988
+Signed-off-by: Martin Perina <mperina@redhat.com>
+---
+ kdump-lib.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kdump-lib.sh b/kdump-lib.sh
+index 7103ba9..abf2eb3 100755
+--- a/kdump-lib.sh
++++ b/kdump-lib.sh
+@@ -75,3 +75,9 @@ get_root_fs_device()
+     return
+ }
+ 
++# get_option_value <option_name>
++# retrieves value of option defined in kdump.conf
++get_option_value() {
++    echo $(strip_comments `grep ^$1 /etc/kdump.conf | tail -1 | cut -d\  -f2-`)
++}
++
+-- 
+1.8.3.1
+

@@ -1,0 +1,65 @@
+From 3ce7af060287a9ba080dee23ee4851f1d2437d80 Mon Sep 17 00:00:00 2001
+From: Martin Perina <mperina@redhat.com>
+Date: Mon, 14 Apr 2014 08:30:15 +0200
+Subject: [RHEL7 PATCH 2/7] Rename FENCE_KDUMP_NODES to FENCE_KDUMP_NODES_FILE
+
+Renames FENCE_KDUMP_NODES variable to FENCE_KDUMP_NODES_FILE to
+distinguish it from values read from fence_kdump_nodes option in
+kdump.conf (introduced in following patches).
+
+Related: rhbz#1086988
+Signed-off-by: Martin Perina <mperina@redhat.com>
+---
+ dracut-kdump.sh        | 4 ++--
+ dracut-module-setup.sh | 2 +-
+ kdump-lib.sh           | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/dracut-kdump.sh b/dracut-kdump.sh
+index 06e41bc..4bac088 100755
+--- a/dracut-kdump.sh
++++ b/dracut-kdump.sh
+@@ -291,12 +291,12 @@ fence_kdump_notify()
+ {
+     local nodes
+ 
+-    if [ -f $FENCE_KDUMP_NODES ]; then
++    if [ -f $FENCE_KDUMP_NODES_FILE ]; then
+         if [ -f $FENCE_KDUMP_CONFIG_FILE ]; then
+             . $FENCE_KDUMP_CONFIG_FILE
+         fi
+ 
+-        read nodes < $FENCE_KDUMP_NODES
++        read nodes < $FENCE_KDUMP_NODES_FILE
+         $FENCE_KDUMP_SEND $FENCE_KDUMP_OPTS $nodes &
+     fi
+ }
+diff --git a/dracut-module-setup.sh b/dracut-module-setup.sh
+index cd60cf1..0ce3885 100755
+--- a/dracut-module-setup.sh
++++ b/dracut-module-setup.sh
+@@ -442,7 +442,7 @@ kdump_check_fence_kdump () {
+     done
+     echo
+ 
+-    echo "$nodes" > ${initdir}/$FENCE_KDUMP_NODES
++    echo "$nodes" > ${initdir}/$FENCE_KDUMP_NODES_FILE
+     dracut_install $FENCE_KDUMP_SEND
+     dracut_install -o $FENCE_KDUMP_CONFIG_FILE
+ }
+diff --git a/kdump-lib.sh b/kdump-lib.sh
+index d72e16b..8de86b6 100755
+--- a/kdump-lib.sh
++++ b/kdump-lib.sh
+@@ -5,7 +5,7 @@
+ 
+ FENCE_KDUMP_CONFIG_FILE="/etc/sysconfig/fence_kdump"
+ FENCE_KDUMP_SEND="/usr/libexec/fence_kdump_send"
+-FENCE_KDUMP_NODES="/etc/fence_kdump_nodes"
++FENCE_KDUMP_NODES_FILE="/etc/fence_kdump_nodes"
+ 
+ is_ssh_dump_target()
+ {
+-- 
+1.8.3.1
+

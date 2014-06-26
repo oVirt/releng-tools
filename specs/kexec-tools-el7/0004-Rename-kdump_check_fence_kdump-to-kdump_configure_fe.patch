@@ -1,0 +1,40 @@
+From 83a5d457e58bb2226ea2c4477deed549ff054ddc Mon Sep 17 00:00:00 2001
+From: Martin Perina <mperina@redhat.com>
+Date: Mon, 14 Apr 2014 08:34:07 +0200
+Subject: [RHEL7 PATCH 4/7] Rename kdump_check_fence_kdump to
+ kdump_configure_fence_kdump
+
+Renames kdump_check_fence_kdump kdump_configure_fence_kdump to clearly
+identify what this function does.
+
+Related: rhbz#1086988
+Signed-off-by: Martin Perina <mperina@redhat.com>
+---
+ dracut-module-setup.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dracut-module-setup.sh b/dracut-module-setup.sh
+index 3df71b1..e64bc41 100755
+--- a/dracut-module-setup.sh
++++ b/dracut-module-setup.sh
+@@ -285,7 +285,7 @@ kdump_install_conf() {
+         esac
+     done < /etc/kdump.conf
+ 
+-    kdump_check_fence_kdump
++    kdump_configure_fence_kdump
+     inst "/tmp/$$-kdump.conf" "/etc/kdump.conf"
+     rm -f /tmp/$$-kdump.conf
+ }
+@@ -419,7 +419,7 @@ kdump_check_iscsi_targets () {
+ # setup fence_kdump in cluster
+ # setup proper network and install needed files
+ # also preserve '[node list]' for 2nd kernel /etc/fence_kdump_nodes
+-kdump_check_fence_kdump () {
++kdump_configure_fence_kdump () {
+     local nodes
+     is_pcs_fence_kdump || return 1
+ 
+-- 
+1.8.3.1
+
