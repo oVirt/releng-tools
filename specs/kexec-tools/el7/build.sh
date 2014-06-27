@@ -14,9 +14,9 @@ patches="0001-Rename-FENCE_KDUMP_CONFIG-to-FENCE_KDUMP_CONFIG_FILE.patch \
 # Download the source RPM and extract it
 if [ ! -f "${src}" ]
 then
-    wget -O "${src}" "${url}"
+    wget -O "${src}.orig" "${url}"
 fi
-rpm2cpio ${src} | cpio -idmv
+rpm2cpio "${src}.orig" | cpio -idmv
 
 # Apply patches for fence_kdump support
 for p in ${patches}; do
