@@ -15,7 +15,6 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-GPG_NAME="oVirt"
 GPG_KEY="FE590CB7"
 
 die() {
@@ -61,7 +60,7 @@ validate() {
 
 sign_pkgs() {
 	local pkgs="$(find "${REPO}" -type f -name "*.rpm")"
-	rpmsign --resign -D "_signature gpg" -D "_gpg_name ${GPG_NAME}" --key-id="${GPG_KEY}" ${pkgs}
+	rpmsign --resign -D "_signature gpg" -D "_gpg_name ${GPG_KEY}" ${pkgs}
 
 	read -sp "Please type the password for the key: " key_password
 
