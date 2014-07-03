@@ -16,6 +16,7 @@
 ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 GPG_NAME="oVirt"
+GPG_KEY="FE590CB7"
 
 die() {
 	local msg="${1?}"
@@ -60,7 +61,13 @@ validate() {
 
 sign_pkgs() {
 	local pkgs="$(find "${REPO}" -type f -name "*.rpm")"
-	rpmsign --resign -D "_signature gpg" -D "_gpg_name ${GPG_NAME}" ${pkgs}
+	rpmsign --resign -D "_signature gpg" -D "_gpg_name ${GPG_NAME}" --key-id="${GPG_KEY}" ${pkgs}
+
+	read -sp "Please type the password for the key: " key_password
+
+	find "${REPO}" -type f -name "*.tar.gz" | while read src; do
+		gpg --local-user "${GPG_KEY}" --detach-sign --passphrase "${key_password}" "${src}"
+	done
 }
 
 main() {
