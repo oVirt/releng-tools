@@ -65,7 +65,7 @@ sign_pkgs() {
 	read -sp "Please type the password for the key: " key_password
 
 	find "${REPO}" -type f -name "*.tar.gz" | while read src; do
-		gpg --local-user "${GPG_KEY}" --detach-sign --passphrase "${key_password}" "${src}"
+		gpg --batch --yes --local-user "${GPG_KEY}" --detach-sign --passphrase "${key_password}" "${src}"
 	done
 }
 
