@@ -18,8 +18,8 @@
 LOCATIONS='src tar
 iso iso'
 DISTROS=(
-    "el[^._]*"
-    "fc[^.]*"
+    "el[[:digit:]]+"
+    "fc[[:digit:]]+"
 )
 
 die() {
@@ -41,8 +41,8 @@ get_distro() {
     local release="${1?}"
     local dist_match
     for dist_match in "${DISTROS[@]}"; do
-        if [[ "$release" =~ $dist_match ]]; then
-            echo "$BASH_REMATCH"
+        if [[ "$release" =~ \.$dist_match ]]; then
+            echo "${BASH_REMATCH:1}"
             return 0
         fi
     done
@@ -97,7 +97,7 @@ publish_artifacts() {
                 sourcerpm="%{SOURCERPM}"
             ' ${pkg}
         )"
-        distro="$(dist_match "${release}")"
+        distro="$(get_distro "${release}")"
         if [[ "${distro}" == "any" ]]; then
             pkg_dst_dir="${ANY_DIR}"
         fi
