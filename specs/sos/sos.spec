@@ -1,10 +1,10 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%global commit 30d85c9c776d8c204c66bb93e924ab8e7a92dd3b
+%global commit 9c182f7ffd06600f49d68768dd2f6b0dc92df938
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 Summary: A set of tools to gather troubleshooting information from a system
 Name: sos
-Version: 3.1
-Release: 1.1%{?dist}.ovirt
+Version: 3.2
+Release: 0.1.b%{?dist}.ovirt
 Group: Applications/System
 Source0: https://github.com/sosreport/sos/archive/%{commit}.tar.gz#/%{name}-%{commit}.tar.gz
 License: GPLv2+
@@ -13,89 +13,13 @@ BuildArch: noarch
 Url: http://fedorahosted.org/sos
 BuildRequires: python-devel
 BuildRequires: gettext
+BuildRequires: python-six
 Requires: libxml2-python
 Requires: rpm-python
 Requires: tar
 Requires: bzip2
 Requires: xz
-Patch1: 0001-Fix-cluster-module-crm_report-support.patch
-Patch2: 0002-Remove-obsolete-diagnostics-code-from-ldap-plugin.patch
-Patch3: 0003-Ensure-superclass-postproc-method-is-called-in-ldap-.patch
-Patch4: 0004-Fix-cluster-postproc-regression.patch
-Patch5: 0005-Fix-get_option-use-in-cluster-plugin.patch
-Patch6: 0006-Fix-verbose-file-logging.patch
-Patch7: 0007-Always-treat-rhevm-vdsmlogs-option-as-string.patch
-Patch8: 0008-Add-rhsm-debug-collection-to-yum-plugin.patch
-Patch9: 0009-Make-get_cmd_output_now-behaviour-match-2.2.patch
-Patch10: 0010-Include-geo-replication-status-in-gluster-plugin.patch
-Patch11: 0011-postgresql-minor-fixes.patch
-Patch12: 0012-postgresql-add-logs-about-errors-warnings.patch
-Patch13: 0013-postgresql-added-license-and-copyright.patch
-Patch14: 0014-postgresql-allow-use-TCP-socket.patch
-Patch15: 0015-Pass-no-archive-to-rhsm-debug-script.patch
-Patch16: 0016-Ensure-unused-fds-are-closed-when-calling-subprocess.patch
-Patch17: 0017-Fix-gluster-volume-name-extraction.patch
-Patch18: 0018-Add-distupgrade-plugin.patch
-Patch19: 0019-Fix-command-output-substitution-exception.patch
-Patch20: 0020-Improve-error-message-when-cluster.crm_from-is-inval.patch
-Patch21: 0021-Remove-useless-check_enabled-from-sar-plugin.patch
-Patch22: 0022-Eliminate-hard-coded-var-log-sa-paths-in-sar-plugin.patch
-Patch23: 0023-Scrub-ldap_default_authtok-password-in-sssd-plugin.patch
-Patch24: 0024-Replace-package-check-with-file-check-in-anacron.patch
-Patch25: 0025-Remove-the-rhevm-plugin.patch
-Patch26: 0026-powerpc-Move-VPD-related-tool-under-common-code.patch
-Patch27: 0027-Add-PowerNV-specific-debug-data.patch
-Patch28: 0028-Fix-remaining-use-of-obsolete-get_cmd_dir-in-plugins.patch
-Patch29: 0029-Update-systemd-support.patch
-Patch30: 0030-Add-tuned-plugin.patch
-Patch31: 0031-Clean-up-get_cmd_path-make_cmd_path-make_cmd_dirs-me.patch
-Patch32: 0032-Fix-broken-binary-detection-in-satellite-plugin.patch
-Patch33: 0033-Rename-validatePlugin-to-validate_plugin.patch
-Patch34: 0034-Update-policy_tests.py-for-validate_plugin-change.patch
-Patch35: 0035-Match-plugins-against-policies.patch
-Patch36: 0036-Do-not-collect-isos-in-cobbler-plugin.patch
-Patch37: 0037-Call-rhsm-debug-with-the-sos-switch.patch
-Patch38: 0038-Fix-plugin_test-exception-on-six.PY2.patch
-Patch39: 0039-Remove-profile-support.patch
-Patch40: 0040-Dead-code-removal-sos_relative_path.patch
-Patch41: 0041-Dead-code-removal-DirTree.patch
-Patch42: 0042-Dead-code-removal-utilities.checksum.patch
-Patch43: 0043-Add-vim-tags-to-all-python-source-files.patch
-Patch44: 0044-Dead-code-removal-sos.plugins.common_prefix.patch
-Patch45: 0045-Dead-code-removal-PluginException.patch
-Patch46: 0046-Convert-infiniband-to-package-list.patch
-Patch47: 0047-Replace-self.policy-.pkg_by_name-us-in-Logs-plugin.patch
-Patch48: 0048-Clean-up-package-checks-in-processor-plugin.patch
-Patch49: 0049-Pythonify-Plugin._path_in_pathlist.patch
-Patch50: 0050-Fix-x86-arch-detection-in-processor-plugin.patch
-Patch51: 0051-Refactor-Plugin.collect-pathway.patch
-Patch52: 0052-Remove-obsolete-checksum-reference-from-utilities_te.patch
-Patch53: 0053-Update-plugin_tests.py-to-match-new-method-names.patch
-Patch54: 0054-Drop-RedHatPlugin-from-procenv.patch
-Patch55: 0055-Remove-sub-parameter-from-Plugin.add_copy_spec.patch
-Patch56: 0056-Remove-references-to-sub-parameter-from-plugin-tests.patch
-Patch57: 0057-Use-a-set-for-Plugin.copy_paths.patch
-Patch58: 0058-Update-Plugin-tests-to-treat-copy_paths-as-a-set.patch
-Patch59: 0059-Add-tests-for-Plugin.add_copy_spec-add_copy_specs.patch
-Patch60: 0060-Raise-a-TypeError-if-add_copy_specs-is-called-with-a.patch
-Patch61: 0061-Add-collection-of-grub-configuration-for-UEFI-system.patch
-Patch62: 0062-Add-Plugin.do_path_regex_sub.patch
-Patch63: 0063-Make-do_path_regex_sub-honour-string-regex-arguments.patch
-Patch64: 0064-Add-oVirt-plugin.patch
-# sos-3.1 still uses the old call_ext_prog interface.
-#Patch65: 0065-Fix-call_ext_prog-use-in-oVirt-plugin.patch
-Patch66: 0066-ovirt-elide-passwords-in-iso-image-uploader.conf.patch
-Patch67: 0067-ovirt-elide-passwords-in-logcollector.conf.patch
-Patch68: 0068-ovirt-add-package-list-to-ovirt-plugin.patch
-Patch69: 0069-Add-oVirt-Data-Warehouse-support.patch
-Patch70: 0070-Add-reports-support-to-oVirt-plugin.patch
-Patch71: 0071-ovirt-Add-dwh-and-reports-packages-to-plugin-package.patch
-Patch72: 0072-ovirt-add-ovirt-scheduler-proxy-logs.patch
-Patch73: 0073-Restore-generic-UI-preamble-text.patch
-Patch74: 0074-Add-postprocessing-for-etc-fstab-passwords.patch
-Patch75: 0075-Elide-bootloader-password-in-grub-plugin.patch
-Patch76: 0076-Make-sure-grub-password-regex-handles-all-cases.patch
-Patch77: 0077-Elide-passwords-in-grub2-plugin.patch
+Requires: python-six
 
 %description
 Sos is a set of tools that gathers information about system
@@ -105,81 +29,6 @@ support technicians and developers.
 
 %prep
 %setup -qn %{name}-%{commit}
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch35 -p1
-%patch36 -p1
-%patch37 -p1
-%patch38 -p1
-%patch39 -p1
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
-%patch45 -p1
-%patch46 -p1
-%patch47 -p1
-%patch48 -p1
-%patch49 -p1
-%patch50 -p1
-%patch51 -p1
-%patch52 -p1
-%patch53 -p1
-%patch54 -p1
-%patch55 -p1
-%patch56 -p1
-%patch57 -p1
-%patch58 -p1
-%patch59 -p1
-%patch61 -p1
-%patch62 -p1
-%patch63 -p1
-%patch64 -p1
-%patch66 -p1
-%patch67 -p1
-%patch68 -p1
-%patch69 -p1
-%patch70 -p1
-%patch71 -p1
-%patch72 -p1
-%patch73 -p1
-%patch74 -p1
-%patch75 -p1
-%patch76 -p1
-%patch77 -p1
 
 %build
 make
@@ -199,10 +48,13 @@ rm -rf ${RPM_BUILD_ROOT}
 %{python_sitelib}/*
 %{_mandir}/man1/*
 %{_mandir}/man5/*
-%doc AUTHORS README.md LICENSE 
+%doc AUTHORS README.md LICENSE
 %config(noreplace) %{_sysconfdir}/sos.conf
 
 %changelog
+* Wed Sep 24 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.2-0.1.b.ovirt
+- Align with upstream sos 3.2b1
+
 * Tue Jun 17 2014 Bryn M. Reeves <bmr@redhat.com> = 3.1-1
 - Elide passwords in grub2 plugin
 - Make sure grub password regex handles all cases
@@ -458,7 +310,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 * Tue Nov  1 2011 Bryn M. Reeves <bmr@redhat.com> = 2.2-17
 - Do not collect subscription manager keys in general plugin
- 
+
 * Fri Sep 23 2011 Bryn M. Reeves <bmr@redhat.com> = 2.2-16
 - Fix execution of RHN hardware.py from hardware plugin
 - Fix hardware plugin to support new lsusb path
@@ -494,7 +346,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 * Thu Apr 07 2011 Bryn M. Reeves <bmr@redhat.com> = 2.2-8
 - Use sha256 for report digest when operating in FIPS mode
- 
+
 * Tue Apr 05 2011 Bryn M. Reeves <bmr@redhat.com> = 2.2-7
 - Fix parted and dumpe2fs output on s390
 
