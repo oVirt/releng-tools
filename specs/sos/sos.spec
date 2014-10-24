@@ -1,25 +1,23 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%global commit 9c182f7ffd06600f49d68768dd2f6b0dc92df938
+%global commit 48a99c95078bab306cb56bb1a05420d88bf15a64
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 Summary: A set of tools to gather troubleshooting information from a system
 Name: sos
 Version: 3.2
-Release: 0.1.b%{?dist}.ovirt
+Release: 0.2%{?dist}.ovirt
 Group: Applications/System
 Source0: https://github.com/sosreport/sos/archive/%{commit}.tar.gz#/%{name}-%{commit}.tar.gz
 License: GPLv2+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildArch: noarch
-Url: http://fedorahosted.org/sos
+Url: http://github.com/sosreport/sos
 BuildRequires: python-devel
 BuildRequires: gettext
-BuildRequires: python-six
 Requires: libxml2-python
-Requires: rpm-python
-Requires: tar
+Requires: python-six
 Requires: bzip2
 Requires: xz
-Requires: python-six
+Obsoletes: sos-plugins-openstack
 
 %description
 Sos is a set of tools that gathers information about system
@@ -52,6 +50,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %{_sysconfdir}/sos.conf
 
 %changelog
+* Fri Oct 24 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.2-0.2.ovirt
+- Align with upstream 3.2-15-g48a99c9
+
 * Wed Sep 24 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.2-0.1.b.ovirt
 - Align with upstream sos 3.2b1
 
