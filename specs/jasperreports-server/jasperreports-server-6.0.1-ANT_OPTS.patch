@@ -10,15 +10,15 @@ Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
  buildomatic/js-ant | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant b/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant
+diff --git a/jasperreports-server-cp-6.0.1-bin/buildomatic/js-ant b/jasperreports-server-cp-6.0.1-bin/buildomatic/js-ant
 index d616774..5775cb9 100755
---- a/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant
-+++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/js-ant
+--- a/jasperreports-server-cp-6.0.1-bin/buildomatic/js-ant
++++ b/jasperreports-server-cp-6.0.1-bin/buildomatic/js-ant
 @@ -1,6 +1,6 @@
  #!/bin/sh
  
--ANT_OPTS="-Xms128m -Xmx512m -XX:MaxPermSize=512m"
-+ANT_OPTS="${ANT_OPTS} -Xms128m -Xmx512m -XX:MaxPermSize=512m"
+-ANT_OPTS="-Xms128m -Xmx512m -XX:MaxPermSize=512m -Djava.net.preferIPv4Stack=true"
++ANT_OPTS="${ANT_OPTS} -Xms128m -Xmx512m -XX:MaxPermSize=512m -Djava.net.preferIPv4Stack=true"
  
  #
  # setup to use bundled of ant

@@ -7,8 +7,8 @@ Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
 
 ---
 
---- a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/js-import-export.sh	2014-01-16 01:41:57.058840500 +0200
-+++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/js-import-export.sh	2014-01-16 01:42:13.853845937 +0200
+--- a/jasperreports-server-cp-6.0.1-bin/buildomatic/bin/js-import-export.sh	2014-01-16 01:41:57.058840500 +0200
++++ b/jasperreports-server-cp-6.0.1-bin/buildomatic/bin/js-import-export.sh	2014-01-16 01:42:13.853845937 +0200
 @@ -34,7 +34,7 @@ fi
  
  # Additional config folder. This will be used to 

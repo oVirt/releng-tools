@@ -15,10 +15,10 @@ Signed-off-by: Alon Bar-Lev <alonbl@redhat.com>
  buildomatic/bin/import-export.xml | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
+diff --git a/jasperreports-server-cp-6.0.1-bin/buildomatic/bin/import-export.xml b/jasperreports-server-cp-6.0.1-bin/buildomatic/bin/import-export.xml
 index bd2157f..45afda5 100755
---- a/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
-+++ b/jasperreports-server-cp-5.5.0-bin/buildomatic/bin/import-export.xml
+--- a/jasperreports-server-cp-6.0.1-bin/buildomatic/bin/import-export.xml
++++ b/jasperreports-server-cp-6.0.1-bin/buildomatic/bin/import-export.xml
 @@ -159,6 +159,8 @@ Make sure you have compiled the jasperserver source code.
                  <arg value="--@{type}"/>
                  <arg value="${archiveArg}"/>
