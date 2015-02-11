@@ -1,7 +1,7 @@
 Name: ebay-cors-filter
 Summary: eBay CORS filter
 Version: @VERSION@
-Release: 1.ovirt%{?dist}
+Release: 0.1.ovirt%{?dist}
 License: ASL 2.0
 URL: https://github.com/eBay/cors-filter
 Source: @SRC@
@@ -9,6 +9,14 @@ BuildArch: noarch
 
 Requires: java >= 1:1.7.0
 Requires: jpackage-utils
+%if 0%{?fedora}
+BuildRequires: maven
+%endif
+%if 0%{?rhel}
+%if %{rhel} >= 7
+BuildRequires: maven
+%endif
+%endif
 
 %description
 CORS (Cross Origin Resource Sharing) is a mechanism supported by W3C to
@@ -37,5 +45,5 @@ install target/cors-filter-%{version}.jar %{buildroot}%{_javadir}/%{name}/cors-f
 %doc README.md
 
 %changelog
-* Wed Jan 28 2015 Juan Hernandez <juan.hernandez@redhat.com> - 1.0.1-1
+* Wed Jan 28 2015 Juan Hernandez <juan.hernandez@redhat.com> - 1.0.1-0.1
 - Initial version.

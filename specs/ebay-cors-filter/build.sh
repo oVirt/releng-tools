@@ -3,10 +3,8 @@
 # The name, version and source of the package:
 name="ebay-cors-filter"
 version="1.0.1"
-src="${name}-${version}.tar.gz"
+src="cors-filter-${version}.tar.gz"
 url="https://github.com/eBay/cors-filter/archive/${src}"
-
-
 # Download the source:
 if [ ! -f "${src}" ]
 then
@@ -22,7 +20,7 @@ sed \
 
 # Build the source and binary packages:
 rpmbuild \
-    -ba \
+    -bs \
     --define="_sourcedir ${PWD}" \
     --define="_srcrpmdir ${PWD}" \
     --define="_rpmdir ${PWD}" \
