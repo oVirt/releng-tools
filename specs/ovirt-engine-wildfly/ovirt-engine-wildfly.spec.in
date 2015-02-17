@@ -36,5 +36,8 @@ rm -rf %{buildroot}%{_datadir}/%{name}/modules/org/jboss/as/web/main/lib/linux-x
 %{_datadir}
 
 %changelog
+* Tue Feb 17 2015 Juan Hernandez <juan.hernandez@redhat.com> - 8.2.0-1
+- Update to upstream version 8.2.0.
+
 * Thu Jul 17 2014 Juan Hernandez <juan.hernandez@redhat.com> - 8.1.0-1
 - Initial release based on existing jboss-as spec file.
