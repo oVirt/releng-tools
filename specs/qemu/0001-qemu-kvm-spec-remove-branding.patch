@@ -1,0 +1,44 @@
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2015-03-17 10:41:49.779973659 +0100
++++ b/qemu-kvm.spec	2015-03-17 10:51:10.623963084 +0100
+@@ -65,8 +65,9 @@
+ # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
+
+ %if %{rhev}
+-    %global pkgsuffix %{rhev_suffix}
++    %global pkgsuffix -ev
+     %global extra_provides_suffix %{nil}
++    %global rhev_provide_suffix %{rhev_suffix}
+     %global conflicts_suffix %{rhel_suffix}
+     %global obsoletes_version 15:0-0
+ %else
+@@ -79,6 +80,10 @@
+ %define rhel_rhev_conflicts()                                         \
+ Conflicts: %1%{conflicts_suffix}                                      \
+ Provides: %1%{extra_provides_suffix} = %{epoch}:%{version}-%{release} \
++    %if 0%{?rhev_provide_suffix:1}                                     \
++Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}   \
++Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}   \
++    %endif                                                            \
+     %if 0%{?obsoletes_version:1}                                          \
+ Obsoletes: %1 < %{obsoletes_version}                                      \
+     %endif
+@@ -86,7 +90,7 @@
+ Summary: QEMU is a FAST! processor emulator
+ Name: %{pkgname}%{?pkgsuffix}
+ Version: 2.1.2
+-Release: 23%{?dist}
++Release: 23%{?dist}.1
+ # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
+ Epoch: 10
+ License: GPLv2+ and LGPLv2+ and BSD
+@@ -1871,6 +1875,9 @@
+ %endif
+
+ %changelog
++* Tue Mar 17 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7.1
++- Removing RH branding from package name
++
+ * Tue Jan 27 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7
+ - kvm-block-qapi-move-string-allocation-from-stack-to-the-.patch [bz#1117170]
+ - kvm-block-remove-unused-variable-in-bdrv_commit.patch [bz#1117170]
