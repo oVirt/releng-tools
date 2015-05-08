@@ -138,6 +138,7 @@ class GetBugs(object):
                     'Red Hat Enterprise Virtualization Manager',
                     'oVirt',
                     'Red Hat Storage',
+                    'Red Hat Gluster Storage',
                 ):
                     if r.status not in (
                         'MODIFIED',
