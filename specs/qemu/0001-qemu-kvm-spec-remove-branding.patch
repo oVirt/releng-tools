@@ -1,9 +1,9 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2015-03-17 10:41:49.779973659 +0100
-+++ b/qemu-kvm.spec	2015-03-17 10:51:10.623963084 +0100
+--- a/qemu-kvm.spec	2015-05-08 08:40:19.675860954 +0200
++++ b/qemu-kvm.spec	2015-05-08 08:48:23.270332795 +0200
 @@ -65,8 +65,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
-
+ 
  %if %{rhev}
 -    %global pkgsuffix %{rhev_suffix}
 +    %global pkgsuffix -ev
@@ -23,22 +23,13 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
      %if 0%{?obsoletes_version:1}                                          \
  Obsoletes: %1 < %{obsoletes_version}                                      \
      %endif
-@@ -86,7 +90,7 @@
- Summary: QEMU is a FAST! processor emulator
- Name: %{pkgname}%{?pkgsuffix}
- Version: 2.1.2
--Release: 23%{?dist}
-+Release: 23%{?dist}.1
- # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
- Epoch: 10
- License: GPLv2+ and LGPLv2+ and BSD
-@@ -1871,6 +1875,9 @@
+@@ -1880,6 +1885,9 @@
  %endif
-
+ 
  %changelog
-+* Tue Mar 17 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7.1
++* Fri May  8 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1_1.2.1
 +- Removing RH branding from package name
 +
- * Tue Jan 27 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7
- - kvm-block-qapi-move-string-allocation-from-stack-to-the-.patch [bz#1117170]
- - kvm-block-remove-unused-variable-in-bdrv_commit.patch [bz#1117170]
+ * Tue Apr 21 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1_1.2
+ - kvm-block-Fix-max-nb_sectors-in-bdrv_make_zero.patch [bz#1203543]
+ - Resolves: bz#1203543
