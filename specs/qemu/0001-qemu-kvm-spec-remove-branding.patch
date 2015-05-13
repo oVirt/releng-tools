@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2015-05-08 08:40:19.675860954 +0200
-+++ b/qemu-kvm.spec	2015-05-08 08:48:23.270332795 +0200
+--- a/qemu-kvm.spec	2015-05-13 15:55:54.288445541 +0200
++++ b/qemu-kvm.spec	2015-05-13 15:54:08.403083081 +0200
 @@ -65,8 +65,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -23,13 +23,13 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
      %if 0%{?obsoletes_version:1}                                          \
  Obsoletes: %1 < %{obsoletes_version}                                      \
      %endif
-@@ -1880,6 +1885,9 @@
+@@ -1883,6 +1888,9 @@
  %endif
  
  %changelog
-+* Fri May  8 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1_1.2.1
++* Wed May 13 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1_1.3.1
 +- Removing RH branding from package name
 +
- * Tue Apr 21 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1_1.2
- - kvm-block-Fix-max-nb_sectors-in-bdrv_make_zero.patch [bz#1203543]
- - Resolves: bz#1203543
+ * Fri May 08 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.3
+ - kvm-fdc-force-the-fifo-access-to-be-in-bounds-of-the-all.patch [bz#1219271]
+ - Resolves: bz#1219271
