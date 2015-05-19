@@ -6,8 +6,8 @@ Group:		Virtualization/Management
 License:	ASL-2.0
 URL:		http://www.ovirt.org
 BuildArch:	noarch
-Source0:	http://search.maven.org/remotecontent?filepath=org/hibernate/hibernate-validator/5.2.0.Beta1/hibernate-validator-5.2.0.Beta1.jar
-Source1:	http://search.maven.org/remotecontent?filepath=org/hibernate/hibernate-validator-cdi/5.2.0.Beta1/hibernate-validator-cdi-5.2.0.Beta1.jar
+Source0:	https://repo1.maven.org/maven2/org/hibernate/hibernate-validator/5.2.0.Beta1/hibernate-validator-5.2.0.Beta1.jar
+Source1:	https://repo1.maven.org/maven2/org/hibernate/hibernate-validator-cdi/5.2.0.Beta1/hibernate-validator-cdi-5.2.0.Beta1.jar
 Source2:	hibernate-validator-module.xml
 Source3:	hibernate-validator-cdi-module.xml
 
