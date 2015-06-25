@@ -1,0 +1,4 @@
+#!/usr/bin/dh-exec
+debian/momd.conf => /etc/momd.conf
+debian/momd.service => /lib/systemd/system/momd.service
+
