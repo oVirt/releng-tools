@@ -86,7 +86,7 @@ Obsoletes: %1 < %{obsoletes_version}                                      \
 Summary: QEMU is a FAST! processor emulator
 Name: %{pkgname}%{?pkgsuffix}
 Version: 2.1.2
-Release: 23%{?dist}_1.3
+Release: 23%{?dist}_1.4
 # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
 Epoch: 10
 License: GPLv2+ and LGPLv2+ and BSD
@@ -842,6 +842,8 @@ Patch340: kvm-pc-add-rhel6.6.0-machine-type.patch
 Patch341: kvm-block-Fix-max-nb_sectors-in-bdrv_make_zero.patch
 # For bz#1219271 - 
 Patch342: kvm-fdc-force-the-fifo-access-to-be-in-bounds-of-the-all.patch
+# For bz#1233655 - [abrt] qemu-kvm: bdrv_error_action(): qemu-kvm killed by SIGABRT
+Patch343: kvm-atomics-add-explicit-compiler-fence-in-__atomic-memo.patch
 
 BuildRequires: zlib-devel
 BuildRequires: SDL-devel
@@ -1395,6 +1397,7 @@ cp %{SOURCE20} pc-bios
 %patch340 -p1
 %patch341 -p1
 %patch342 -p1
+%patch343 -p1
 
 %build
 buildarch="%{kvm_target}-softmmu"
@@ -1883,6 +1886,11 @@ sh %{_sysconfdir}/sysconfig/modules/kvm.modules &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jun 24 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.4
+- kvm-atomics-add-explicit-compiler-fence-in-__atomic-memo.patch [bz#1233655]
+- Resolves: bz#1233655
+  ([abrt] qemu-kvm: bdrv_error_action(): qemu-kvm killed by SIGABRT)
+
 * Fri May 08 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.3
 - kvm-fdc-force-the-fifo-access-to-be-in-bounds-of-the-all.patch [bz#1219271]
 - Resolves: bz#1219271
