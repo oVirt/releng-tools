@@ -1,6 +1,5 @@
-diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2015-07-01 16:20:42.073241716 +0200
-+++ b/qemu-kvm.spec	2015-07-01 16:24:53.918801642 +0200
+--- a/qemu-kvm.spec	2015-07-20 17:41:40.000000000 +0200
++++ b/qemu-kvm.spec	2015-07-28 11:33:32.679950616 +0200
 @@ -65,8 +65,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -27,18 +26,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a FAST! processor emulator
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.1.2
--Release: 23%{?dist}_1.4
-+Release: 23%{?dist}_1.4.1
+-Release: 23%{?dist}_1.6
++Release: 23%{?dist}_1.6.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1886,6 +1891,9 @@
+@@ -1898,6 +1903,9 @@
  %endif
  
  %changelog
-+* Wed Jul  1 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1.4.1
++* Tue Jul 28 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1.6.1
 +- Removing RH branding from package name
 +
- * Wed Jun 24 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.4
- - kvm-atomics-add-explicit-compiler-fence-in-__atomic-memo.patch [bz#1233655]
- - Resolves: bz#1233655
+ * Mon Jul 20 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1_1.6
+ - kvm-i8254-fix-out-of-bounds-memory-access-in-pit_ioport_.patch [bz#1243727]
+ - Resolves: bz#1243727
