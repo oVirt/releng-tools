@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## Copyright (C) 2014 Red Hat, Inc., Kiril Nesenko <knesenko@redhat.com>
+## Copyright (C) 2015 Red Hat, Inc., Sandro Bonazzola <sbonazzo@redhat.com>
 ### This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2 of the License, or
@@ -37,7 +38,7 @@ usage() {
     --days=DAYS_TO_KEEP            days to keep
 
     Example:
-    ${0} --days=4 /var/www/html/pub/*
+    ${0} --days=4 /var/www/html/pub/ovirt-*-snapshot
 __EOF__
 }
 
@@ -74,7 +75,8 @@ validate() {
 
 clean_pkgs() {
 	for snapshot in "${REPO_PATH[@]}"; do
-		find "${snapshot}" -type f -mtime +"${DAYS_TO_KEEP}" ! -name "*.xml" -exec rm -f {} \;
+		echo "Cleaning ${snapshot}"
+		find "${snapshot}" -type f -mtime +"${DAYS_TO_KEEP}" ! -name "*.xml" -exec rm -f -v {} \;
 		for repo in "${snapshot}/rpm"/*; do
 			createrepo "${repo}" || die "Cannot createrepo for ${repo}"
 		done
