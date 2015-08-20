@@ -144,6 +144,7 @@ class GetBugs(object):
                         'MODIFIED',
                         'ON_QA',
                         'VERIFIED',
+                        'RELEASE_PENDING',
                         'CLOSED',
                     ):
                         sys.stderr.write(
