@@ -134,11 +134,15 @@ class GetBugs(object):
             ans = bzobj.query(queryobj)
             if ans:
                 r = ans[0]
-                if r.product in (
-                    'Red Hat Enterprise Virtualization Manager',
-                    'oVirt',
-                    'Red Hat Storage',
-                    'Red Hat Gluster Storage',
+                if (
+                    r.product in (
+                        'Red Hat Enterprise Virtualization Manager',
+                        'oVirt',
+                        'Red Hat Storage',
+                        'Red Hat Gluster Storage',
+                    )
+                ) or (
+                    r.classification == 'oVirt'
                 ):
                     if r.status not in (
                         'MODIFIED',
