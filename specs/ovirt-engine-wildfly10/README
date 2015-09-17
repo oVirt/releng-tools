@@ -1,0 +1,2 @@
+This package is needed by the oVirt Engine in distributions that don't include
+the WildFly application server.
