@@ -1,6 +1,5 @@
-diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2015-09-08 10:10:09.417779110 +0200
-+++ b/qemu-kvm.spec	2015-09-08 10:12:30.309296208 +0200
+--- a/qemu-kvm.spec	2015-09-25 13:59:02.267141816 +0200
++++ b/qemu-kvm.spec	2015-09-25 14:02:18.092809792 +0200
 @@ -65,8 +65,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -27,18 +26,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a FAST! processor emulator
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.1.2
--Release: 23%{?dist}_1.8
-+Release: 23%{?dist}_1.8.1
+-Release: 23%{?dist}_1.9
++Release: 23%{?dist}_1.9.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1958,6 +1963,9 @@
+@@ -1961,6 +1966,9 @@
  %endif
  
  %changelog
-+* Tue Sep  8 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1.8.1
++* Fri Sep 25 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1.9.1
 +- Removing RH branding from package name
 +
- * Thu Aug 06 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.8
- - kvm-qemu_ram_foreach_block-pass-up-error-value-and-down-.patch [bz#1248382]
- - kvm-rdma-Fix-qemu-crash-when-IPv6-address-is-used-for-mi.patch [bz#1248382]
+ * Fri Aug 28 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.9
+ - kvm-vnc-fix-memory-corruption-CVE-2015-5225.patch [bz#1255897]
+ - Resolves: bz#1255897
