@@ -63,6 +63,7 @@ validate() {
 }
 
 scan_for_artifacts() {
+	echo "[$0] ##### Starting artifacts publishing $(date)" >&2
 	find "${SRC_DIR}" -maxdepth 1 -mindepth 1 -type d -name '*.ready' | while read dir; do
 		repo_version="$(basename "${dir}")"
 		repo_version="${repo_version%.*}"
@@ -74,6 +75,7 @@ scan_for_artifacts() {
 			|| die "We still have files under ${dir}. Please recheck"
 		rm -rf "${dir}"
 	done || die "Failed inside the loop"
+	echo "[$0] ##### Artifacts publishing finished $(date)" >&2
 }
 
 main() {
