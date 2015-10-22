@@ -2,7 +2,7 @@
 
 # The name, version and source of the package:
 name="ovirt-engine-wildfly"
-version="8.2.0"
+version="8.2.1"
 src="wildfly-${version}.Final.zip"
 url="http://download.jboss.org/wildfly/${version}.Final/${src}"
 
