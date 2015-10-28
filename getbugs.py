@@ -181,8 +181,8 @@ class GetBugs(object):
                 list_url += "%s%%2C " % bug_id
 
         sys.stderr.flush()
-        sys.stderr.write('\n\n'+list_url+'\n')
-        sys.stderr.flush()
+        sys.stdout.write('\n\n\n'+list_url+'\n')
+        sys.stdout.flush()
 
 if __name__ == '__main__':
     GetBugs().main()
