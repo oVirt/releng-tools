@@ -1,7 +1,7 @@
 Name:		ovirt-engine-wildfly-overlay
-Version:	002
+Version:	8.0.4
 Release:	1%{?dist}
-Summary:	Wildfly overlay for ovirt-engine
+Summary:	WildFly 8 overlay for ovirt-engine
 Group:		Virtualization/Management
 License:	ASL-2.0
 URL:		http://www.ovirt.org
@@ -13,7 +13,7 @@ Source3:	http://central.maven.org/maven2/org/hibernate/hibernate-validator-cdi/5
 Source4:	hibernate-validator-cdi-module.xml
 
 %description
-Wildfly overlay for ovirt-engine
+WildFly 8 overlay for ovirt-engine
 
 %install
 install -d -m 0755 "%{buildroot}%{_docdir}/%{name}"
@@ -30,6 +30,12 @@ install -m 0644 "%{SOURCE4}" "%{buildroot}%{_datadir}/%{name}/modules/org/hibern
 %{_docdir}/%{name}/
 
 %changelog
+* Wed Nov 04 2015 Martin Perina <mperina@redhat.com> 8.0.4-1
+- Change package version to be able to distinguish overlay packages
+  for WildFly 8 and WildFly 10 which are incompatible
+
+- Fix upgraded packages to match requirements for WildFly 8.2.1
+- Upgrade to Hibernate Validator 5.2.2.
 * Thu Oct 22 2015 Martin Perina <mperina@redhat.com> 002-1
 - Fix upgraded packages to match requirements for WildFly 8.2.1
 - Upgrade to Hibernate Validator 5.2.2.
