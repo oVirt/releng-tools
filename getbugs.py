@@ -72,7 +72,14 @@ class GetBugs(object):
             help='shows fixed-in-version in the output',
             default=False,
         )
+        parser.add_argument(
+            '--target-milestone',
+            type=str,
+            help='restrict bugs to the given target milestone',
+            default=None,
+        )
         self._args = parser.parse_args()
+
 
     def main(self):
         self.parse_args()
@@ -152,7 +159,14 @@ class GetBugs(object):
                         'CLOSED',
                     ):
                         sys.stderr.write(
-                            "%d - is in status %s\n" % (bug_id, r.status)
+                            "%d - is in status %s and targeted to %s\n" % (bug_id, r.status, r.target_milestone)
+                        )
+                    elif (
+                        self._args.target_milestone is not None and
+                        r.target_milestone != self._args.target_milestone
+                    ):
+                        sys.stderr.write(
+                            "%d - is targeted to %s\n" % (bug_id, r.target_milestone)
                         )
                     else:
                         list_url += "%s%%2C " % bug_id
