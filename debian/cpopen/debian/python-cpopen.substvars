@@ -1,0 +1,5 @@
+python:Versions=2.7
+python:Provides=python2.7-cpopen
+python:Depends=python (>= 2.7), python (<< 2.8), python:any (>= 2.6.6-7~)
+shlibs:Depends=libc6 (>= 2.11)
+misc:Depends=

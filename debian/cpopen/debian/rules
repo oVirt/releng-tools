@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=cpopen
+export CPOPEN_VERSION="1.4"
+
+%:
+	dh $@ --with python2 --buildsystem=pybuild
+
+override_dh_strip:
+	dh_strip -ppython-foo  --dbg-package=python-cpopen-dbg
+
