@@ -30,4 +30,3 @@ Recommends:
     python-dbg
 Description: Python support for cpopen (debug extension)
  Debug symbols for python-cpopen package.
-
