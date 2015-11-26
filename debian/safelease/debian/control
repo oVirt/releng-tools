@@ -1,0 +1,15 @@
+Source: safelease
+Maintainer: Sandro Bonazzola <sbonazzo@redhat.com>
+Section: misc
+Priority: extra
+Standards-Version: 3.9.6
+Build-Depends: debhelper (>= 9)
+
+Package: safelease
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Legacy locking utility for VDSM
+ Safelease is a legacy cluster lock utility used by VDSM. It is based on
+ the algorithm presented in the article "Light-Weight Leases for
+ Storage-Centric Coordination" by G Chockler and D Malkhi.
+
