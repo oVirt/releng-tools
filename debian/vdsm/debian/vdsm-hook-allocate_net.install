@@ -1,0 +1,1 @@
+usr/libexec/vdsm/hooks/before_device_create/10_allocate_net

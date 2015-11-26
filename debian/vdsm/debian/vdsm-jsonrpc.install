@@ -1,0 +1,6 @@
+usr/lib/python2.7/dist-packages/vdsmapi.py
+usr/lib/python2.7/dist-packages/yajsonrpc/__init__.py
+usr/share/vdsm/rpc/Bridge.py
+usr/share/vdsm/rpc/__init__.py
+usr/share/vdsm/rpc/bindingjsonrpc.py
+usr/share/vdsm/rpc/vdsmapi-schema.json

@@ -1,0 +1,5 @@
+usr/lib/python2.7/dist-packages/vdsm/infra/__init__.py
+usr/lib/python2.7/dist-packages/vdsm/infra/eventfd/__init__.py
+usr/lib/python2.7/dist-packages/vdsm/infra/filecontrol/__init__.py
+usr/lib/python2.7/dist-packages/vdsm/infra/sigutils/__init__.py
+usr/lib/python2.7/dist-packages/vdsm/infra/zombiereaper/__init__.py

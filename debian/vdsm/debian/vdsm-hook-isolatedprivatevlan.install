@@ -1,0 +1,2 @@
+etc/libvirt/nwfilter/isolatedprivatevlan-vdsm.xml
+usr/libexec/vdsm/hooks/before_vm_start/50_isolatedprivatevlan

@@ -1,0 +1,6 @@
+usr/share/java/vdsm-jsonrpc-java
+usr/share/java/vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
+usr/share/maven-effective-poms/JPP.vdsm-jsonrpc-java-vdsm-jsonrpc-java-client.pom
+usr/share/maven-fragments/vdsm-jsonrpc-java.xml
+usr/share/maven-poms/JPP.vdsm-jsonrpc-java-root.pom
+usr/share/maven-poms/JPP.vdsm-jsonrpc-java-vdsm-jsonrpc-java-client.pom

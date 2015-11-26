@@ -1,0 +1,10 @@
+usr/share/vdsm/tests
+usr/share/vdsm/tests/README
+usr/share/vdsm/tests/*.py*
+usr/share/vdsm/tests/*.out
+usr/share/vdsm/tests/functional
+usr/share/vdsm/tests/functional/*.policy
+usr/share/vdsm/tests/functional/*.py*
+usr/share/vdsm/tests/*.xml
+usr/share/vdsm/tests/run_tests.sh
+usr/share/vdsm/tests/*.conf
