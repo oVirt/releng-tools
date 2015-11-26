@@ -1,0 +1,11 @@
+#!/bin/sh
+
+echo "deb http://resources.ovirt.org/pub/ovirt-3.6/debian/ binary/" >> /etc/apt/sources.list
+echo "deb-src http://resources.ovirt.org/pub/ovirt-3.6/debian/ source/" >> /etc/apt/sources.list
+echo "deb http://resources.ovirt.org/pub/ovirt-3.6-pre/debian/ binary/" >> /etc/apt/sources.list
+echo "deb-src http://resources.ovirt.org/pub/ovirt-3.6-pre/debian/ source/" >> /etc/apt/sources.list
+
+echo "APT { Get { AllowUnauthenticated "1"; }; };" >> /etc/apt/apt.conf
+
+apt-get update
+

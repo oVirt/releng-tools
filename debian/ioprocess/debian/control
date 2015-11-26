@@ -1,0 +1,44 @@
+Source: ioprocess
+Priority: extra
+Maintainer: Simone Tiraboschi <stirabos@redhat.com>
+Build-Depends:	
+    debhelper (>= 9~),
+    autotools-dev,
+    automake,
+    autoconf,
+    python-nose,
+    libglib2.0-dev,
+    libyajl-dev,
+    dh-python,
+    python-all-dev (>= 2.6.6-3~),
+    python-all-dbg (>= 2.6.6-3~),
+    python-setuptools,
+    python-cpopen
+Standards-Version: 3.9.6
+Section: python
+Homepage: http://www.ovirt.org/Features/ioprocess
+Vcs-Git: git://gerrit.ovirt.org/ioprocess.git
+Vcs-Browser: https://gerrit.ovirt.org/gitweb?p=ioprocess.git
+
+Package: ioprocess
+Section: utils
+Architecture: any
+Depends:
+    ${shlibs:Depends},
+    ${misc:Depends},
+    libyajl2,
+    libglib2.0-0
+Description: Slave process to perform risky IO
+ A slave process to perform risky IO.
+
+Package: python-ioprocess
+Section: python
+Architecture: all
+Depends:
+    ${python:Depends},
+    ${misc:Depends},
+    python,
+    python-cpopen,
+    ioprocess
+Description: Python bindings for ioprocess
+ This package provides a python API to a slave process to perform risky IO.
