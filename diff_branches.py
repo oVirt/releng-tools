@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-# Copyright (C) 2014 Red Hat, Inc., Sandro Bonazzola <sbonazzo@redhat.com>
+# Copyright (C) 2014-2015 Red Hat, Inc., Sandro Bonazzola <sbonazzo@redhat.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,6 +67,8 @@ class PatchesChecker(object):
                 current_commit['Subject'] = logs[i+4]
             elif line.find('Change-Id:') != -1:
                 current_commit['Change'] = line
+            elif line.find('Bug-Url:') != -1:
+                current_commit['Bug'] = line
         if current_commit:
             data[current_commit['commit']] = current_commit.copy()
 
@@ -100,6 +102,7 @@ class PatchesChecker(object):
                 print(master_data[commit]['Date'])
                 print(master_data[commit]['Subject'])
                 print(master_data[commit]['Change'])
+                print(master_data[commit].get('Bug', ''))
                 print('')
 
         print (
