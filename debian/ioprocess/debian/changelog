@@ -1,3 +1,9 @@
+ioprocess (0.15.0.4-1) unstable; urgency=low
+
+  * Rebase on upstream 0.15.0-4-1
+
+ -- Sandro Bonazzola <sbonazzo@redhat.com>  Fri, 11 Dec 2015 14:37:19 +0100
+
 ioprocess (0.15.0-1) unstable; urgency=low
 
   * Rebase on upstream 0.15.0

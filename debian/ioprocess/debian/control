@@ -1,7 +1,8 @@
 Source: ioprocess
 Priority: extra
 Maintainer: Simone Tiraboschi <stirabos@redhat.com>
-Build-Depends:	
+Uploader: Sandro Bonazzola <sbonazzo@redhat.com>
+Build-Depends:
     debhelper (>= 9~),
     autotools-dev,
     automake,
@@ -9,6 +10,7 @@ Build-Depends:
     python-nose,
     libglib2.0-dev,
     libyajl-dev,
+    dh-autoreconf,
     dh-python,
     python-all-dev (>= 2.6.6-3~),
     python-all-dbg (>= 2.6.6-3~),
@@ -39,6 +41,7 @@ Depends:
     ${misc:Depends},
     python,
     python-cpopen,
+    python-six,
     ioprocess
 Description: Python bindings for ioprocess
  This package provides a python API to a slave process to perform risky IO.
