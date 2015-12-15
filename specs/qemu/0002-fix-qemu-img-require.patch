@@ -1,6 +1,7 @@
---- a/qemu-kvm.spec	2015-09-25 14:02:54.113932666 +0200
-+++ b/qemu-kvm.spec	2015-09-25 14:03:04.962969669 +0200
-@@ -1085,7 +1085,7 @@
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2015-12-15 09:59:59.067261911 +0100
++++ b/qemu-kvm.spec	2015-12-15 10:00:11.952303324 +0100
+@@ -1349,7 +1349,7 @@
  Group:          Development/Libraries
  Requires:       libcacard%{?pkgsuffix} = %{epoch}:%{version}-%{release}
  # older qemu-img has vscclient which is now in libcacard-tools

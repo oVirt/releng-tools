@@ -1,17 +1,18 @@
---- a/qemu-kvm.spec	2015-09-25 13:59:02.267141816 +0200
-+++ b/qemu-kvm.spec	2015-09-25 14:02:18.092809792 +0200
-@@ -65,8 +65,9 @@
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2015-12-15 09:52:38.215845024 +0100
++++ b/qemu-kvm.spec	2015-12-15 09:59:28.414163393 +0100
+@@ -62,8 +62,9 @@
+ # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
- %if %{rhev}
--    %global pkgsuffix %{rhev_suffix}
-+    %global pkgsuffix -ev
-     %global extra_provides_suffix %{nil}
-+    %global rhev_provide_suffix %{rhev_suffix}
-     %global conflicts_suffix %{rhel_suffix}
-     %global obsoletes_version 15:0-0
- %else
-@@ -79,6 +80,10 @@
+-%global pkgsuffix %{rhev_suffix}
++%global pkgsuffix -ev
+ %global extra_provides_suffix %{nil}
++%global rhev_provide_suffix %{rhev_suffix}
+ %global conflicts_suffix %{rhel_suffix}
+ %global obsoletes_version 15:0-0
+ 
+@@ -71,12 +72,16 @@
  %define rhel_rhev_conflicts()                                         \
  Conflicts: %1%{conflicts_suffix}                                      \
  Provides: %1%{extra_provides_suffix} = %{epoch}:%{version}-%{release} \
@@ -19,25 +20,23 @@
 +Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}   \
 +Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}   \
 +    %endif                                                            \
-     %if 0%{?obsoletes_version:1}                                          \
- Obsoletes: %1 < %{obsoletes_version}                                      \
-     %endif
-@@ -86,7 +91,7 @@
+ Obsoletes: %1 < %{obsoletes_version}
+ 
  Summary: QEMU is a FAST! processor emulator
- Name: %{pkgname}%{?pkgsuffix}
- Version: 2.1.2
--Release: 23%{?dist}_1.9
-+Release: 23%{?dist}_1.9.1
+ Name:    %{pkgname}%{?pkgsuffix}
+ Version: 2.3.0
+-Release: 31%{?dist}_2.3
++Release: 31%{?dist}_2.3.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1961,6 +1966,9 @@
- %endif
+@@ -2360,6 +2365,9 @@
+ %{_libdir}/pkgconfig/libcacard.pc
  
  %changelog
-+* Fri Sep 25 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 10:2.1.2-23.el7_1.9.1
++* Tue Dec 15 2015 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.3.1
 +- Removing RH branding from package name
 +
- * Fri Aug 28 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.1.2-23.el7_1.9
- - kvm-vnc-fix-memory-corruption-CVE-2015-5225.patch [bz#1255897]
- - Resolves: bz#1255897
+ * Thu Nov 19 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.3
+ - kvm-vhost-user-ignore-qemu-only-features.patch [bz#1279388]
+ - kvm-vhost-user-fix-log-size.patch [bz#1279388]
