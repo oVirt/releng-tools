@@ -1,5 +1,5 @@
 #!/bin/bash -e
-src="qemu-kvm-rhev-2.3.0-31.el7_2.3.src.rpm"
+src="qemu-kvm-rhev-2.3.0-31.el7_2.4.src.rpm"
 url="ftp://ftp.redhat.com/pub/redhat/linux/enterprise/7Server/en/RHEV/SRPMS/${src}"
 patches=(
     "0001-qemu-kvm-spec-remove-branding.patch"
@@ -18,7 +18,6 @@ cp qemu-kvm.spec qemu-kvm.spec.orig
 for patchset in "${patches[@]}" ; do
   patch -p1 < "${patchset}"
 done
-
 
 # Build the source and binary packages:
 rpmbuild \

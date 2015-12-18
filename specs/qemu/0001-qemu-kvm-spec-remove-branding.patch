@@ -1,6 +1,5 @@
-diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2015-12-15 09:52:38.215845024 +0100
-+++ b/qemu-kvm.spec	2015-12-15 09:59:28.414163393 +0100
+--- a/qemu-kvm.spec	2015-12-18 08:57:38.358570044 +0100
++++ b/qemu-kvm.spec	2015-12-18 09:00:37.512998699 +0100
 @@ -62,8 +62,9 @@
  # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
@@ -25,18 +24,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a FAST! processor emulator
  Name:    %{pkgname}%{?pkgsuffix}
  Version: 2.3.0
--Release: 31%{?dist}_2.3
-+Release: 31%{?dist}_2.3.1
+-Release: 31%{?dist}_2.4
++Release: 31%{?dist}_2.4.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2360,6 +2365,9 @@
+@@ -2372,6 +2377,9 @@
  %{_libdir}/pkgconfig/libcacard.pc
  
  %changelog
-+* Tue Dec 15 2015 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.3.1
++* Fri Dec 18 2015 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.4.1
 +- Removing RH branding from package name
 +
- * Thu Nov 19 2015 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.3
- - kvm-vhost-user-ignore-qemu-only-features.patch [bz#1279388]
- - kvm-vhost-user-fix-log-size.patch [bz#1279388]
+ * Mon Nov 30 2015 Jeff E. Nelson <jen@redhat.com> - rhev-2.3.0-31.el7_2.4
+ - kvm-virtio-blk-Fix-double-completion-for-werror-stop.patch [bz#1283987]
+ - kvm-virtio-blk-Move-resetting-of-req-mr_next-to-virtio_b.patch [bz#1283987]
