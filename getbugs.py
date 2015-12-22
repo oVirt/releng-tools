@@ -159,14 +159,14 @@ class GetBugs(object):
                         'CLOSED',
                     ):
                         sys.stderr.write(
-                            "%d - is in status %s and targeted to %s\n" % (bug_id, r.status, r.target_milestone)
+                            "%d - is in status %s and targeted to %s; assignee: %s\n" % (bug_id, r.status, r.target_milestone, r.assigned_to)
                         )
                     elif (
                         self._args.target_milestone is not None and
                         r.target_milestone != self._args.target_milestone
                     ):
                         sys.stderr.write(
-                            "%d - is targeted to %s\n" % (bug_id, r.target_milestone)
+                            "%d - is targeted to %s; assignee: %s\n" % (bug_id, r.target_milestone, r.assigned_to)
                         )
                     else:
                         list_url += "%s%%2C " % bug_id
