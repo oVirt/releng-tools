@@ -25,7 +25,13 @@ Check patches merged on a trunk and not merged in a branch
 
 
 import argparse
+import bugzilla
 import git
+import sys
+
+BUGZILLA_SERVER = 'bugzilla.redhat.com'
+BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
+BUGZILLA_URL = BUGZILLA_HOME + 'xmlrpc.cgi'
 
 
 class PatchesChecker(object):
@@ -33,6 +39,7 @@ class PatchesChecker(object):
         super(PatchesChecker, self).__init__()
         self._repo = git.Git('.')
         self._args = None
+        self.bzobj = None
 
     def parse_args(self):
         parser = argparse.ArgumentParser(
@@ -51,6 +58,12 @@ class PatchesChecker(object):
             metavar='branch',
             type=str,
             help='new branch to be compared with reference trunk'
+        )
+        parser.add_argument(
+            '--target-milestone',
+            type=str,
+            help='restrict bugs to the given target milestone',
+            default=None,
         )
         self._args = parser.parse_args()
 
@@ -72,8 +85,41 @@ class PatchesChecker(object):
         if current_commit:
             data[current_commit['commit']] = current_commit.copy()
 
+    def check_bug(self, change, author, bugline):
+        if self._args.target_milestone is None:
+            return
+        bugline = bugline.replace('show_bug.cgi?id=', '')
+        try:
+            bug_id = int(
+                bugline[
+                    bugline.find(BUGZILLA_SERVER) +
+                    len(BUGZILLA_SERVER) + 1:
+                ]
+            )
+        except ValueError:
+            return
+        queryobj = self.bzobj.build_query(bug_id=str(bug_id))
+        ans = self.bzobj.query(queryobj)
+        if not ans:
+            return
+        r = ans[0]
+        if r.target_milestone <= self._args.target_milestone:
+            sys.stderr.write(
+                (
+                    "{change} submitted by {author} fixes {bug_id} which is"
+                    "targeted to {milestone}\n"
+                ).format(
+                    change=change,
+                    author=author,
+                    bug_id=bug_id,
+                    milestone=r.target_milestone
+                )
+            )
+
     def main(self):
         self.parse_args()
+        if self._args.target_milestone is not None:
+            self.bzobj = bugzilla.RHBugzilla4(url=BUGZILLA_URL)
         master = self._repo.log([self._args.trunk]).splitlines()
         master_data = {}
         self.parse_log(master, master_data)
@@ -97,12 +143,19 @@ class PatchesChecker(object):
                 master_data[commit]['Change'] not in in_branch
             ):
                 count += 1
+                bug = master_data[commit].get('Bug', '')
                 print(master_data[commit]['commit'])
                 print(master_data[commit]['Author'])
                 print(master_data[commit]['Date'])
                 print(master_data[commit]['Subject'])
                 print(master_data[commit]['Change'])
-                print(master_data[commit].get('Bug', ''))
+                if bug:
+                    print(bug)
+                    self.check_bug(
+                        master_data[commit]['Change'],
+                        master_data[commit]['Author'],
+                        bug
+                    )
                 print('')
 
         print (
