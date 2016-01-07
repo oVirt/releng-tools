@@ -1,7 +1,7 @@
 %global __jar_repack 0
 Name: ovirt-engine-wildfly
 Version: @VERSION@
-Release: 0.3%{?dist}
+Release: 0.4%{?dist}
 Summary: WildFly Application Server for oVirt Engine
 Group: Virtualization/Management
 License: ASL 2.0
@@ -50,6 +50,9 @@ find \
 %{_datadir}
 
 %changelog
+* Thu Jan 07 2016 Martin Perina <mperina@redhat.com> - 10.0.0-0.4
+- Update to upstream version 10.0.0.CR5.
+
 * Wed Nov 04 2015 Martin Perina <mperina@redhat.com> - 10.0.0-0.3
 - Update to upstream version 10.0.0.CR4.
 
