@@ -1,0 +1,238 @@
+Name: spagobi
+Summary: Spago BI Todo: update me
+Version: @VERSION@
+Release: 0.1.@CHECKOUT@%{?dist}
+License: MPLv2.0
+URL: http://spagobi.com/
+
+# The source for this package was pulled from upstream's vcs.  Use the
+# following commands to generate the tarball:
+#  svn export -r @SVNREV@ svn://svn.forge.objectweb.org/svnroot/spagobi/V_5.x/Server/trunk spagobi5x-@CHECKOUT@
+# some prebuilt jar files are included, so we need to get rid of them
+# TODO: work with upstream getting them removed
+#  find spagobi5x-@CHECKOUT@ -name "*.jar" | xargs rm -f
+#  tar -cJvf spagobi5x-@CHECKOUT@.tar.xz spagobi5x-@CHECKOUT@
+Source0: spagobi5x-@CHECKOUT@.tar.xz
+
+BuildArch: noarch
+
+BuildRequires: java-devel >= 1:1.7.0
+BuildRequires: jpackage-utils
+BuildRequires: maven
+
+# TODO: check missing Requires
+# TODO: get all build deps packaged and reviewed for licensing
+# TODO: get included js libraries (extjs for example) handled properly
+# TODO: update summaries and descriptions
+# TODO: set subpackages Requires
+
+%description
+Todo: update me
+
+
+%package accessibility-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description accessibility-engine
+Todo: update me
+
+%package birt-report-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description birt-report-engine
+Todo: update me
+
+%package chart-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description chart-engine
+Todo: update me
+
+%package cockpit-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description cockpit-engine
+Todo: update me
+
+%package common-jengine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description common-jengine
+Todo: update me
+
+%package console-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description console-engine
+Todo: update me
+
+%package data-mining-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description data-mining-engine
+Todo: update me
+
+%package geo-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description geo-engine
+Todo: update me
+
+%package geo-report-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description geo-report-engine
+Todo: update me
+
+%package jpivot-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description jpivot-engine
+Todo: update me
+
+%package jasper-report-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description jasper-report-engine
+Todo: update me
+
+%package mobile-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description mobile-engine
+Todo: update me
+
+%package network-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description network-engine
+Todo: update me
+
+%package qbe-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description qbe-engine
+Todo: update me
+
+%package social-analysis
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description social-analysis
+Todo: update me
+
+%package talend-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description talend-engine
+Todo: update me
+
+%package what-if-engine
+Summary: Todo: update me
+Requires: %{name} = %{version}-%{release}
+
+%description what-if-engine
+Todo: update me
+
+%prep
+%setup -q -n spagobi5x-@CHECKOUT@
+
+%build
+cd spagobi-parent
+# %%mvn_build -b -f -s -- -P wildfly -Dwildfly.home=%%{buildroot}/usr/share/%%{name}
+mvn package -Dmaven.test.skip=true -P wildfly -Dwildfly.home=%{buildroot}/usr/share/%{name}
+
+%install
+cd spagobi-parent
+mvn install -Dmaven.test.skip=true -P wildfly -Dwildfly.home=%{buildroot}/usr/share/%{name}
+# %%mvn_install -- -P wildfly -Dwildfly.home=%%{buildroot}/usr/share/%%{name}
+
+%files
+%license SpagoBIProject/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBI.war
+
+%files accessibility-engine
+%license SpagoBIAccessibilityEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIAccessibilityEngine.war
+
+%files birt-report-engine
+%license SpagoBIBirtReportEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIBirtReportEngine.war
+
+%files chart-engine
+%license SpagoBIChartEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIChartEngine.war
+
+%files cockpit-engine
+%license SpagoBICockpitEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBICockpitEngine.war
+
+%files common-jengine
+%license SpagoBICommonJEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBICommonJEngine.war
+
+%files console-engine
+%license SpagoBIConsoleEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIConsoleEngine.war
+
+%files data-mining-engine
+%{_datadir}/%{name}/standalone/deployments/SpagoBIDataMiningEngine.war
+
+%files geo-engine
+%license SpagoBIGeoEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIGeoEngine.war
+
+%files geo-report-engine
+%license SpagoBIGeoReportEngine/src/main/webapp/LICENSE.txt
+
+%{_datadir}/%{name}/standalone/deployments/SpagoBIGeoReportEngine.war
+
+%files jpivot-engine
+%license SpagoBIJPivotEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIJPivotEngine.war
+
+%files jasper-report-engine
+%license SpagoBIJasperReportEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIJasperReportEngine.war
+
+%files mobile-engine
+%license SpagoBIMobileEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIMobileEngine.war
+
+%files network-engine
+%license SpagoBINetworkEngine/src/main/webapp/LICENSE.txt
+%doc SpagoBINetworkEngine/Readme.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBINetworkEngine.war
+
+%files qbe-engine
+%license SpagoBIQbeEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBIQbeEngine.war
+
+%files social-analysis
+%{_datadir}/%{name}/standalone/deployments/SpagoBISocialAnalysis.war
+
+%files talend-engine
+%license SpagoBITalendEngine/src/main/webapp/LICENSE.txt
+%{_datadir}/%{name}/standalone/deployments/SpagoBITalendEngine.war
+
+%files what-if-engine
+%{_datadir}/%{name}/standalone/deployments/SpagoBIWhatIfEngine.war
+
+%changelog
+* Mon Jan 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - @VERSION@-0.1.@CHECKOUT@
+Initial packaging
