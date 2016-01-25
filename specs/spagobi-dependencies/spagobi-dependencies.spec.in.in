@@ -1,0 +1,109 @@
+
+%global __jar_repack 0
+
+Summary:	SpagoBI 3rd party dependencies
+Name:		@PACKAGE_NAME@
+Version:	@PACKAGE_RPM_VERSION@
+Release:	@PACKAGE_RPM_RELEASE@%{?release_suffix}%{?dist}
+License:	@PACKAGE_LICENSE@
+URL:		http://www.ovirt.org
+Source:		@PACKAGE_NAME@-@PACKAGE_VERSION@-@PACKAGE_RPM_RELEASE@.tar.gz
+Group:		Virtualization/Management
+
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch:	noarch
+
+BuildRequires:	tar
+BuildRequires:	unzip
+BuildRequires:	curl
+
+%if 0%{?rhel}
+BuildRequires: maven-local
+%endif
+%if 0%{?fedora}
+BuildRequires: javapackages-local
+
+#com.sun.jersey:jersey-grizzly2
+BuildRequires: mvn(org.glassfish.grizzly:grizzly-http)
+
+# org.jboss.resteasy:resteasy-jaxrs
+BuildRequires: mvn(org.apache.httpcomponents:httpclient)
+BuildRequires: mvn(org.jboss.resteasy:jaxrs-api)
+BuildRequires: mvn(commons-httpclient:commons-httpclient)
+BuildRequires: mvn(javax.annotation:jsr250-api)
+BuildRequires: mvn(net.jcip:jcip-annotations)
+BuildRequires: mvn(commons-io:commons-io)
+BuildRequires: mvn(org.scannotation:scannotation)
+
+# com.xebialabs.restito:restito
+BuildRequires: mvn(org.apache.mina:mina-core)
+BuildRequires: mvn(org.glassfish.grizzly:grizzly-http-server)
+BuildRequires: mvn(org.mockito:mockito-core)
+BuildRequires: mvn(com.jayway.jsonpath:json-path)
+BuildRequires: mvn(junit:junit)
+%endif
+
+%description
+SpagoBI 3rd party dependencies
+
+%prep
+%setup -q -n %{name}-@PACKAGE_VERSION@
+%if 0%{?fedora}
+# these deps are already available in Fedora
+# eclipse-platform
+rm -f conf.d/org-eclipse-text.conf
+rm -f downloads/org.eclipse.text*
+rm -f conf.d/commands.conf
+rm -f downloads/commands*
+rm -f conf.d/common.conf
+rm -f downloads/common*
+%endif
+
+# Parents first
+for artifact in downloads/*parent*.pom
+do
+    %mvn_artifact ${artifact}
+done
+
+for artifact in $(find downloads -name "*.pom" ! -name "*parent*")
+do
+if [ ! -e ${artifact/.pom/.jar} ]
+then
+    %mvn_artifact ${artifact}
+fi
+done
+
+for artifact in downloads/*.pom
+do
+if [ -e ${artifact/.pom/.jar} ]
+then
+    %mvn_artifact ${artifact} ${artifact/.pom/.jar}
+fi
+done
+
+
+%build
+make OFFLINE=1 %{?_smp_mflags}
+
+%install
+rm -rf "%{buildroot}"
+make %{?_smp_mflags} OFFLINE=1 install DESTDIR="%{buildroot}" JAVADIR="%{_javadir}" POMDIR="%{_mavenpomdir}"
+%mvn_install
+
+%files
+%doc COPYING
+%doc COPYING.csv
+%doc ChangeLog
+%{_javadir}/%{name}/
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/
+%{_datadir}/maven-metadata/*
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/*
+%{_mavendepmapfragdir}/*
+%endif
+
+%changelog
+* Mon Jan 25 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 5.2.0-1
+- Initial packaging

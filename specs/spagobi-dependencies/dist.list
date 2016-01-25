@@ -1,0 +1,10 @@
+ChangeLog
+Makefile
+build.sh
+common.sh
+csv.sh
+doc.sh
+download.sh
+install.sh
+spagobi-dependencies.spec.in.in
+speclicense.sh
