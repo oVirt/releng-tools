@@ -1,3 +1,7 @@
+
+%global __jar_repack 0
+
+
 Name: spagobi
 Summary: Spago BI Todo: update me
 Version: @VERSION@
@@ -19,6 +23,15 @@ BuildArch: noarch
 BuildRequires: java-devel >= 1:1.7.0
 BuildRequires: jpackage-utils
 BuildRequires: maven
+BuildRequires: unzip
+
+%if 0%{?rhel}
+BuildRequires: xmvn
+%endif
+
+%if 0%{?fedora}
+BuildRequires: xmvn-subst
+%endif
 
 # TODO: check missing Requires
 # TODO: get all build deps packaged and reviewed for licensing
@@ -151,87 +164,96 @@ Todo: update me
 
 %prep
 %setup -q -n spagobi5x-@CHECKOUT@
+%if 0%{?fedora}
+# the pom_change_dep macro is not available on EL 7
+%pom_change_dep :log4j ::1.2.17 SpagoBIUtils
+%endif
 
 %build
 cd spagobi-parent
 # %%mvn_build -b -f -s -- -P wildfly -Dwildfly.home=%%{buildroot}/usr/share/%%{name}
-mvn package -Dmaven.test.skip=true -P wildfly -Dwildfly.home=%{buildroot}/usr/share/%{name}
+mvn package -Dmaven.test.skip=true -P wildfly -Dwildfly.home=..
 
 %install
-cd spagobi-parent
-mvn install -Dmaven.test.skip=true -P wildfly -Dwildfly.home=%{buildroot}/usr/share/%{name}
-# %%mvn_install -- -P wildfly -Dwildfly.home=%%{buildroot}/usr/share/%%{name}
+cd standalone/deployments
+install -dm 0755 %{buildroot}/usr/share/%{name}
+for i in *.war
+do
+    install -dm 0755 %{buildroot}/usr/share/%{name}/${i}
+    unzip -q -o ${i} -d %{buildroot}/usr/share/%{name}/${i}
+    xmvn-subst %{buildroot}/usr/share/%{name}/${i}/WEB-INF/lib
+done
 
 %files
 %license SpagoBIProject/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBI.war
+%{_datadir}/%{name}/SpagoBI.war
 
 %files accessibility-engine
 %license SpagoBIAccessibilityEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIAccessibilityEngine.war
+%{_datadir}/%{name}/SpagoBIAccessibilityEngine.war
 
 %files birt-report-engine
 %license SpagoBIBirtReportEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIBirtReportEngine.war
+%{_datadir}/%{name}/SpagoBIBirtReportEngine.war
 
 %files chart-engine
 %license SpagoBIChartEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIChartEngine.war
+%{_datadir}/%{name}/SpagoBIChartEngine.war
 
 %files cockpit-engine
 %license SpagoBICockpitEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBICockpitEngine.war
+%{_datadir}/%{name}/SpagoBICockpitEngine.war
 
 %files common-jengine
 %license SpagoBICommonJEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBICommonJEngine.war
+%{_datadir}/%{name}/SpagoBICommonJEngine.war
 
 %files console-engine
 %license SpagoBIConsoleEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIConsoleEngine.war
+%{_datadir}/%{name}/SpagoBIConsoleEngine.war
 
 %files data-mining-engine
-%{_datadir}/%{name}/standalone/deployments/SpagoBIDataMiningEngine.war
+%{_datadir}/%{name}/SpagoBIDataMiningEngine.war
 
 %files geo-engine
 %license SpagoBIGeoEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIGeoEngine.war
+%{_datadir}/%{name}/SpagoBIGeoEngine.war
 
 %files geo-report-engine
 %license SpagoBIGeoReportEngine/src/main/webapp/LICENSE.txt
 
-%{_datadir}/%{name}/standalone/deployments/SpagoBIGeoReportEngine.war
+%{_datadir}/%{name}/SpagoBIGeoReportEngine.war
 
 %files jpivot-engine
 %license SpagoBIJPivotEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIJPivotEngine.war
+%{_datadir}/%{name}/SpagoBIJPivotEngine.war
 
 %files jasper-report-engine
 %license SpagoBIJasperReportEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIJasperReportEngine.war
+%{_datadir}/%{name}/SpagoBIJasperReportEngine.war
 
 %files mobile-engine
 %license SpagoBIMobileEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIMobileEngine.war
+%{_datadir}/%{name}/SpagoBIMobileEngine.war
 
 %files network-engine
 %license SpagoBINetworkEngine/src/main/webapp/LICENSE.txt
 %doc SpagoBINetworkEngine/Readme.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBINetworkEngine.war
+%{_datadir}/%{name}/SpagoBINetworkEngine.war
 
 %files qbe-engine
 %license SpagoBIQbeEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBIQbeEngine.war
+%{_datadir}/%{name}/SpagoBIQbeEngine.war
 
 %files social-analysis
-%{_datadir}/%{name}/standalone/deployments/SpagoBISocialAnalysis.war
+%{_datadir}/%{name}/SpagoBISocialAnalysis.war
 
 %files talend-engine
 %license SpagoBITalendEngine/src/main/webapp/LICENSE.txt
-%{_datadir}/%{name}/standalone/deployments/SpagoBITalendEngine.war
+%{_datadir}/%{name}/SpagoBITalendEngine.war
 
 %files what-if-engine
-%{_datadir}/%{name}/standalone/deployments/SpagoBIWhatIfEngine.war
+%{_datadir}/%{name}/SpagoBIWhatIfEngine.war
 
 %changelog
 * Mon Jan 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - @VERSION@-0.1.@CHECKOUT@
