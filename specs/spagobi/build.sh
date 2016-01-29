@@ -73,7 +73,7 @@ done
 cp -rl trunk spagobi5x-${CHECKOUT}
 find spagobi5x-${CHECKOUT} -name "*.jar" -delete
 rm -rf spagobi5x-${CHECKOUT}/.svn
-tar -cJvf spagobi5x-${CHECKOUT}.tar.xz spagobi5x-${CHECKOUT}
+tar --checkpoint=1000 -cJf spagobi5x-${CHECKOUT}.tar.xz spagobi5x-${CHECKOUT}
 rm -rf spagobi5x-${CHECKOUT}
 
 # Generate the spec from the template:

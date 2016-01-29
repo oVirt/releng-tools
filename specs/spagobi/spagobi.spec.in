@@ -1,14 +1,14 @@
 
 %global __jar_repack 0
 
-%global with_birt_report_engine 1
-%global with_cockpit_engine 1
 %global with_jasper_report_engine 1
 %global with_qbe_engine 1
 
 # Not needed for now and still to be checked for dependencies licensing
 %global with_accessibility_engine 0
+%global with_birt_report_engine 0
 %global with_chart_engine 0
+%global with_cockpit_engine 0
 %global with_common_jengine 0
 %global with_console_engine 0
 %global with_data_mining_engine 0
@@ -39,17 +39,77 @@ Source0: spagobi5x-@CHECKOUT@.tar.xz
 
 BuildArch: noarch
 
+# Maven Build
 BuildRequires: java-devel >= 1:1.7.0
 BuildRequires: jpackage-utils
 BuildRequires: maven
 BuildRequires: unzip
-
 %if 0%{?rhel}
+BuildRequires: maven-local
 BuildRequires: xmvn
 %endif
-
 %if 0%{?fedora}
+BuildRequires: javapackages-local
 BuildRequires: xmvn-subst
+%endif
+
+# Dependencies not packaged by distribution
+BuildRequires: spagobi-dependencies
+Requires: spagobi-dependencies
+
+
+# Common requirements
+BuildRequires: antlr-tool
+%if 0%{?fedora}
+BuildRequires: apache-mime4j
+BuildRequires: axis
+%endif
+
+# SpagoBIUtilsJSON
+%if 0%{?fedora}
+BuildRequires: jackson-core >= 2.0.2
+BuildRequires: jackson-databind >= 2.0.2
+%endif
+
+# SpagoBIUtils
+%if 0%{?fedora}
+BuildRequires: json-path
+BuildRequires: json-smart
+BuildRequires: slf4j-log4j12
+BuildRequires: mongo-java-driver
+BuildRequires: portlet-2.0-api
+BuildRequires: wss4j
+BuildRequires: resteasy-core
+# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
+
+
+# Exception: Following dependencies were not resolved and requires cannot
+# be generated.
+# Either remove the dependencies from pom.xml or add proper packages
+# to BuildRequires:
+
+# org.jasig.cas:cas-client-core:3.1.6 required by it.eng.spagobi:SpagoBIUtils
+# de.myfoo:commonj:1.0 required by it.eng.spagobi:SpagoBIUtils
+# opensymphony:quartz:1.6.0 required by it.eng.spagobi:SpagoBIUtils
+# org.dspace.xmlui.ehcache:ehcache:1.1 required by it.eng.spagobi:SpagoBIUtils
+# com.hbql:HBql:0.90.0.1 required by it.eng.spagobi:SpagoBIUtils
+# it.eng.spago:spago-core:2.3.0 required by it.eng.spagobi:SpagoBIUtils
+# it.eng.spago:spago-web:2.3.0 required by it.eng.spagobi:SpagoBIUtils
+# org.safehaus.jug:jug::lgpl:2.0.0 required by it.eng.spagobi:SpagoBIUtils
+# it.eng.spago:spago-portlet:2.3.0 required by it.eng.spagobi:SpagoBIUtils
+# org.jgrapht:jgrapht-core:0.9.1 required by it.eng.spagobi:SpagoBIUtils
+
+# org.jboss.resteasy:resteasy-jaxrs:3.0.9.Final required by it.eng.spagobi:spagobi-core
+
+# org.eclipse.core:runtime:3.10.0-v20140318-2214 required by it.eng.spagobi:spagobi-commons-core
+
+
+%endif
+
+# QbeCore
+%if 0%{?fedora}
+BuildRequires: eclipselink
+BuildRequires: hibernate-entitymanager
 %endif
 
 %if %{with_accessibility_engine}
@@ -57,7 +117,6 @@ BuildRequires: xmvn-subst
 # Missing on EL7
 BuildRequires:  glassfish-servlet-api = 3.0.1
 %endif
-#BuildRequires: mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:  wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 BuildRequires:  xalan-j2 = 2.7.0
@@ -70,8 +129,6 @@ BuildRequires:  xerces-j2 = 2.11.0
 BuildRequires:  glassfish-servlet-api = 3.0.1
 BuildRequires:  hibernate-validator
 # ^ Fedora has 5.0.1 while 4.1.0 is required by pom
-BuildRequires:  resteasy-core
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 BuildRequires:  resteasy-optional
 # ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
@@ -83,7 +140,6 @@ BuildRequires:  httpcomponents-core
 # ^ EL7 has 4.2.4 while 4.4.3 is required by pom
 BuildRequires:  jackson-databind = 2.0.2
 BuildRequires:  javassist = 3.12.1
-#BuildRequires:  mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:  mvn(org.twitter4j:twitter4j-core) = 4.0.1
 BuildRequires:  mvn(org.twitter4j:twitter4j-stream) = 4.0.1
 BuildRequires:  quartz = 2.2.1
@@ -102,7 +158,6 @@ BuildRequires:	batik
 # ^ EL7 has 1.8 while 1.7 is required by pom
 BuildRequires:	jetty-server = 9.2.12.v20150709
 BuildRequires:	jetty-servlets = 9.2.12.v20150709
-#BuildRequires:	mvn(it.eng.spagobi:QbeCore) = 5.2.0
 BuildRequires:	mvn(org.cometd.java:bayeux-api) = 3.0.5
 BuildRequires:	mvn(org.cometd.java:cometd-java-websocket-javax-server) = 3.0.5
 BuildRequires:	wsdl4j
@@ -116,8 +171,6 @@ BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
 BuildRequires:	groovy-lib
 # ^ Fedora has 2.4.4 while 2.1.6 is required by pom
-BuildRequires:	resteasy-core
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 BuildRequires:	resteasy-optional
 # ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
@@ -125,7 +178,6 @@ BuildRequires:	httpcomponents-client
 # ^ EL7 has 4.2.5 while 4.5 is required by pom
 BuildRequires:	httpcomponents-core
 # ^ EL7 has 4.2.4 while 4.4.3 is required by pom
-#BuildRequires:	mvn(it.eng.spagobi:QbeCore) = 5.2.0
 #BuildRequires:	mvn(it.eng.spagobi:SpagoBIDAO) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
@@ -137,7 +189,6 @@ BuildRequires:	wsdl4j
 BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
 %endif
-#BuildRequires:	mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -151,7 +202,6 @@ BuildRequires:	jasperreports
 # ^ Fedora has 4.0.2 while 4.0.0 is required by pom
 %endif
 # BuildRequires:	mvn(com.fdsapi:fdsapi) = 1.2
-# BuildRequires:	mvn(it.eng.spagobi:QbeCore) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -161,8 +211,6 @@ BuildRequires:	wsdl4j
 # Missing on EL7
 BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
-BuildRequires:	resteasy-core
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 BuildRequires:	resteasy-multipart-provider
 # ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 BuildRequires:	resteasy-optional
@@ -198,7 +246,6 @@ BuildRequires:	objectweb-asm = 3.3.1
 BuildRequires:	batik
 # ^ EL7 has 1.8 while 1.7 is required by pom
 # BuildRequires:	mvn(com.fdsapi:fdsapi) = 1.2
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -211,7 +258,6 @@ BuildRequires:	glassfish-servlet-api
 %endif
 BuildRequires:	json-lib = 2.4
 BuildRequires:	json_simple = 1.1
-# BuildRequires:	mvn(it.eng.spagobi:QbeCore) = 5.2.0
 # BuildRequires:	mvn(it.eng.spagobi:SpagoBIDAO) = 5.2.0
 # BuildRequires:	mvn(org.geotools:gt-geojson) = 2.7.5
 # BuildRequires:	mvn(org.geotools:gt-shapefile) = 2.7.5
@@ -234,7 +280,6 @@ BuildRequires:	jasperreports
 BuildRequires:	glassfish-jsp
 # ^ EL7 has 2.2.6 while 2.0 is required by pom
 # BuildRequires:	mvn(com.fdsapi:fdsapi) = 1.2
-# BuildRequires:	mvn(it.eng.spagobi:QbeCore) = 5.2.0
 # BuildRequires:	mvn(net.sf.jasperreports:jasperreports-chart-themes) = 6.1.0
 # BuildRequires:	mvn(net.sf.jasperreports:jasperreports-fonts) = 6.0.0
 BuildRequires:	wsdl4j
@@ -242,6 +287,7 @@ BuildRequires:	wsdl4j
 BuildRequires:	xerces-j2
 # ^ EL7 has 2.11.0 while 2.10.0 is required by pom
 BuildRequires:	xml-commons-apis = 1.4.01
+BuildRequires:	aopalliance
 %endif
 
 %if %{with_jpivot_engine}
@@ -269,7 +315,6 @@ BuildRequires:	jboss-jsf-2.1-api = 1.2
 # BuildRequires:	mvn(eigenbase:eigenbase-properties) = 1.3
 # BuildRequires:	mvn(eigenbase:eigenbase-resgen) = 1.3
 # BuildRequires:	mvn(eigenbase:eigenbase-xom) = 1.3
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 # BuildRequires:	mvn(jfreechart:jfreechart) = 1.0.0
 # BuildRequires:	mvn(jstl:jstl) = 1.2
 # BuildRequires:	mvn(pentaho:mondrian) = 3.1.5
@@ -298,7 +343,6 @@ BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
 %endif
 BuildRequires:	apache-commons-lang = 2.1
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -324,7 +368,6 @@ BuildRequires:	batik
 BuildRequires:	jaxen
 # ^ EL7 has 1.1.3 while 1.1 is required by pom
 # BuildRequires:	mvn(com.fdsapi:fdsapi) = 1.2
-# BuildRequires:	mvn(it.eng.spagobi:QbeCore) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -336,7 +379,6 @@ BuildRequires:	glassfish-servlet-api
 %endif
 BuildRequires:	dom4j = 1.6.1
 BuildRequires:	jakarta-commons-httpclient = 3.0.1
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -345,8 +387,6 @@ BuildRequires:	wsdl4j
 %if 0%{?fedora}
 BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
-BuildRequires:	resteasy-core
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 BuildRequires:	resteasy-optional
 # ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
@@ -366,7 +406,6 @@ BuildRequires:	mvn(edu.princeton:java-cup) = 11b
 BuildRequires:	mvn(eigenbase:eigenbase-properties) = 1.3
 BuildRequires:	mvn(eigenbase:eigenbase-resgen) = 1.3
 BuildRequires:	mvn(eigenbase:eigenbase-xom) = 1.3
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIUtils) = 5.2.0
 BuildRequires:	mvn(mondrian:mondrian) = 3.8.0.0-209
 BuildRequires:	mvn(org.hsqldb:hsqldb-driver) = 8.0.2
 BuildRequires:	mvn(org.olap4j:olap4j) = 1.1.0
@@ -379,7 +418,6 @@ BuildRequires:	wsdl4j
 # TODO: get all build deps packaged and reviewed for licensing
 # TODO: get included js libraries (extjs for example) handled properly
 # TODO: update summaries and descriptions
-# TODO: set subpackages Requires
 
 %description
 SpagoBI is an Open Source Business Intelligence suite
@@ -425,6 +463,18 @@ Requires: %{name} = %{version}-%{release}
 SpagoBI Cockpit Engine
 %endif
 
+%package commons-core
+Summary: SpagoBI Commons Core
+
+%description commons-core
+SpagoBI Commons Core
+
+%package core
+Summary: SpagoBI Core
+
+%description core
+SpagoBI Core
+
 %if %{with_common_jengine}
 %package common-jengine
 Summary: SpagoBI Common JEngine
@@ -445,6 +495,20 @@ of actions for manage these.
 This engine can works only or within the eBam platform
 (see http://www.eclipse.org/ebam for more details). I
 %endif
+
+%package dao
+Summary: SpagoBI DAO
+Requires: %{name}-qbe-core = %{version}-%{release}
+
+%description dao
+SpagoBI DAO
+
+
+%package database-scripts
+Summary: SpagoBI Database Scripts
+
+%description database-scripts
+SpagoBI Database Scripts
 
 %if %{with_data_mining_engine}
 %package data-mining-engine
@@ -496,6 +560,21 @@ SpagoBI JasperReport Engine supports the execution of reports designed
 with iReport 3.0.0.
 %endif
 
+%package metamodel-core
+Summary: SpagoBI MetaModel Core
+Requires: %{name}-utils = %{version}-%{release}
+Requires: %{name}-commons-core = %{version}-%{release}
+
+%description metamodel-core
+SpagoBI MetaModel Core
+
+%package metamodel-utils
+Summary: SpagoBI MetaModel Utils
+Requires: %{name}-metamodel-core = %{version}-%{release}
+
+%description metamodel-utils
+SpagoBI MetaModel Utils
+
 %if %{with_mobile_engine}
 %package mobile-engine
 Summary: SpagoBI Mobile Engine
@@ -513,6 +592,27 @@ Requires: %{name} = %{version}-%{release}
 %description network-engine
 SpagoBI Network Engine
 %endif
+
+%package ldap-security-provider
+Summary: SpagoBI Ldap Security Provider
+Requires: %{name} = %{version}-%{release}
+
+%description ldap-security-provider
+SpagoBI Ldap Security Provider
+
+%package liferay-security-provider
+Summary: SpagoBI Liferay Security Provider
+Requires: %{name} = %{version}-%{release}
+
+%description liferay-security-provider
+SpagoBI Liferay Security Provider
+
+%package oauth2-security-provider
+Summary: SpagoBI OAuth2 Security Provider
+Requires: %{name} = %{version}-%{release}
+
+%description oauth2-security-provider
+SpagoBI OAuth2 Security Provider
 
 %if %{with_qbe_engine}
 %package qbe-engine
@@ -552,12 +652,66 @@ The SpagoBIWhatIfEngine is the brand new SpagoBI OLAP engine with writeback
 capabilities, based on the popular Mondrian OLAP engine.
 %endif
 
+%package utils
+Summary: SpagoBI Utils
+
+%description utils
+SpagoBI Utils
+
+
+%package utils-json
+Summary: SpagoBI Utils JSON
+
+%description utils-json
+SpagoBI Utils JSON
+
+%package qbe-core
+Summary: SpagoBI QbeCore
+
+%description qbe-core
+SpagoBI QbeCore
+
 %prep
 %setup -q -n spagobi5x-@CHECKOUT@
 %if 0%{?fedora}
 # the pom_change_dep macro is not available on EL 7
 %pom_change_dep :log4j ::1.2.17 SpagoBIUtils
+# The artifact javax.xml:jaxrpc:jar:1.1 has been relocated to javax.xml:jaxrpc-api:jar:1.1
+%pom_change_dep javax.xml:jaxrpc:1.1 javax.xml:jaxrpc-api:1.1 SpagoBIUtils
 %endif
+
+# Tests are disabled
+%pom_remove_plugin :maven-surefire-plugin spagobi-parent
+
+%pom_remove_dep junit:junit QbeCore
+
+%pom_remove_dep junit:junit spagobi-core
+%pom_remove_dep memory-measurer:memory-measurer spagobi-core
+%pom_remove_dep junit:junit SpagoBIDAO
+
+%pom_remove_dep junit:junit SpagoBIUtils
+
+%if %{with_what_if_engine}
+%pom_remove_dep org.hsqldb:hsqldb-driver SpagoBIWhatIfEngine
+%endif
+
+
+
+# Install included jar files
+%mvn_artifact spagobi-core/pom.xml spagobi-core/target/spagobi-core-%{version}.jar
+%mvn_artifact spagobi-commons-core/pom.xml spagobi-commons-core/target/spagobi-commons-core-%{version}.jar
+%mvn_artifact spagobi-metamodel-core/pom.xml spagobi-metamodel-core/target/spagobi-metamodel-core-%{version}.jar
+%mvn_artifact spagobi-metamodel-utils/pom.xml spagobi-metamodel-utils/target/spagobi-metamodel-utils-%{version}.jar
+%mvn_artifact SpagoBIDAO/pom.xml SpagoBIDAO/target/SpagoBIDAO-%{version}.jar
+%mvn_artifact SpagoBILdapSecurityProvider/pom.xml SpagoBILdapSecurityProvider/target/SpagoBILdapSecurityProvider-%{version}.jar
+%mvn_artifact SpagoBILiferaySecurityProvider/pom.xml SpagoBILiferaySecurityProvider/target/SpagoBILiferaySecurityProvider-%{version}.jar
+%mvn_artifact SpagoBIOAuth2SecurityProvider/pom.xml SpagoBIOAuth2SecurityProvider/target/SpagoBIOAuth2SecurityProvider-%{version}.jar
+%mvn_artifact SpagoBIUtils/pom.xml SpagoBIUtils/target/SpagoBIUtils-%{version}.jar
+%mvn_artifact SpagoBIUtilsJSON/pom.xml SpagoBIUtilsJSON/target/SpagoBIUtilsJSON-%{version}.jar
+%mvn_artifact QbeCore/pom.xml QbeCore/target/QbeCore-%{version}.jar
+
+# CAS is not needed for now
+%pom_disable_module ../cas spagobi-parent/pom.xml
 
 %if ! %{with_accessibility_engine}
 	%pom_disable_module ../SpagoBIAccessibilityEngine spagobi-parent/pom.xml
@@ -569,6 +723,7 @@ capabilities, based on the popular Mondrian OLAP engine.
 
 %if ! %{with_birt_report_engine}
 	%pom_disable_module ../SpagoBIBirtReportEngine spagobi-parent/pom.xml
+	%pom_disable_module ../spagobi.birt.oda spagobi-parent/pom.xml
 %endif
 
 %if ! %{with_chart_engine}
@@ -634,8 +789,22 @@ cd spagobi-parent
 mvn package -Dmaven.test.skip=true -P wildfly -Dwildfly.home=..
 
 %install
-cd standalone/deployments
 install -dm 0755 %{buildroot}/usr/share/%{name}
+
+# Install Database Scripts
+DBSCRIPTDIR=%{buildroot}/usr/share/%{name}/dbscripts
+install -dm 0755 ${DBSCRIPTDIR}
+cd SpagoBIDatabaseScripts
+cp -r ./* ${DBSCRIPTDIR}
+find ${DBSCRIPTDIR} -type d -exec chmod 755 \{\} \;
+find ${DBSCRIPTDIR} -type f -exec chmod 644 \{\} \;
+cd ..
+
+#Install Java Libraries
+%mvn_install
+
+# Install Web Apps
+cd standalone/deployments
 for i in *.war
 do
     install -dm 0755 %{buildroot}/usr/share/%{name}/${i}
@@ -643,9 +812,17 @@ do
     xmvn-subst %{buildroot}/usr/share/%{name}/${i}/WEB-INF/lib
 done
 
+
+
 %files
 %license SpagoBIProject/src/main/webapp/LICENSE.txt
 %{_datadir}/%{name}/SpagoBI.war
+%if 0%{?fedora}
+%{_datadir}/maven-metadata/*
+%endif
+%if 0%{?rhel}
+%{_mavendepmapfragdir}/*
+%endif
 
 %if %{with_accessibility_engine}
 %files accessibility-engine
@@ -725,6 +902,33 @@ done
 %{_datadir}/%{name}/SpagoBINetworkEngine.war
 %endif
 
+%files ldap-security-provider
+%{_javadir}/%{name}/SpagoBILdapSecurityProvider.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/SpagoBILdapSecurityProvider.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-SpagoBILdapSecurityProvider.pom
+%endif
+
+%files liferay-security-provider
+%{_javadir}/%{name}/SpagoBILiferaySecurityProvider.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/SpagoBILiferaySecurityProvider.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-SpagoBILiferaySecurityProvider.pom
+%endif
+
+%files oauth2-security-provider
+%{_javadir}/%{name}/SpagoBIOAuth2SecurityProvider.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/SpagoBIOAuth2SecurityProvider.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-SpagoBIOAuth2SecurityProvider.pom
+%endif
+
 %if %{with_qbe_engine}
 %files qbe-engine
 %license SpagoBIQbeEngine/src/main/webapp/LICENSE.txt
@@ -746,6 +950,83 @@ done
 %files what-if-engine
 %{_datadir}/%{name}/SpagoBIWhatIfEngine.war
 %endif
+
+%files utils
+%{_javadir}/%{name}/SpagoBIUtils.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/SpagoBIUtils.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-SpagoBIUtils.pom
+%endif
+
+%files utils-json
+%{_javadir}/%{name}/SpagoBIUtilsJSON.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/SpagoBIUtilsJSON.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-SpagoBIUtilsJSON.pom
+%endif
+
+%files qbe-core
+%{_javadir}/%{name}/QbeCore.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/QbeCore.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-QbeCore.pom
+%endif
+
+%files commons-core
+%{_javadir}/%{name}/spagobi-commons-core.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/spagobi-commons-core.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-spagobi-commons-core.pom
+%endif
+
+%files core
+%{_javadir}/%{name}/spagobi-core.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/spagobi-core.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-spagobi-core.pom
+%endif
+
+%files dao
+%{_javadir}/%{name}/SpagoBIDAO.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/SpagoBIDAO.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-SpagoBIDAO.pom
+%endif
+
+
+%files metamodel-core
+%{_javadir}/%{name}/spagobi-metamodel-core.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/spagobi-metamodel-core.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-spagobi-metamodel-core.pom
+%endif
+
+%files metamodel-utils
+%{_javadir}/%{name}/spagobi-metamodel-utils.jar
+%if 0%{?fedora}
+%{_mavenpomdir}/%{name}/spagobi-metamodel-utils.pom
+%endif
+%if 0%{?rhel}
+%{_mavenpomdir}/JPP.spagobi-spagobi-metamodel-utils.pom
+%endif
+
+%files database-scripts
+%{_datadir}/%{name}/dbscripts/
+
 
 %changelog
 * Mon Jan 18 2016 Sandro Bonazzola <sbonazzo@redhat.com> - @VERSION@-0.1.@CHECKOUT@
