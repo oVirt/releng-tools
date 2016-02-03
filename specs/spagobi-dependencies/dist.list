@@ -1,4 +1,6 @@
 ChangeLog
+COPYING
+COPYING.csv
 Makefile
 build.sh
 common.sh

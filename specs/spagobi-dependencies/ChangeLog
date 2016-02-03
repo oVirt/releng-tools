@@ -2,9 +2,20 @@
 
  * Initial release.
  * +activation-1.1.1
- * +common-3.6.200-v20130402-1505
- * +org.eclipse.text-3.5.101
- * +restito-0.8
+ * +asm-attrs-1.5.3
+ * +batik-1.5-fop-0.20-5
  * +commands-3.3.0-I20070605-0010
+ * +common-3.6.200-v20130402-1505
+ * +commons-betwixt-0.7
+ * +fop-0.20.5
  * +jersey-grizzly2-1.18.3
- * +resteasy-jaxrs-2.3.5.Final.jar
+ * +jersey-project-1.18.3
+ * +jvnet-parent-4
+ * +MetaModel-4.3.1
+ * +MetaModel-core-4.3.1
+ * +MetaModel-pojo-4.3.1
+ * +org.eclipse.text-3.5.101
+ * +resteasy-jaxrs-2.3.5.Final
+ * +resteasy-jaxrs-all-2.3.5.Final
+ * +restito-0.8
+

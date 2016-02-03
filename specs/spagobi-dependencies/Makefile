@@ -45,6 +45,7 @@ install:	all
 
 .PHONY: spagobi-dependencies.spec.in.in
 dist:		\
+		doc \
 		download \
 		spagobi-dependencies.spec \
 		$(NULL)

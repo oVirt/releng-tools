@@ -41,6 +41,23 @@ BuildRequires: mvn(org.glassfish.grizzly:grizzly-http-server)
 BuildRequires: mvn(org.mockito:mockito-core)
 BuildRequires: mvn(com.jayway.jsonpath:json-path)
 BuildRequires: mvn(junit:junit)
+
+# it.eng.spago:spago-core
+BuildRequires: mvn(avalon-framework:avalon-framework)
+BuildRequires: mvn(com.jamonapi:jamon)
+BuildRequires: mvn(commons-dbcp:commons-dbcp)
+BuildRequires: mvn(commons-validator:commons-validator)
+BuildRequires: mvn(javax.mail:mail)
+BuildRequires: mvn(javax.transaction:jta)
+BuildRequires: mvn(oro:oro)
+
+BuildRequires: mvn(org.apache:apache:pom:)
+
+# commons-betwixt:commons-betwixt
+BuildRequires: mvn(commons-beanutils:commons-beanutils-core)
+BuildRequires: mvn(commons-digester:commons-digester)
+
+
 %endif
 
 %description
@@ -48,6 +65,7 @@ SpagoBI 3rd party dependencies
 
 %prep
 %setup -q -n %{name}-@PACKAGE_VERSION@
+
 %if 0%{?fedora}
 # these deps are already available in Fedora
 # eclipse-platform
@@ -56,11 +74,11 @@ rm -f downloads/org.eclipse.text*
 rm -f conf.d/commands.conf
 rm -f downloads/commands*
 rm -f conf.d/common.conf
-rm -f downloads/common*
+rm -f downloads/common-3.6*
 %endif
 
 # Parents first
-for artifact in downloads/*parent*.pom
+for artifact in $(find downloads -name "*parent*.pom")
 do
     %mvn_artifact ${artifact}
 done
@@ -73,13 +91,14 @@ then
 fi
 done
 
-for artifact in downloads/*.pom
+for artifact in $(find downloads -name "*.pom"|sort)
 do
 if [ -e ${artifact/.pom/.jar} ]
 then
     %mvn_artifact ${artifact} ${artifact/.pom/.jar}
 fi
 done
+
 
 
 %build
