@@ -1,3 +1,0 @@
-/sbin/service momd stop >/dev/null 2>&1 || true
-/sbin/chkconfig --del momd || true
-
