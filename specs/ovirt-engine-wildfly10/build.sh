@@ -3,7 +3,7 @@
 # The name, version and source of the package:
 name="ovirt-engine-wildfly"
 version="10.0.0"
-qualifier="CR5"
+qualifier="Final"
 src="wildfly-${version}.${qualifier}.zip"
 url="http://download.jboss.org/wildfly/${version}.${qualifier}/${src}"
 
