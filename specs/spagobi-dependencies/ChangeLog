@@ -10,6 +10,8 @@
  * +fop-0.20.5
  * +jersey-grizzly2-1.18.3
  * +jersey-project-1.18.3
+ * +juh-3.2.1
+ * +jurt-3.2.1
  * +jvnet-parent-4
  * +MetaModel-4.3.1
  * +MetaModel-core-4.3.1
@@ -21,4 +23,5 @@
  * +resteasy-jaxrs-2.3.5.Final
  * +resteasy-jaxrs-all-2.3.5.Final
  * +restito-0.8
-
+ * +ridl-3.2.1
+ * +unoil-3.2.1

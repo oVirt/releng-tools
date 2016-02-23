@@ -102,17 +102,47 @@ done
 
 %build
 make OFFLINE=1 %{?_smp_mflags}
+
+# _repack_broken_jar <jar file> <hash> <conf file>
+function _repack_broken_jar() {
+    local jarfile="${1}"
+    local oldhash="${2}"
+    local conf="${3}"
+    mkdir tmp
+    pushd tmp
+        jar xvf ../downloads/${jarfile}
+        jar cvf ../downloads/${jarfile} *
+    popd
+    rm -rf tmp
+    newhash="$(sha1sum downloads/${jarfile}  | awk '{print $1}' )"
+    sed -i "s:${oldhash}:${newhash}:" conf.d/${conf}
+}
+
 #{ com.liferay.portal:portal-client:jar:5.2.3
 # workaround for duplicate entry: com/liferay/client/soap/portal/service/http/deploy.wsdd
-mkdir tmp
-cd tmp
-jar xvf ../downloads/portal-client-5.2.3.jar
-jar cvf ../downloads/portal-client-5.2.3.jar *
-cd ..
-rm -rf tmp
-newhash="$(sha1sum downloads/portal-client-5.2.3.jar  |cut -f1 -d\ )"
-sed -i "s:20ba2461ec270d4e4d6e9a9fde2cc39aa8f0b60e:${newhash}:" conf.d/portal-client.conf
+_repack_broken_jar portal-client-5.2.3.jar 20ba2461ec270d4e4d6e9a9fde2cc39aa8f0b60e portal-client.conf
 #}
+
+#{ org.openoffice:unoil:jar:3.2.1
+# workaround for invalid entry compressed size (expected 640 but got 638 bytes)
+_repack_broken_jar unoil-3.2.1.jar 3fe6ae6fb39d7404229bf75ae5f56bf1827fa3c9 unoil.conf
+#}
+
+#{ org.openoffice:ridl:jar:3.2.1
+# workaround for invalid entry compressed size (expected 5592 but got 5558 bytes)
+_repack_broken_jar ridl-3.2.1.jar c2383e8c2ae1e91e9bf9d115585d15f6806249ea ridl.conf
+#}
+
+#{ org.openoffice:jurt:jar:3.2.1
+# workaround for invalid entry compressed size (expected 7470 but got 7456 bytes)
+_repack_broken_jar jurt-3.2.1.jar bcc6e74d8ff0760799ae8bca67b5657091606d0e jurt.conf
+#}
+
+#{ org.openoffice:juh:jar:3.2.1
+# workaround for invalid entry compressed size (expected 6510 but got 6491 bytes)
+_repack_broken_jar juh-3.2.1.jar 8596138f58b984196ad4b69d03de534eda4f23af juh.conf
+#}
+
 
 %install
 rm -rf "%{buildroot}"
@@ -125,6 +155,7 @@ make %{?_smp_mflags} OFFLINE=1 install DESTDIR="%{buildroot}" JAVADIR="%{_javadi
 %doc ChangeLog
 %{_javadir}/%{name}/
 %if 0%{?fedora}
+%{_jnidir}/%{name}/
 %{_mavenpomdir}/%{name}/
 %{_datadir}/maven-metadata/*
 %endif
