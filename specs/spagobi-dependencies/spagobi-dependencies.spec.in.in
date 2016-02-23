@@ -57,7 +57,6 @@ BuildRequires: mvn(org.apache:apache:pom:)
 BuildRequires: mvn(commons-beanutils:commons-beanutils-core)
 BuildRequires: mvn(commons-digester:commons-digester)
 
-
 %endif
 
 %description
@@ -103,6 +102,17 @@ done
 
 %build
 make OFFLINE=1 %{?_smp_mflags}
+#{ com.liferay.portal:portal-client:jar:5.2.3
+# workaround for duplicate entry: com/liferay/client/soap/portal/service/http/deploy.wsdd
+mkdir tmp
+cd tmp
+jar xvf ../downloads/portal-client-5.2.3.jar
+jar cvf ../downloads/portal-client-5.2.3.jar *
+cd ..
+rm -rf tmp
+newhash="$(sha1sum downloads/portal-client-5.2.3.jar  |cut -f1 -d\ )"
+sed -i "s:20ba2461ec270d4e4d6e9a9fde2cc39aa8f0b60e:${newhash}:" conf.d/portal-client.conf
+#}
 
 %install
 rm -rf "%{buildroot}"
