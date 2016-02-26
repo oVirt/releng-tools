@@ -65,17 +65,6 @@ SpagoBI 3rd party dependencies
 %prep
 %setup -q -n %{name}-@PACKAGE_VERSION@
 
-%if 0%{?fedora}
-# these deps are already available in Fedora
-# eclipse-platform
-rm -f conf.d/org-eclipse-text.conf
-rm -f downloads/org.eclipse.text*
-rm -f conf.d/commands.conf
-rm -f downloads/commands*
-rm -f conf.d/common.conf
-rm -f downloads/common-3.6*
-%endif
-
 # Parents first
 for artifact in $(find downloads -name "*parent*.pom")
 do
