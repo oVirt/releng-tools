@@ -57,6 +57,17 @@ BuildRequires: xmvn-subst
 BuildRequires: spagobi-dependencies
 Requires: spagobi-dependencies
 
+# Internal dependencies
+Requires: %{name}-commons-core = %{version}-%{release}
+Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-dao = %{version}-%{release}
+Requires: %{name}-qbe-core = %{version}-%{release}
+Requires: %{name}-ldap-security-provider = %{version}-%{release}
+Requires: %{name}-metamodel-core = %{version}-%{release}
+Requires: %{name}-metamodel-utils = %{version}-%{release}
+Requires: %{name}-oauth2-security-provider = %{version}-%{release}
+Requires: %{name}-utils = %{version}-%{release}
+Requires: %{name}-utils-json = %{version}-%{release}
 
 # Common requirements
 BuildRequires: antlr-tool
@@ -80,30 +91,11 @@ BuildRequires: mongo-java-driver
 BuildRequires: portlet-2.0-api
 BuildRequires: wss4j
 BuildRequires: resteasy-core
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
+BuildRequires: super-csv
 
-
-# Exception: Following dependencies were not resolved and requires cannot
-# be generated.
-# Either remove the dependencies from pom.xml or add proper packages
-# to BuildRequires:
-
-# org.jasig.cas:cas-client-core:3.1.6 required by it.eng.spagobi:SpagoBIUtils
-# de.myfoo:commonj:1.0 required by it.eng.spagobi:SpagoBIUtils
-# opensymphony:quartz:1.6.0 required by it.eng.spagobi:SpagoBIUtils
-# org.dspace.xmlui.ehcache:ehcache:1.1 required by it.eng.spagobi:SpagoBIUtils
-# com.hbql:HBql:0.90.0.1 required by it.eng.spagobi:SpagoBIUtils
-# it.eng.spago:spago-core:2.3.0 required by it.eng.spagobi:SpagoBIUtils
-# it.eng.spago:spago-web:2.3.0 required by it.eng.spagobi:SpagoBIUtils
-# org.safehaus.jug:jug::lgpl:2.0.0 required by it.eng.spagobi:SpagoBIUtils
-# it.eng.spago:spago-portlet:2.3.0 required by it.eng.spagobi:SpagoBIUtils
-# org.jgrapht:jgrapht-core:0.9.1 required by it.eng.spagobi:SpagoBIUtils
-
-# org.jboss.resteasy:resteasy-jaxrs:3.0.9.Final required by it.eng.spagobi:spagobi-core
-
-# org.eclipse.core:runtime:3.10.0-v20140318-2214 required by it.eng.spagobi:spagobi-commons-core
-
-
+# Core
+BuildRequires: jtidy
+BuildRequires: lucene-highlighter
 %endif
 
 # QbeCore
@@ -178,7 +170,6 @@ BuildRequires:	httpcomponents-client
 # ^ EL7 has 4.2.5 while 4.5 is required by pom
 BuildRequires:	httpcomponents-core
 # ^ EL7 has 4.2.4 while 4.4.3 is required by pom
-#BuildRequires:	mvn(it.eng.spagobi:SpagoBIDAO) = 5.2.0
 BuildRequires:	wsdl4j
 # ^ EL7 has 1.6.3 while 1.5.1 is required by pom
 %endif
@@ -220,7 +211,6 @@ BuildRequires:	httpcomponents-client
 # ^ EL7 has 4.2.5 while 4.5 is required by pom
 BuildRequires:	httpcomponents-core
 # ^ EL7 has 4.2.4 while 4.4.3 is required by pom
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIDAO) = 5.2.0
 # BuildRequires:	mvn(org.rosuda:JRI) = 1.7.0
 # BuildRequires:	mvn(org.rosuda:JRIEngine) = 1.7.0
 # BuildRequires:	mvn(org.rosuda:REngine) = 1.7.0
@@ -258,7 +248,6 @@ BuildRequires:	glassfish-servlet-api
 %endif
 BuildRequires:	json-lib = 2.4
 BuildRequires:	json_simple = 1.1
-# BuildRequires:	mvn(it.eng.spagobi:SpagoBIDAO) = 5.2.0
 # BuildRequires:	mvn(org.geotools:gt-geojson) = 2.7.5
 # BuildRequires:	mvn(org.geotools:gt-shapefile) = 2.7.5
 # BuildRequires:	mvn(org.geotools:gt-swing) = 2.7.5
@@ -333,7 +322,6 @@ BuildRequires:	glassfish-servlet-api
 %endif
 BuildRequires:	glassfish-jsp
 # ^ EL7 has 2.2.6 while 2.0 is required by pom
-#BuildRequires:	mvn(it.eng.spagobi:spagobi-core) = 5.2.0
 %endif
 
 %if %{with_network_engine}
@@ -554,6 +542,9 @@ The engine comes with an embedded version of Mondrian server.
 %package jasper-report-engine
 Summary: SpagoBI JasperReport Engine
 Requires: %{name} = %{version}-%{release}
+Requires: %{name}-qbe-core = %{version}-%{release}
+Requires: %{name}-utils = %{version}-%{release}
+Requires: %{name}-utils-json = %{version}-%{release}
 
 %description jasper-report-engine
 SpagoBI JasperReport Engine supports the execution of reports designed
@@ -563,6 +554,7 @@ with iReport 3.0.0.
 %package metamodel-core
 Summary: SpagoBI MetaModel Core
 Requires: %{name}-utils = %{version}-%{release}
+Requires: %{name}-utils-json = %{version}-%{release}
 Requires: %{name}-commons-core = %{version}-%{release}
 
 %description metamodel-core
@@ -595,21 +587,18 @@ SpagoBI Network Engine
 
 %package ldap-security-provider
 Summary: SpagoBI Ldap Security Provider
-Requires: %{name} = %{version}-%{release}
 
 %description ldap-security-provider
 SpagoBI Ldap Security Provider
 
 %package liferay-security-provider
 Summary: SpagoBI Liferay Security Provider
-Requires: %{name} = %{version}-%{release}
 
 %description liferay-security-provider
 SpagoBI Liferay Security Provider
 
 %package oauth2-security-provider
 Summary: SpagoBI OAuth2 Security Provider
-Requires: %{name} = %{version}-%{release}
 
 %description oauth2-security-provider
 SpagoBI OAuth2 Security Provider
@@ -618,6 +607,8 @@ SpagoBI OAuth2 Security Provider
 %package qbe-engine
 Summary: SpagoBI Qbe Engine
 Requires: %{name} = %{version}-%{release}
+Requires: %{name}-utils = %{version}-%{release}
+Requires: %{name}-utils-json = %{version}-%{release}
 
 %description qbe-engine
 Query By Example (Qbe) is a SpagoBI engine that allows final users to freely
@@ -804,14 +795,21 @@ cd ..
 %mvn_install
 
 # Install Web Apps
-cd standalone/deployments
-for i in *.war
-do
-    install -dm 0755 %{buildroot}/usr/share/%{name}/${i}
-    unzip -q -o ${i} -d %{buildroot}/usr/share/%{name}/${i}
-    xmvn-subst %{buildroot}/usr/share/%{name}/${i}/WEB-INF/lib
-done
-
+pushd standalone/deployments
+    for i in *.war
+    do
+        install -dm 0755 %{buildroot}/usr/share/%{name}/${i}
+        unzip -q -o ${i} -d %{buildroot}/usr/share/%{name}/${i}
+        xmvn-subst %{buildroot}/usr/share/%{name}/${i}/WEB-INF/lib
+    done
+popd
+pushd %{buildroot}
+    for artifact in usr/share/java/%{name}/*
+    do
+        artifact_name=$(basename "${artifact}"|cut -f1 -d.)
+        find usr/share/%{name} -name "${artifact_name}-%{version}*.jar" -exec ln -sf /${artifact} {} \;
+    done
+popd
 
 
 %files
