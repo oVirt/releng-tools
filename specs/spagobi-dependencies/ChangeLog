@@ -23,7 +23,7 @@
  * +portal-client-5.2.3
  * +portal-kernel-5.2.3
  * +portal-service-5.2.3
- * +quartz-1.6.0
+ * +quartz-1.6.1
  * +resteasy-jaxrs-2.3.5.Final
  * +resteasy-jaxrs-all-2.3.5.Final
  * +restito-0.8
