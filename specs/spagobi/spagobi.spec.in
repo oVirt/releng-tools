@@ -669,6 +669,8 @@ SpagoBI QbeCore
 %pom_change_dep :log4j ::1.2.17 SpagoBIUtils
 # The artifact javax.xml:jaxrpc:jar:1.1 has been relocated to javax.xml:jaxrpc-api:jar:1.1
 %pom_change_dep javax.xml:jaxrpc:1.1 javax.xml:jaxrpc-api:1.1 SpagoBIUtils
+#The artifact opensymphony:quartz:jar:1.6.1 has been relocated to org.opensymphony.quartz:quartz
+%pom_change_dep opensymphony:quartz:1.6.1 org.opensymphony.quartz:quartz:1.6.1 SpagoBIUtils
 %endif
 
 # Tests are disabled
