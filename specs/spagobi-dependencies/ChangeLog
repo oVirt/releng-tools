@@ -4,13 +4,15 @@
  * +activation-1.1.1
  * +asm-attrs-1.5.3
  * +batik-1.5-fop-0.20-5
+ * +bayeux-api-3.0.5
  * +cas-client-core-3.1.6
+ * +cometd-java-common-3.0.5
+ * +cometd-java-server-3.0.5
  * +commands-3.3.0-I20070605-0010
  * +common-3.6.200-v20130402-1505
  * +commons-betwixt-0.7
  * +fop-0.20.5
  * +jersey-grizzly2-1.18.3
- * +jersey-project-1.18.3
  * +juh-3.2.1
  * +jurt-3.2.1
  * +jvnet-parent-4
@@ -24,8 +26,7 @@
  * +portal-kernel-5.2.3
  * +portal-service-5.2.3
  * +quartz-1.6.1
- * +resteasy-jaxrs-2.3.5.Final
- * +resteasy-jaxrs-all-2.3.5.Final
+ * +resteasy-jaxrs-2.3.5
  * +restito-0.8
  * +ridl-3.2.1
  * +unoil-3.2.1

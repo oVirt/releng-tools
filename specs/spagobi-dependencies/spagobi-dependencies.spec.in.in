@@ -10,7 +10,6 @@ URL:		http://www.ovirt.org
 Source:		@PACKAGE_NAME@-@PACKAGE_VERSION@-@PACKAGE_RPM_RELEASE@.tar.gz
 Group:		Virtualization/Management
 
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:	noarch
 
 BuildRequires:	tar
@@ -57,6 +56,11 @@ BuildRequires: mvn(org.apache:apache:pom:)
 BuildRequires: mvn(commons-beanutils:commons-beanutils-core)
 BuildRequires: mvn(commons-digester:commons-digester)
 
+# org.cometd.java:cometd-java-common
+BuildRequires: mvn(org.eclipse.jetty:jetty-util-ajax)
+
+# org.cometd.java:cometd-java-server
+BuildRequires: mvn(org.eclipse.jetty:jetty-jmx)
 %endif
 
 %description
@@ -66,24 +70,36 @@ SpagoBI 3rd party dependencies
 %setup -q -n %{name}-@PACKAGE_VERSION@
 
 # Parents first
+%mvn_artifact downloads/cometd-project-3.0.5.pom
+my_already_installed=(downloads/cometd-project-3.0.5.pom)
+
 for artifact in $(find downloads -name "*parent*.pom")
 do
-    %mvn_artifact ${artifact}
+    if ! [[ " ${my_already_installed[@]} " =~ " ${artifact} " ]]; then
+        %mvn_artifact ${artifact}
+        my_already_installed+=(${artifact})
+    fi
 done
 
-for artifact in $(find downloads -name "*.pom" ! -name "*parent*")
+for artifact in $(find downloads -name "*.pom")
 do
 if [ ! -e ${artifact/.pom/.jar} ]
 then
-    %mvn_artifact ${artifact}
+    if ! [[ " ${my_already_installed[@]} " =~ " ${artifact} " ]]; then
+        %mvn_artifact ${artifact}
+        my_already_installed+=(${artifact})
+    fi
 fi
 done
 
-for artifact in $(find downloads -name "*.pom"|sort)
+for artifact in $(find downloads -name "*.pom")
 do
 if [ -e ${artifact/.pom/.jar} ]
 then
-    %mvn_artifact ${artifact} ${artifact/.pom/.jar}
+    if ! [[ " ${my_already_installed[@]} " =~ " ${artifact} " ]]; then
+        %mvn_artifact ${artifact} ${artifact/.pom/.jar}
+        my_already_installed+=(${artifact})
+    fi
 fi
 done
 
