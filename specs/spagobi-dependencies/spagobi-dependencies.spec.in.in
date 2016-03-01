@@ -106,7 +106,7 @@ then
 fi
 done
 
-
+%mvn_alias opensymphony:quartz org.opensymphony.quartz:quartz
 
 %build
 make OFFLINE=1 %{?_smp_mflags}
