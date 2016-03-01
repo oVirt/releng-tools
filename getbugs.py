@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-# Copyright (C) 2014 Red Hat, Inc., Sandro Bonazzola <sbonazzo@redhat.com>
+# Copyright (C) 2014-2016 Red Hat, Inc., Sandro Bonazzola <sbonazzo@redhat.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,13 +73,18 @@ class GetBugs(object):
             default=False,
         )
         parser.add_argument(
+            '--debug',
+            action='store_true',
+            help='shows detailed errors in the output',
+            default=False,
+        )
+        parser.add_argument(
             '--target-milestone',
             type=str,
             help='restrict bugs to the given target milestone',
             default=None,
         )
         self._args = parser.parse_args()
-
 
     def main(self):
         self.parse_args()
@@ -98,13 +103,14 @@ class GetBugs(object):
                         )
                     )
                 except ValueError as e:
-                    sys.stderr.write(
-                        'Invalid input in %s: %s\n' % (
-                            self._args.current,
-                            line,
+                    if self._args.debug:
+                        sys.stderr.write(
+                            'Invalid input in %s: %s\n' % (
+                                self._args.current,
+                                line,
+                            )
                         )
-                    )
-                    sys.stderr.write(str(e))
+                        sys.stderr.write(str(e))
         current.sort()
 
         previous = []
@@ -121,13 +127,14 @@ class GetBugs(object):
                         )
                     )
                 except ValueError as e:
-                    sys.stderr.write(
-                        'Invalid input in %s: %s\n' % (
-                            self._args.previous,
-                            line,
+                    if self._args.debug:
+                        sys.stderr.write(
+                            'Invalid input in %s: %s\n' % (
+                                self._args.previous,
+                                line,
+                            )
                         )
-                    )
-                    sys.stderr.write(str(e))
+                        sys.stderr.write(str(e))
         previous.sort()
 
         not_in_old = set(current) - set(previous)
@@ -159,20 +166,37 @@ class GetBugs(object):
                         'CLOSED',
                     ):
                         sys.stderr.write(
-                            "%d - is in status %s and targeted to %s; assignee: %s\n" % (bug_id, r.status, r.target_milestone, r.assigned_to)
+                            (
+                                "{bug} - is in status {status} and targeted "
+                                "to {milestone}; "
+                                "assignee: {assignee}\n"
+                            ).format(
+                                bug=bug_id,
+                                status=r.status,
+                                milestone=r.target_milestone,
+                                assignee=r.assigned_to
+                            )
                         )
                     elif (
                         self._args.target_milestone is not None and
                         r.target_milestone != self._args.target_milestone
                     ):
                         sys.stderr.write(
-                            "%d - is targeted to %s; assignee: %s\n" % (bug_id, r.target_milestone, r.assigned_to)
+                            "%d - is targeted to %s; assignee: %s\n" % (
+                                bug_id,
+                                r.target_milestone,
+                                r.assigned_to
+                            )
                         )
                     else:
                         list_url += "%s%%2C " % bug_id
-                        sys.stdout.write('{{BZ|')
-                        sys.stdout.write(str(r.id))
-                        sys.stdout.write('}}')
+                        sys.stdout.write(
+                            ' - [BZ %s](%s%s)' % (
+                                str(r.id),
+                                BUGZILLA_HOME,
+                                str(r.id)
+                            )
+                        )
                         sys.stdout.write(' - ')
                         if self._args.show_target:
                             sys.stdout.write(str(r.target_release))
@@ -185,7 +209,7 @@ class GetBugs(object):
                                 r.summary, "utf-8", "xmlcharrefreplace"
                             )
                         )
-                        sys.stdout.write('<BR>\n')
+                        sys.stdout.write('\n')
                 else:
                     sys.stderr.write(
                         "%d - has product %s\n" % (bug_id, r.product)
