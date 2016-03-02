@@ -159,6 +159,10 @@ _repack_broken_jar jurt-3.2.1.jar bcc6e74d8ff0760799ae8bca67b5657091606d0e jurt.
 _repack_broken_jar juh-3.2.1.jar 8596138f58b984196ad4b69d03de534eda4f23af juh.conf
 #}
 
+#{ de.myfoo:commonj:jar:1.0
+# workaround for duplicate entry: de/myfoo/commonj/timers/FixedDelayTimer.class
+_repack_broken_jar commonj-1.0.jar eff38bd2912d297d22f40b0c131b757ccc4e3c1a commonj.conf
+#}
 
 %install
 rm -rf "%{buildroot}"
