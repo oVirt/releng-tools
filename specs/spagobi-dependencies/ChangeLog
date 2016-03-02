@@ -2,6 +2,7 @@
 
  * Initial release.
  * +activation-1.1.1
+ * +app-1.3.200-v20130910-1609
  * +asm-attrs-1.5.3
  * +batik-1.5-fop-0.20-5
  * +bayeux-api-3.0.5
@@ -11,11 +12,13 @@
  * +commands-3.3.0-I20070605-0010
  * +common-3.6.200-v20130402-1505
  * +commons-betwixt-0.7
+ * +contenttype-3.4.200-v20140207-1251
  * +fop-0.20.5
  * +HBql-0.90.0.1
  * +jbpm-3.1.2
  * +jersey-grizzly2-1.18.3
  * +jgrapht-core-0.9.1
+ * +jobs-3.6.0-v20140424-0053
  * +jug-2.0.0
  * +juh-3.2.1
  * +jurt-3.2.1
@@ -25,14 +28,29 @@
  * +MetaModel-pojo-4.3.1
  * +nl.captcha.simplecaptcha-1.1.1
  * +org.eclipse.core.commands-3.6.0
+ * +org.eclipse.core.contenttype-3.4.100.v20100505-1235
+ * +org.eclipse.core.expressions-3.4.200.v20100505
+ * +org.eclipse.core.filesystem-1.3.0.v20100526-0737
+ * +org.eclipse.core.jobs-3.5.0.v20100515
+ * +org.eclipse.core.resources-3.6.0.v20100526-0737
+ * +org.eclipse.core.runtime-3.6.0.v20100505
+ * +org.eclipse.equinox.app-1.3.0.v20100512
  * +org.eclipse.equinox.common-3.6.0
+ * +org.eclipse.equinox.preferences-3.3.0.v20100503
+ * +org.eclipse.equinox.registry-3.5.0.v20100503
+ * +org.eclipse.osgi-3.6.0.v20100517
+ * +org.eclipse.osgi.services-3.2.100.v20100503
  * +org.eclipse.text-3.5.101
+ * +osgi-3.10.0-v20140606-1445
  * +portal-client-5.2.3
  * +portal-kernel-5.2.3
  * +portal-service-5.2.3
+ * +preferences-3.5.200-v20140224-1527
  * +quartz-1.6.1
+ * +registry-3.5.400-v20140428-1507
  * +resteasy-jaxrs-2.3.5
  * +restito-0.8
  * +ridl-3.2.1
+ * +runtime-3.10.0-v20140318-2214
  * +unoil-3.2.1
  * +UserAgentUtils-1.2.4

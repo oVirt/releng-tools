@@ -16,6 +16,9 @@ BuildRequires:	tar
 BuildRequires:	unzip
 BuildRequires:	curl
 
+BuildRequires:	felix-osgi-foundation
+
+
 %if 0%{?rhel}
 BuildRequires: maven-local
 %endif
@@ -167,8 +170,8 @@ make %{?_smp_mflags} OFFLINE=1 install DESTDIR="%{buildroot}" JAVADIR="%{_javadi
 %doc COPYING.csv
 %doc ChangeLog
 %{_javadir}/%{name}/
-%if 0%{?fedora}
 %{_jnidir}/%{name}/
+%if 0%{?fedora}
 %{_mavenpomdir}/%{name}/
 %{_datadir}/maven-metadata/*
 %endif
