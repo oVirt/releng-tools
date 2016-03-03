@@ -28,15 +28,6 @@ BuildRequires: javapackages-local
 #com.sun.jersey:jersey-grizzly2
 BuildRequires: mvn(org.glassfish.grizzly:grizzly-http)
 
-# org.jboss.resteasy:resteasy-jaxrs
-BuildRequires: mvn(org.apache.httpcomponents:httpclient)
-BuildRequires: mvn(org.jboss.resteasy:jaxrs-api)
-BuildRequires: mvn(commons-httpclient:commons-httpclient)
-BuildRequires: mvn(javax.annotation:jsr250-api)
-BuildRequires: mvn(net.jcip:jcip-annotations)
-BuildRequires: mvn(commons-io:commons-io)
-BuildRequires: mvn(org.scannotation:scannotation)
-
 # com.xebialabs.restito:restito
 BuildRequires: mvn(org.apache.mina:mina-core)
 BuildRequires: mvn(org.glassfish.grizzly:grizzly-http-server)
