@@ -92,11 +92,16 @@ BuildRequires: portlet-2.0-api
 BuildRequires: wss4j
 BuildRequires: resteasy-core
 BuildRequires: super-csv
+%endif
 
 # Core
+%if 0%{?fedora}
 BuildRequires: jtidy
 BuildRequires: lucene-highlighter
+BuildRequires: resteasy-multipart-provider
+BuildRequires: resteasy-optional
 %endif
+
 
 # QbeCore
 %if 0%{?fedora}
@@ -121,8 +126,6 @@ BuildRequires:  xerces-j2 = 2.11.0
 BuildRequires:  glassfish-servlet-api = 3.0.1
 BuildRequires:  hibernate-validator
 # ^ Fedora has 5.0.1 while 4.1.0 is required by pom
-BuildRequires:  resteasy-optional
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
 BuildRequires:  hibernate-core = 3.6.2
 BuildRequires:  hibernate-jpa-2.0-api = 1.0.0
@@ -163,8 +166,6 @@ BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
 BuildRequires:	groovy-lib
 # ^ Fedora has 2.4.4 while 2.1.6 is required by pom
-BuildRequires:	resteasy-optional
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
 BuildRequires:	httpcomponents-client
 # ^ EL7 has 4.2.5 while 4.5 is required by pom
@@ -202,10 +203,6 @@ BuildRequires:	wsdl4j
 # Missing on EL7
 BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
-BuildRequires:	resteasy-multipart-provider
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
-BuildRequires:	resteasy-optional
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
 BuildRequires:	httpcomponents-client
 # ^ EL7 has 4.2.5 while 4.5 is required by pom
@@ -375,8 +372,6 @@ BuildRequires:	wsdl4j
 %if 0%{?fedora}
 BuildRequires:	glassfish-servlet-api
 # ^ Fedora has 3.1.0 while 3.0.1 is required by pom
-BuildRequires:	resteasy-optional
-# ^ Fedora has 3.0.6 while 3.0.9 is required by pom
 %endif
 BuildRequires:	apache-commons-configuration = 1.9
 BuildRequires:	apache-commons-lang = 2.1
