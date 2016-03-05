@@ -1,0 +1,26 @@
+Name: ovirt-engine-nodejs-modules
+Version: 0.0.0
+Release: 0.0%{?dist}
+Summary: Node.js modules required to build oVirt Engine JavaScript applications
+Group: Virtualization/Management
+License: ASL 2.0
+URL: http://ovirt.org
+Source: @TAR@
+
+BuildArch: x86_64
+
+Requires: ovirt-engine-nodejs
+
+%description
+Node.js modules required to build oVirt Engine JavaScript applications.
+
+%install
+mkdir -p %{buildroot}%{_datadir}/%{name}
+tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
+
+%files
+%{_datadir}
+
+%changelog
+* Sat Mar 5 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.0
+- Initial packaging.

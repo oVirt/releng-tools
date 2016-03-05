@@ -1,0 +1,6 @@
+{
+  "name": "dependencies",
+  "dependencies": {
+    "less": "= 2.6.1"
+  }
+}

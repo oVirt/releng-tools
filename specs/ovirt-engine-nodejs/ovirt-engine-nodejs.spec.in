@@ -1,0 +1,25 @@
+Name: ovirt-engine-nodejs
+Version: @VERSION@
+Release: 0.0%{?dist}
+Summary: Node.js for oVirt Engine
+Group: Virtualization/Management
+License: ASL 2.0
+URL: https://nodejs.org
+Source: @SRC@
+
+BuildArch: x86_64
+
+%description
+Node.js for oVirt Engine
+
+%install
+mkdir -p %{buildroot}%{_datadir}
+tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}
+mv %{buildroot}%{_datadir}/node-v%{version}-linux-x64 %{buildroot}%{_datadir}/%{name}
+
+%files
+%{_datadir}
+
+%changelog
+* Fri Mar 4 2016 Juan Hernandez <juan.hernandez@redhat.com> - 4.3.2
+- Initial packaging.
