@@ -29,6 +29,13 @@ rm -rf "${modules_dir}"
 npm install
 tar -cJf "${modules_tar}" "${modules_dir}"
 
+# Configure the path environment variable so that we can use the
+# binaries provided by the modules installed in the previous step:
+export PATH="${PWD}/${modules_dir}/.bin:${PATH}"
+
+# Scan the downloaded modules and generate the LICENSES.csv file:
+license-checker --csv --out LICENSES.csv
+
 # Generate the spec from the template:
 sed \
     -e "s/@TAR@/${modules_tar}/g" \

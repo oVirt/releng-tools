@@ -3,8 +3,8 @@ Version: @VERSION@
 Release: 0.0%{?dist}
 Summary: Node.js for oVirt Engine
 Group: Virtualization/Management
-License: ASL 2.0
 URL: https://nodejs.org
+License: Multiple
 Source: @SRC@
 
 BuildArch: x86_64
@@ -18,6 +18,7 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}
 mv %{buildroot}%{_datadir}/node-v%{version}-linux-x64 %{buildroot}%{_datadir}/%{name}
 
 %files
+%license %{_datadir}/%{name}/LICENSE
 %{_datadir}
 
 %changelog
