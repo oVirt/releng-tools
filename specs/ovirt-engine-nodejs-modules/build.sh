@@ -27,7 +27,7 @@ modules_dir="node_modules"
 modules_tar="${modules_dir}.tar.xz"
 rm -rf "${modules_dir}"
 npm install
-tar -cJf "${modules_tar}" -C "${modules_dir}" .
+tar -cJf "${modules_tar}" "${modules_dir}"
 
 # Generate the spec from the template:
 sed \

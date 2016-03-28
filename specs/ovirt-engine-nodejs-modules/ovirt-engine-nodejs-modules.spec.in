@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 0.0.0
-Release: 0.0%{?dist}
+Release: 0.1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
 License: ASL 2.0
@@ -22,5 +22,9 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 %{_datadir}
 
 %changelog
-* Sat Mar 5 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.0
+* Mon Mar 28 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.0-0.1
+- Move the modules to a "node_modules" directory, as otherwise some
+  tools, like "webpack", fail to find some of them.
+
+* Sat Mar 5 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.0-0.0
 - Initial packaging.
