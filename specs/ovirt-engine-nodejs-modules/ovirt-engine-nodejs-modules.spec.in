@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 0.0.1
-Release: 0.0%{?dist}
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -9,7 +9,7 @@ Source0: @TAR@
 Source1: LICENSES.csv
 Source2: CHANGES.adoc
 
-BuildArch: x86_64
+ExclusiveArch: x86_64
 
 Requires: ovirt-engine-nodejs
 
@@ -34,6 +34,9 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 %{_datadir}/%{name}
 
 %changelog
+* Thu Mar 31 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.1-1
+- Build only for x86_64.
+
 * Tue Mar 29 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.1-0.0
 - Added ReactJS, Babel and Webpack.
 
