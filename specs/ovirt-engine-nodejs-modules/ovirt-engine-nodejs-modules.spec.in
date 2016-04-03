@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.1
+Version: 0.0.2
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -34,6 +34,9 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 %{_datadir}/%{name}
 
 %changelog
+* Sun Apr 3 2016 Martin Betak <mbetak@redhat.com> - 0.0.2-1
+- Added ESLint and ESLint Standard.js plugin.
+
 * Thu Mar 31 2016 Juan Hernandez <juan.hernadez@redhat.com> - 0.0.1-1
 - Build only for x86_64.
 
