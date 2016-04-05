@@ -174,7 +174,9 @@ class GetBugs(object):
                                 bug=bug_id,
                                 status=r.status,
                                 milestone=r.target_milestone,
-                                assignee=r.assigned_to
+                                assignee=codecs.encode(
+                                    r.assigned_to, "utf-8", "xmlcharrefreplace"
+                                )
                             )
                         )
                     elif (
@@ -185,7 +187,10 @@ class GetBugs(object):
                             "%d - is targeted to %s; assignee: %s\n" % (
                                 bug_id,
                                 r.target_milestone,
-                                r.assigned_to
+                                codecs.encode(
+                                    r.assigned_to, "utf-8", "xmlcharrefreplace"
+                                )
+
                             )
                         )
                     else:
