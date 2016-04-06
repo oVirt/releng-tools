@@ -74,7 +74,12 @@ class GetReleaseNotes(object):
                 continue
             print "----------------------------------------------------------"
             print bz.cf_doc_type
-            print "{{BZ|%s}} <b>%s</b><br>" % (bz.id, bz.summary)
+            print ' - [BZ %s](%s%s) <b>%s</b>' % (
+                str(bz.id),
+                BUGZILLA_HOME,
+                str(bz.id),
+                bz.summary
+            )
             notes = bz.cf_release_notes.splitlines()
             for line in notes:
                 print line + '<br>'
