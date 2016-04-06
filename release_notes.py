@@ -25,6 +25,9 @@ Get info from bugzilla for helping with release note writing
 
 import argparse
 import bugzilla
+import codecs
+import sys
+import copy
 
 
 BUGZILLA_SERVER = 'bugzilla.redhat.com'
@@ -36,6 +39,7 @@ class GetReleaseNotes(object):
     def __init__(self):
         super(GetReleaseNotes, self).__init__()
         self._args = None
+        self._bugs = {}
 
     def parse_args(self):
         parser = argparse.ArgumentParser(
@@ -60,10 +64,21 @@ class GetReleaseNotes(object):
         ans = bzobj.query(queryobj)
         list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
         for bz in ans:
-            if bz.cf_doc_type == "Bug Fix":
-                continue
-            if bz.classification != "oVirt":
-                continue
+            if not (
+                (
+                    bz.product in (
+                        'Red Hat Enterprise Virtualization Manager',
+                        'oVirt',
+                        'Red Hat Storage',
+                        'Red Hat Gluster Storage',
+                    )
+                ) or (bz.classification == 'oVirt')
+            ):
+                sys.stderr.write(
+                    "%d - has product %s\n" % (bz.id, bz.product)
+                )
+            #if bz.cf_fixed_in != "ovirt 4.0.0 alpha1":
+                #continue
             if bz.status not in (
                 'MODIFIED',
                 'ON_QA',
@@ -72,21 +87,41 @@ class GetReleaseNotes(object):
                 'CLOSED',
             ):
                 continue
-            print "----------------------------------------------------------"
-            print bz.cf_doc_type
-            print ' - [BZ %s](%s%s) <b>%s</b>' % (
-                str(bz.id),
-                BUGZILLA_HOME,
-                str(bz.id),
-                bz.summary
-            )
-            notes = bz.cf_release_notes.splitlines()
-            for line in notes:
-                print line + '<br>'
-            print "----------------------------------------------------------"
+
+            if bz.cf_doc_type not in self._bugs:
+                self._bugs[bz.cf_doc_type] = {}
+
+            product = bz.product
+            if bz.classification != 'oVirt':
+                product = bz.component
+
+            if product not in self._bugs[bz.cf_doc_type]:
+                self._bugs[bz.cf_doc_type][product] = []
+
+            self._bugs[bz.cf_doc_type][product].append(copy.copy(bz))
+
+        for doc_type in self._bugs:
+            print('\n' *10)
+            print('\n## ' + doc_type + '\n')
+            for product in self._bugs[doc_type]:
+                print('\n### ' + product + '\n')
+                for bz in self._bugs[doc_type][product]:
+                    print ' - [BZ %s](%s%s) <b>%s</b><br>' % (
+                        str(bz.id),
+                        BUGZILLA_HOME,
+                        str(bz.id),
+                        codecs.encode(
+                            bz.summary, "utf-8", "xmlcharrefreplace"
+                        )
+
+                    )
+                    if doc_type != "Bug Fix":
+                        notes = bz.cf_release_notes.splitlines()
+                        for line in notes:
+                            print line + '<br>'
             list_url += "%s%%2C " % bz.id
-        print
-        print list_url
+        print()
+        print(list_url)
 
 
 if __name__ == '__main__':
