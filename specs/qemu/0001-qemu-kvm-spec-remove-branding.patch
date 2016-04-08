@@ -1,5 +1,6 @@
---- a/qemu-kvm.spec	2016-02-01 09:42:50.893994731 +0100
-+++ b/qemu-kvm.spec	2016-02-01 09:46:41.539772968 +0100
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2016-04-08 13:07:26.623228242 +0200
++++ b/qemu-kvm.spec	2016-04-08 13:07:37.204274240 +0200
 @@ -62,8 +62,9 @@
  # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
@@ -24,18 +25,18 @@
  Summary: QEMU is a FAST! processor emulator
  Name:    %{pkgname}%{?pkgsuffix}
  Version: 2.3.0
--Release: 31%{?dist}.7
-+Release: 31%{?dist}_2.7.1
+-Release: 31%{?dist}.10
++Release: 31%{?dist}_2.10.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2414,6 +2419,9 @@
+@@ -2436,6 +2441,9 @@
  %{_libdir}/pkgconfig/libcacard.pc
  
  %changelog
-+* Mon Feb  1 2016 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.7.1
++* Fri Apr  8 2016 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.10.1
 +- Removing RH branding from package name
 +
- * Thu Jan 21 2016 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.7
- - kvm-fw_cfg-add-check-to-validate-current-entry-value-CVE.patch [bz#1298435]
- - kvm-ahci-clean-up-ncq_tfs-used-on-error.patch [bz#1297292]
+ * Mon Mar 14 2016 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.10
+ - kvm-Revert-vhost-send-SET_VRING_ENABLE-at-start-stop.patch [bz#1310543 bz#1316156]
+ - kvm-tests-vhost-user-disable-unless-CONFIG_VHOST_NET.patch [bz#1316156]
