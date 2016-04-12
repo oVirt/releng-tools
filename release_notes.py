@@ -86,6 +86,15 @@ class GetReleaseNotes(object):
                 'RELEASE_PENDING',
                 'CLOSED',
             ):
+                sys.stderr.write(
+                    "%d - is in %s state\n" % (bz.id, bz.status)
+                )
+                continue
+            if '---' in bz.target_release:
+                sys.stderr.write(
+                    "%d - has no target release so we consider it "
+                    "not fixed\n" % (bz.id,)
+                )
                 continue
 
             if bz.cf_doc_type not in self._bugs:
@@ -118,7 +127,11 @@ class GetReleaseNotes(object):
                     if doc_type != "Bug Fix":
                         notes = bz.cf_release_notes.splitlines()
                         for line in notes:
-                            print line + '<br>'
+                            print(
+                                codecs.encode(
+                                    line, "utf-8", "xmlcharrefreplace"
+                                ) + '<br>'
+                            )
             list_url += "%s%%2C " % bz.id
         print()
         print(list_url)
