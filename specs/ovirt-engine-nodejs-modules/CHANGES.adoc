@@ -3,6 +3,42 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.3 / Apr 15 2016
+
+.New packages
+|===
+|Name | Version
+
+|babel-eslint
+|6.0.2
+
+|bootstrap
+|3.3.6
+
+|classnames
+|2.2.3
+
+|clean-webpack-plugin
+|0.1.8
+
+|copy-webpack-plugin
+|1.1.1
+
+|css-loader
+|0.23.1
+
+|file-loader
+|0.8.5
+
+|patternfly
+|3.2.0
+
+|style-loader
+|0.13.0
+
+|url-loader
+|0.5.7
+
 == 0.0.2 / Apr 3 2016
 
 .New packages

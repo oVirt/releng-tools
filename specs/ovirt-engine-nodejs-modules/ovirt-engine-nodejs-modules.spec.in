@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.2
+Version: 0.0.3
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -34,6 +34,9 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 %{_datadir}/%{name}
 
 %changelog
+* Fri Apr 15 2016 Ryan Barry <rbarry@redhat.com> - 0.0.3-1
+- Add classnames, Bootstrap, Patternfly, and plugins for webpack.
+
 * Sun Apr 3 2016 Martin Betak <mbetak@redhat.com> - 0.0.2-1
 - Added ESLint and ESLint Standard.js plugin.
 
