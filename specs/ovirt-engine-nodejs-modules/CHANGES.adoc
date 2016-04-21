@@ -3,6 +3,49 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.4 / Apr 21 2016
+
+.New packages
+|===
+|Name | Version
+
+|c3
+|0.4.10
+
+|d3
+|3.5.16
+
+|eslint-config-standard-jsx
+|1.1.1
+
+.Updated packages
+|===
+|Name | Version
+
+|babel-core
+|6.7.7
+
+|copy-webpack-plugin
+|2.1.1
+
+|eslint
+|2.8.0
+
+|eslint-plugin-react
+|5.0.1
+
+|react
+|15.0.1
+
+|react-dom
+|15.0.1
+
+|style-loader
+|0.13.1
+
+|webpack
+|1.13.0
+
 == 0.0.3 / Apr 15 2016
 
 .New packages
