@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.4
+Version: 0.0.5
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -34,6 +34,9 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 %{_datadir}/%{name}
 
 %changelog
+* Fri Apr 22 2016 Marek Libra <mlibra@redhat.com> - 0.0.5-1
+- Add po2json for webpack.
+
 * Thu Apr 21 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.4-1
 - Bump babel-core, copy-webpack-plugin, ESLint and its React
   plugin, React and React-DOM, style-loader and webpack.
