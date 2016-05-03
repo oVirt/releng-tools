@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.5
+Version: 0.0.6
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -8,6 +8,7 @@ URL: http://ovirt.org
 Source0: @TAR@
 Source1: LICENSES.csv
 Source2: CHANGES.adoc
+Source3: setup-env.sh
 
 ExclusiveArch: x86_64
 
@@ -18,15 +19,21 @@ Node.js modules required to build oVirt Engine JavaScript applications.
 
 %prep
 
-# Copy the documentation files:
+# Copy additional files to build directory:
 cp %{SOURCE1} .
 cp %{SOURCE2} .
+cp %{SOURCE3} .
 
 %install
 
-# Install the modules:
+# Create the destination directory in build root:
 mkdir -p %{buildroot}%{_datadir}/%{name}
+
+# Install the modules:
 tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
+
+# Copy additional files to build root:
+cp %{SOURCE3} %{buildroot}%{_datadir}/%{name}/.
 
 %files
 %doc CHANGES.adoc
@@ -34,6 +41,9 @@ tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 %{_datadir}/%{name}
 
 %changelog
+* Thu May 5 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.6-1
+- Add setup-env.sh script.
+
 * Fri Apr 22 2016 Marek Libra <mlibra@redhat.com> - 0.0.5-1
 - Add po2json for webpack.
 
