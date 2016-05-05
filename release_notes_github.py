@@ -36,12 +36,16 @@ to select any scope), and export it as an environment variable:
 
 """
 
+import atexit
 import codecs
 import os
 import re
+import shutil
 import sys
+import tempfile
 
 import bugzilla
+import git
 import requests
 
 from collections import OrderedDict
@@ -172,6 +176,41 @@ class GitHubProject(object):
         return rv
 
 
+class GerritGitProject(object):
+
+    GERRIT_GIT_BASE_URL = 'https://gerrit.ovirt.org/'
+
+    def __init__(self, project):
+        # this creates a brand new bare repository for the sake of
+        # consistency
+        self.repo_url = self.GERRIT_GIT_BASE_URL + project
+        self.repo_path = tempfile.mkdtemp(prefix='release-notes-')
+        atexit.register(shutil.rmtree, self.repo_path)
+        git.Repo.clone_from(self.repo_url, self.repo_path, bare=True)
+        self.repo = git.Git(self.repo_path)
+
+    def get_commits_between_revs(self, r1, r2):
+        log = self.repo.log('%s..%s' % (r1, r2))
+        current = None
+        rv = []
+        for line in log.splitlines():
+            if line.startswith('commit '):
+                if current is not None:
+                    current.setdefault('message', '')
+                    rv.append(current)
+                current = {
+                    'sha': line[7:].strip(),
+                }
+            elif line.strip().lower().startswith('bug-url'):
+                current['message'] = line.strip()
+
+        if current is not None:
+            current.setdefault('message', '')
+            rv.append(current)
+
+        return rv
+
+
 def generate_notes(milestone):
 
     cp = ConfigParser()
@@ -187,7 +226,7 @@ def generate_notes(milestone):
     for project in cp.sections():
         sys.stderr.write('Project: %s\n\n' % (project,))
 
-        gh = GitHubProject(project)
+        gh = GerritGitProject(project)
         previous = cp.get(project, 'previous')
         current = cp.get(project, 'current')
         project_name = cp.get(project, 'name')
