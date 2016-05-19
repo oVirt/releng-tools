@@ -75,7 +75,7 @@ class Bugzilla(object):
         if m:
             return int(m.group('bug_id'))
 
-    def validate_bug(self, bug_id, target_milestone=None):
+    def validate_bug(self, bug_id, target_milestones=None):
         bug = self.get_bug(bug_id)
         if not bug:
             sys.stderr.write("%d - invalid bug\n" % bug_id)
@@ -115,8 +115,8 @@ class Bugzilla(object):
                 return None
 
             elif (
-                target_milestone is not None and
-                bug.target_milestone != target_milestone
+                target_milestones and
+                bug.target_milestone not in target_milestones
             ):
                 sys.stderr.write(
                     '%d - is targeted to %s; assignee: %s\n' % (
@@ -219,11 +219,20 @@ def generate_notes(milestone):
             milestone,
         ))
 
+    target_milestones = [milestone]
+    if cp.has_section('default') and cp.get('default', 'target_milestones'):
+        milestones = cp.get('default', 'target_milestones')
+        if milestones:
+            target_milestones = [i.strip() for i in milestones.split(',')]
+
     bz = Bugzilla()
 
     generated = OrderedDict()
 
     for project in cp.sections():
+        if project == 'default':
+            continue
+
         sys.stderr.write('Project: %s\n\n' % (project,))
 
         gh = GerritGitProject(project)
@@ -255,7 +264,7 @@ def generate_notes(milestone):
                 commit['sha'],
                 bug_id,
             ))
-            bug = bz.validate_bug(bug_id, milestone)
+            bug = bz.validate_bug(bug_id, target_milestones)
             bugs_found.append(bug_id)
             if bug:
                 doc_type = generated.setdefault(bug.cf_doc_type, OrderedDict())
