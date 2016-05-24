@@ -213,6 +213,22 @@ class GerritGitProject(object):
 
 def generate_notes(milestone):
 
+    def sort_function(x, y):
+        priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
+
+        def get_priority_index(a):
+            if a is None:
+                return 0
+            try:
+                return priorities.index(a.strip().lower())
+            except ValueError:
+                return 0
+
+        return (
+            get_priority_index(y.get('priority')) -
+            get_priority_index(x.get('priority'))
+        )
+
     cp = ConfigParser()
     if not cp.read(['milestones/%s.conf' % milestone]):
         raise RuntimeError('Failed to read config file for milestone: %s' % (
@@ -268,22 +284,24 @@ def generate_notes(milestone):
             bugs_found.append(bug_id)
             if bug:
                 doc_type = generated.setdefault(bug.cf_doc_type, OrderedDict())
-                proj = doc_type.setdefault(project_name or project, [])
-                proj.append({
+                proj = doc_type.setdefault(project_name or project, {})
+                team = proj.setdefault(bug.cf_ovirt_team, [])
+                team.append({
                     'id': bug_id,
+                    'priority': bug.priority,
                     'summary': codecs.encode(
                         bug.summary, "utf-8", "xmlcharrefreplace"
                     ),
                 })
                 if bug.cf_doc_type.lower() != 'bug fix':
-                    proj[-1]['release_notes'] = '<br>'.join(
+                    team[-1]['release_notes'] = '<br>'.join(
                         codecs.encode(
                             bug.cf_release_notes,
                             'utf-8',
                             'xmlcharrefreplace'
                         ).splitlines()
                     )
-                proj.sort(lambda x, y: x['id'] - y['id'])
+                team.sort(sort_function)
 
         sys.stderr.write('\n')
 
@@ -300,13 +318,16 @@ def generate_notes(milestone):
         for project in generated[bug_type]:
             sys.stdout.write('#### %s\n\n' % project)
 
-            for bug in generated[bug_type][project]:
-                sys.stdout.write(
-                    ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                    '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
-                )
+            for team in generated[bug_type][project]:
+                sys.stdout.write('##### Team: %s\n\n' % team)
 
-            sys.stdout.write('\n')
+                for bug in generated[bug_type][project][team]:
+                    sys.stdout.write(
+                        ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                        '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
+                    )
+
+                sys.stdout.write('\n')
 
     if not bug_fixes:
         return
@@ -316,13 +337,16 @@ def generate_notes(milestone):
     for project in bug_fixes:
         sys.stdout.write('### %s\n\n' % project)
 
-        for bug in bug_fixes[project]:
-            sys.stdout.write(
-                ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                '<b>{summary}</b><br>\n'.format(**bug)
-            )
+        for team in bug_fixes[project]:
+            sys.stdout.write('#### Team: %s\n\n' % team)
 
-        sys.stdout.write('\n')
+            for bug in bug_fixes[project][team]:
+                sys.stdout.write(
+                    ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                    '<b>{summary}</b><br>\n'.format(**bug)
+                )
+
+            sys.stdout.write('\n')
 
 
 def main(argv):
