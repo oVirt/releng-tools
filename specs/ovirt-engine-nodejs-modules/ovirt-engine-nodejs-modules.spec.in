@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.7
+Version: 0.0.8
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -41,6 +41,10 @@ cp %{SOURCE3} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Thu May 26 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.8-1
+- Add i18n-related dependencies: intl-messageformat, react-intl
+  and json-loader for webpack.
+
 * Tue May 10 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.7-1
 - Add jQuery.
 
