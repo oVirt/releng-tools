@@ -283,7 +283,10 @@ def generate_notes(milestone):
             bug = bz.validate_bug(bug_id, target_milestones)
             bugs_found.append(bug_id)
             if bug:
-                doc_type = generated.setdefault(bug.cf_doc_type, OrderedDict())
+                cf_doc_type = bug.cf_doc_type
+                if 'docs needed' in cf_doc_type.lower():
+                    cf_doc_type = 'Unclassified'
+                doc_type = generated.setdefault(cf_doc_type, OrderedDict())
                 proj = doc_type.setdefault(project_name or project, {})
                 team = proj.setdefault(bug.cf_ovirt_team, [])
                 team.append({
@@ -293,7 +296,7 @@ def generate_notes(milestone):
                         bug.summary, "utf-8", "xmlcharrefreplace"
                     ),
                 })
-                if bug.cf_doc_type.lower() != 'bug fix':
+                if cf_doc_type.lower() != 'bug fix':
                     team[-1]['release_notes'] = '<br>'.join(
                         codecs.encode(
                             bug.cf_release_notes,
