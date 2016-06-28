@@ -3,6 +3,48 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.9 / Jun 28 2016
+
+.New packages
+|===
+|Name | Version
+
+|babel-polyfill
+|6.9.1
+
+|chai
+|3.5.0
+
+|imports-loader
+|0.6.5
+
+|karma
+|0.13.22
+
+|karma-mocha
+|1.0.1
+
+|karma-mocha-reporter
+|2.0.4
+
+|karma-phantomjs-launcher
+|1.0.0
+
+|karma-sourcemap-loader
+|0.3.7
+
+|karma-webpack
+|1.7.0
+
+|mocha
+|2.5.3
+
+|phantomjs-prebuilt
+|2.1.7
+
+|sinon
+|1.17.4
+
 == 0.0.8 / May 26 2016
 
 .New packages

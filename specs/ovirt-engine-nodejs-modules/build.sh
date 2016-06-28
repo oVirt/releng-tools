@@ -4,7 +4,7 @@
 name="ovirt-engine-nodejs-modules"
 
 # Download the node binaries and extract them to a local directory:
-node_version="4.3.2"
+node_version="4.4.6"
 node_dir="node-v${node_version}-linux-x64"
 node_tar="${node_dir}.tar.xz"
 node_url="https://nodejs.org/dist/v${node_version}/${node_tar}"
