@@ -22,6 +22,9 @@ mv %{buildroot}%{_datadir}/node-v%{version}-linux-x64 %{buildroot}%{_datadir}/%{
 %{_datadir}
 
 %changelog
+* Tue Jun 28 2016 Vojtech Szocs <vszocs@redhat.com> - 4.4.6-1
+- Bump Node.js version to 4.4.6.
+
 * Thu Mar 31 2016 Juan Hernandez <juan.hernandez@redhat.com> - 4.3.2-1
 - Build only for x86_64.
 

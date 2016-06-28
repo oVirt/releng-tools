@@ -2,7 +2,7 @@
 
 # The name, version and source of the package:
 name="ovirt-engine-nodejs"
-version="4.3.2"
+version="4.4.6"
 src="node-v${version}-linux-x64.tar.xz"
 url="https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.xz"
 
@@ -15,7 +15,6 @@ fi
 # Generate the spec from the template:
 sed \
     -e "s/@VERSION@/${version}/g" \
-    -e "s/@QUALIFIER@/${qualifier}/g" \
     -e "s/@SRC@/${src}/g" \
     < "${name}.spec.in" \
     > "${name}.spec"
