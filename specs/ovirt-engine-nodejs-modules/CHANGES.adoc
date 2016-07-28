@@ -3,6 +3,15 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.10 / Jul 28 2016
+
+.New packages
+|===
+|Name | Version
+
+|intl
+|1.2.4
+
 == 0.0.9 / Jun 28 2016
 
 .New packages

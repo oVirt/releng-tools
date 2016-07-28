@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.9
+Version: 0.0.10
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -41,6 +41,9 @@ cp %{SOURCE3} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Thu Jul 28 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.10-1
+- Add Intl API (ECMA-402) polyfill.
+
 * Tue Jun 28 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.9-1
 - Add test-related dependencies: Karma, Mocha, Chai, PhantomJS,
   Sinon, babel-polyfill and imports-loader.
