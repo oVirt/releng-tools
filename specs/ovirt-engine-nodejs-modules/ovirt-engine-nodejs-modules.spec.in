@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.10
+Version: 0.0.11
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -29,18 +29,39 @@ cp %{SOURCE3} .
 # Create the destination directory in build root:
 mkdir -p %{buildroot}%{_datadir}/%{name}
 
-# Install the modules:
-tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
+# Create the directory under where the modules will be installed in the
+# build root:
+mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
+
+# Copy the modules tarball, but don't uncompress it, as that would
+# generate more files than RPM is capable to have in one single file.
+# The tarball will be uncompressed later, to the /var/lib directory.
+cp %{SOURCE0} %{buildroot}%{_datadir}/%{name}/node_modules.tar
 
 # Copy additional files to build root:
 cp %{SOURCE3} %{buildroot}%{_datadir}/%{name}/.
+
+%post
+
+# Uncompress the modules tarball directory:
+tar -xf %{_datadir}/%{name}/node_modules.tar -C %{_sharedstatedir}/%{name}
+
+%postun
+
+# Remove all files from the directory where the modules tarball was
+# uncompressed:
+rm -rf  %{_sharedstatedir}/%{name}/*
 
 %files
 %doc CHANGES.adoc
 %license LICENSES.csv
 %{_datadir}/%{name}
+%{_sharedstatedir}/%{name}
 
 %changelog
+* Mon Aug 1 2016 Juan Hernandez <juan.hernandez@redhat.com> - 0.0.11-1
+- Don't extract the tarball, to avoid RPM file number limits.
+
 * Thu Jul 28 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.10-1
 - Add Intl API (ECMA-402) polyfill.
 

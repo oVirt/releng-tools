@@ -13,5 +13,5 @@
 export PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 
 # Link the Node.js dependencies to the local "node_modules" directory:
-ln -s "/usr/share/ovirt-engine-nodejs-modules/node_modules"
+ln -s "/var/lib/ovirt-engine-nodejs-modules/node_modules"
 export PATH="./node_modules/.bin:${PATH}"

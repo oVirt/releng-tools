@@ -6,7 +6,7 @@ name="ovirt-engine-nodejs-modules"
 # Download the node binaries and extract them to a local directory:
 node_version="4.4.6"
 node_dir="node-v${node_version}-linux-x64"
-node_tar="${node_dir}.tar.xz"
+node_tar="${node_dir}.tar"
 node_url="https://nodejs.org/dist/v${node_version}/${node_tar}"
 if [ ! -f "${node_tar}" ]
 then
@@ -24,10 +24,10 @@ export PATH="${PWD}/${node_dir}/bin:${PATH}"
 # download all the dependencies listed in the "package.json" file and
 # create a tar file containing everything:
 modules_dir="node_modules"
-modules_tar="${modules_dir}.tar.xz"
+modules_tar="${modules_dir}.tar"
 rm -rf "${modules_dir}"
 npm install
-tar -cJf "${modules_tar}" "${modules_dir}"
+tar -cf "${modules_tar}" "${modules_dir}"
 
 # Configure the path environment variable so that we can use the
 # binaries provided by the modules installed in the previous step:
