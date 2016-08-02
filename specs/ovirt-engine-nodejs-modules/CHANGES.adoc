@@ -3,6 +3,15 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.13 / Aug 4 2016
+
+.Removed packages
+|===
+|Name | Version
+
+|license-checker
+|5.1.0
+
 == 0.0.10 / Jul 28 2016
 
 .New packages

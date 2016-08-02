@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.12
+Version: 0.0.13
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt Engine JavaScript applications
 Group: Virtualization/Management
@@ -60,6 +60,13 @@ rm -rf  %{_sharedstatedir}/%{name}/*
 %{_sharedstatedir}/%{name}
 
 %changelog
+* Thu Aug 4 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.13-1
+- Update build.sh to address various npm warnings when building RPM.
+- npm modules to be included in RPM are now declared in dependencies,
+  npm modules needed only for RPM build are now in devDependencies.
+- Modules listed in devDependencies should no longer be mentioned in
+  CHANGES.adoc file as they are not included in resulting RPM.
+
 * Tue Aug 2 2016 Juan Hernandez <juan.hernandez@redhat.com> - 0.0.12-1
 - Automatically calculate RPM dependencies using "find-requires".
 

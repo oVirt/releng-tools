@@ -20,14 +20,12 @@ tar -xf "${node_tar}"
 # installation that may be available in the system:
 export PATH="${PWD}/${node_dir}/bin:${PATH}"
 
-# Clean the local modules directory, run "npm" so that it will
-# download all the dependencies listed in the "package.json" file and
-# create a tar file containing everything:
+# Clean the local modules directory and run "npm install" to download
+# all the dependencies listed in the "package.json" file:
 modules_dir="node_modules"
-modules_tar="${modules_dir}.tar"
 rm -rf "${modules_dir}"
-npm install
-tar -cf "${modules_tar}" "${modules_dir}"
+npm cache clean
+npm install --no-optional
 
 # Configure the path environment variable so that we can use the
 # binaries provided by the modules installed in the previous step:
@@ -35,6 +33,13 @@ export PATH="${PWD}/${modules_dir}/.bin:${PATH}"
 
 # Scan the downloaded modules and generate the LICENSES.csv file:
 license-checker --csv --out LICENSES.csv
+
+# Prune modules listed as devDependencies from modules directory:
+npm prune --production
+
+# Create a tar file out of the modules directory:
+modules_tar="${modules_dir}.tar"
+tar -cf "${modules_tar}" "${modules_dir}"
 
 # Find the dependencies required by binaries and libraries. Usually this
 # is done by RPM itself, but in our case we need to do it explicitly
