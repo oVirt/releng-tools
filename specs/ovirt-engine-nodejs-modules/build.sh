@@ -36,9 +36,30 @@ export PATH="${PWD}/${modules_dir}/.bin:${PATH}"
 # Scan the downloaded modules and generate the LICENSES.csv file:
 license-checker --csv --out LICENSES.csv
 
+# Find the dependencies required by binaries and libraries. Usually this
+# is done by RPM itself, but in our case we need to do it explicitly
+# because the binaries and libraries aren't part of the %files section
+# of the RPM, only the tarball containing them.
+requires=$(
+    find "${modules_dir}" -type f |
+    egrep -v '\.(css|html|js|json|md|txt|yml)$' |
+    /usr/lib/rpm/find-requires |
+    egrep -v '^$' |
+    sed 's|^|Requires: |'
+)
+
+# In order to use the calculated dependencies with the "s" command of
+# sed, we need to add a backslash before each new line, except for
+# the last one:
+requires=$(
+    echo "${requires}" |
+    sed -e '$!s|$|\\|'
+)
+
 # Generate the spec from the template:
 sed \
-    -e "s/@TAR@/${modules_tar}/g" \
+    -e "s|@TAR@|${modules_tar}|g" \
+    -e "s|@REQUIRES@|${requires}|g" \
     < "${name}.spec.in" \
     > "${name}.spec"
 
