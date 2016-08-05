@@ -32,7 +32,7 @@ npm install --no-optional
 export PATH="${PWD}/${modules_dir}/.bin:${PATH}"
 
 # Scan the downloaded modules and generate the LICENSES.csv file:
-license-checker --csv --out LICENSES.csv
+license-checker --production --csv --out LICENSES.csv
 
 # Prune modules listed as devDependencies from modules directory:
 npm prune --production
