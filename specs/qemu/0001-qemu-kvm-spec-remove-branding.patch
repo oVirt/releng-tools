@@ -25,7 +25,7 @@
  Name:    %{pkgname}%{?pkgsuffix}
  Version: 2.3.0
 -Release: 31%{?dist}.16
-+Release: 31%{?dist}.16.1
++Release: 31%{?dist}_2.16.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
