@@ -313,8 +313,9 @@ def generate_notes(milestone):
     sys.stdout.write('## What\'s New in %s?\n\n' % milestone.split('-')[-1])
 
     bug_fixes = None
-
-    for bug_type in generated:
+    bug_types = generated.keys()
+    bug_types.sort()
+    for bug_type in bug_types:
         if bug_type.lower() == 'bug fix':
             bug_fixes = generated[bug_type]
             continue
@@ -322,8 +323,9 @@ def generate_notes(milestone):
 
         for project in generated[bug_type]:
             sys.stdout.write('#### %s\n\n' % project)
-
-            for team in generated[bug_type][project]:
+            teams = generated[bug_type][project].keys()
+            teams.sort()
+            for team in teams:
                 sys.stdout.write('##### Team: %s\n\n' % team)
 
                 for bug in generated[bug_type][project][team]:
@@ -341,8 +343,9 @@ def generate_notes(milestone):
 
     for project in bug_fixes:
         sys.stdout.write('### %s\n\n' % project)
-
-        for team in bug_fixes[project]:
+        teams = bug_fixes[project].keys()
+        teams.sort()
+        for team in teams:
             sys.stdout.write('#### Team: %s\n\n' % team)
 
             for bug in bug_fixes[project][team]:
