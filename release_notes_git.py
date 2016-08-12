@@ -162,10 +162,10 @@ class GitHubProject(object):
     def get_commits_between_revs(self, r1, r2):
         r = self._do_request(
             '/repos/{owner}/{project}/compare/{previous}...{current}'.format(
-                owner = self.GITHUB_REPO_OWNER,
-                project = self.project,
-                previous = r1,
-                current = r2,
+                owner=self.GITHUB_REPO_OWNER,
+                project=self.project,
+                previous=r1,
+                current=r2,
             )
         )
         commits = r.get('commits', [])
