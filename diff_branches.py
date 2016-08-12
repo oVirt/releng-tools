@@ -26,6 +26,7 @@ Check patches merged on a trunk and not merged in a branch
 
 import argparse
 import bugzilla
+import codecs
 import git
 import sys
 
@@ -145,7 +146,13 @@ class PatchesChecker(object):
                 count += 1
                 bug = master_data[commit].get('Bug', '')
                 print(master_data[commit]['commit'])
-                print(master_data[commit]['Author'])
+                print(
+                    codecs.encode(
+                        master_data[commit]['Author'],
+                        "utf-8",
+                        "xmlcharrefreplace"
+                    )
+                )
                 print(master_data[commit]['Date'])
                 print(master_data[commit]['Subject'])
                 print(master_data[commit]['Change'])
