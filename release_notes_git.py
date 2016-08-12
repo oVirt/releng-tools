@@ -44,12 +44,14 @@ import shutil
 import sys
 import tempfile
 
-import bugzilla
-import git
-import requests
 
 from collections import OrderedDict
 from ConfigParser import ConfigParser
+
+import bugzilla
+import git
+
+import requests
 
 
 class Bugzilla(object):
