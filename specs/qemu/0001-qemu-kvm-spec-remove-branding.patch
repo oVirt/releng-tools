@@ -1,5 +1,5 @@
---- b/qemu-kvm.spec	2016-07-08 13:33:44.176886309 +0200
-+++ a/qemu-kvm.spec	2016-07-08 13:38:25.063482672 +0200
+--- a/qemu-kvm.spec	2016-08-19 14:17:25.955954703 +0200
++++ b/qemu-kvm.spec	2016-08-19 14:23:11.565360285 +0200
 @@ -62,8 +62,9 @@
  # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
@@ -24,18 +24,18 @@
  Summary: QEMU is a FAST! processor emulator
  Name:    %{pkgname}%{?pkgsuffix}
  Version: 2.3.0
--Release: 31%{?dist}.16
-+Release: 31%{?dist}_2.16.1
+-Release: 31%{?dist}.21
++Release: 31%{?dist}_2.21.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2479,6 +2484,9 @@
+@@ -2560,6 +2565,9 @@
  %{_libdir}/pkgconfig/libcacard.pc
  
  %changelog
-+* Fri Jul  8 2016 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.16.1
++* Fri Aug 19 2016 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.21
 +- Removing RH branding from package name
 +
- * Thu Jun 16 2016 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.16
- - kvm-vga-add-sr_vbe-register-set.patch [bz#1347185]
- - Resolves: bz#1347185
+ * Tue Aug 02 2016 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.21
+ - kvm-block-iscsi-avoid-potential-overflow-of-acb-task-cdb.patch [bz#1358997]
+ - Resolves: bz#1358997
