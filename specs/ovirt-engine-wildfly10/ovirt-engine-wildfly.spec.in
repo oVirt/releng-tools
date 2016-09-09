@@ -50,6 +50,9 @@ find \
 %{_datadir}
 
 %changelog
+* Fri Sep 09 2016 Martin Perina <mperina@redhat.com> - 10.1.0-1
+- Update to upstream version 10.1.0.Final.
+
 * Mon Feb 22 2016 Martin Perina <mperina@redhat.com> - 10.0.0-1
 - Update to upstream version 10.0.0.Final.
 
