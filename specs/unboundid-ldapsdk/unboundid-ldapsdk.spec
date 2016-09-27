@@ -10,8 +10,8 @@
 %endif
 
 Name:           unboundid-ldapsdk
-Version:        3.0.0
-Release:        1%{?release_suffix}%{?dist}
+Version:        3.2.0
+Release:        1%{?dist}
 Summary:        UnboundID LDAP SDK for Java
 
 License:        GPLv2 or LGPLv2+
@@ -19,14 +19,14 @@ URL:            https://www.ldap.com/unboundid-ldap-sdk-for-java
 Source0:        https://github.com/UnboundID/ldapsdk/archive/%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  ant
-%if 0%{?fedora} >= 21
+%if 0%{?fedora}
 BuildRequires:  javapackages-local
 %else
 %if %_use_maven
 BuildRequires:  maven-local
 %endif
 %endif
-Patch1:         unboundid-ldapsdk-3.0.0-build.patch
+Patch1:         unboundid-ldapsdk-3.2.0-build.patch
 
 %description
 The UnboundID LDAP SDK for Java is a fast, powerful, user-friendly, and
@@ -88,19 +88,32 @@ __EOF__
 %endif
 
 %files -f .mfiles
-%doc dist-root-se/LICENSE.txt
-%doc dist-root-se/LICENSE-LGPLv2.1.txt
-%doc dist-root-se/LICENSE-UnboundID-LDAPSDK.txt
-%doc dist-root-se/LICENSE-GPLv2.txt
+%license dist-root-se/LICENSE.txt
+%license dist-root-se/LICENSE-LGPLv2.1.txt
+%license dist-root-se/LICENSE-UnboundID-LDAPSDK.txt
+%license dist-root-se/LICENSE-GPLv2.txt
 %doc dist-root-se/README.txt
 
 %files javadoc -f .mfiles-javadoc
-%doc dist-root-se/LICENSE.txt
-%doc dist-root-se/LICENSE-LGPLv2.1.txt
-%doc dist-root-se/LICENSE-UnboundID-LDAPSDK.txt
-%doc dist-root-se/LICENSE-GPLv2.txt
+%license dist-root-se/LICENSE.txt
+%license dist-root-se/LICENSE-LGPLv2.1.txt
+%license dist-root-se/LICENSE-UnboundID-LDAPSDK.txt
+%license dist-root-se/LICENSE-GPLv2.txt
 
 %changelog
+* Fri Sep 23 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.2.0-1
+- Rebased on upstream 3.2.0
+- Resolves: BZ#1378924
+
+* Tue Mar 29 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.1.1-1
+- Rebased on upstream 3.1.1
+
+* Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.0.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Thu Jun 11 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.0.0-1
 - Rebased on upstream 3.0.0
 - Resolves: BZ#1230454
