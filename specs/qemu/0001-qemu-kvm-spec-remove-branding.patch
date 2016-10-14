@@ -1,6 +1,7 @@
---- a/qemu-kvm.spec	2016-08-19 14:17:25.955954703 +0200
-+++ b/qemu-kvm.spec	2016-08-19 14:23:11.565360285 +0200
-@@ -62,8 +62,9 @@
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2016-11-08 09:05:53.811887784 +0100
++++ b/qemu-kvm.spec	2016-11-08 09:08:35.958617704 +0100
+@@ -64,8 +64,9 @@
  # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -11,7 +12,7 @@
  %global conflicts_suffix %{rhel_suffix}
  %global obsoletes_version 15:0-0
  
-@@ -71,12 +72,16 @@
+@@ -73,12 +74,16 @@
  %define rhel_rhev_conflicts()                                         \
  Conflicts: %1%{conflicts_suffix}                                      \
  Provides: %1%{extra_provides_suffix} = %{epoch}:%{version}-%{release} \
@@ -22,20 +23,20 @@
  Obsoletes: %1 < %{obsoletes_version}
  
  Summary: QEMU is a FAST! processor emulator
- Name:    %{pkgname}%{?pkgsuffix}
- Version: 2.3.0
--Release: 31%{?dist}.21
-+Release: 31%{?dist}_2.21.1
+ Name: %{pkgname}%{?pkgsuffix}
+ Version: 2.6.0
+-Release: 27%{?dist}
++Release: 27.1%{?dist}
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2560,6 +2565,9 @@
- %{_libdir}/pkgconfig/libcacard.pc
+@@ -2317,6 +2322,9 @@
+ %endif
  
  %changelog
-+* Fri Aug 19 2016 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.3.0-31.el7_2.21
++* Tue Nov  8 2016 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.6.0-27.1.el7
 +- Removing RH branding from package name
 +
- * Tue Aug 02 2016 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.3.0-31.el7_2.21
- - kvm-block-iscsi-avoid-potential-overflow-of-acb-task-cdb.patch [bz#1358997]
- - Resolves: bz#1358997
+ * Fri Sep 23 2016 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.6.0-27.el7
+ - kvm-char-fix-waiting-for-TLS-and-telnet-connection.patch [bz#1300773]
+ - kvm-target-i386-introduce-kvm_put_one_msr.patch [bz#1377920]
