@@ -1,6 +1,6 @@
-%global commit0 d9cd7764203255869d41be524af9e98e54a7b2ad
+%global commit0 ff6aa4265351f9a978736d27c386d7d485dead91
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-%global checkout 20161020git%{shortcommit0}
+%global checkout 20161102git%{shortcommit0}
 
 Name:           opstools-ansible
 Version:        0.0.1
