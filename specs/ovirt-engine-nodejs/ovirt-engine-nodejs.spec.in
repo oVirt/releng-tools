@@ -22,6 +22,9 @@ mv %{buildroot}%{_datadir}/node-v%{version}-linux-x64 %{buildroot}%{_datadir}/%{
 %{_datadir}
 
 %changelog
+* Fri Nov 18 2016 Vojtech Szocs <vszocs@redhat.com> - 6.9.1-1
+- Bump Node.js version to 6.9.1.
+
 * Tue Jun 28 2016 Vojtech Szocs <vszocs@redhat.com> - 4.4.6-1
 - Bump Node.js version to 4.4.6.
 

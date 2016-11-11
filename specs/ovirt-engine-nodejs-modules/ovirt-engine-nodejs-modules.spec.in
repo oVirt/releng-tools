@@ -60,6 +60,9 @@ rm -rf  %{_sharedstatedir}/%{name}/*
 %{_sharedstatedir}/%{name}
 
 %changelog
+* Fri Nov 18 2016 Vojtech Szocs <vszocs@redhat.com> - 0.0.15-1
+- Bump Node.js version to 6.9.1.
+
 * Mon Nov 14 2016 Martin Betak <mbetak@redhat.com> - 0.0.14-1
 - Add new ovirt-web-ui dependencies based on create-react-app eject.
 
