@@ -19,20 +19,13 @@
 
 """
 This script generates release notes for oVirt projects, fetching commits from
-Github.
+Gerrit.
 
 To run it:
 
     $ ./release_notes_github.py ovirt-3.6.5 [1] > notes.md
 
 Where  'ovirt-3.6.5' is the current milestone and 1 is the RC number, if any.
-
-WARNING: when running this, if user gets '403 Forbidden' errors from
-Github API, it is due to API rate limiting. To work around this, just
-go to https://github.com/settings/tokens and create a new token (no need
-to select any scope), and export it as an environment variable:
-
-    $ export GITHUB_OAUTH_TOKEN="your token here"
 
 """
 
@@ -269,45 +262,6 @@ class Bugzilla(object):
             return None
 
         return bug
-
-
-class GitHubProject(object):
-
-    GITHUB_API_URL = 'https://api.github.com'
-    GITHUB_REPO_OWNER = 'oVirt'
-
-    def __init__(self, project):
-        self.project = project
-
-        self.session = requests.Session()
-        self.session.headers['Accept'] = 'application/json'
-
-        oauth_token = os.environ.get('GITHUB_OAUTH_TOKEN')
-        if oauth_token is not None:
-            self.session.headers['Authorization'] = 'token %s' % oauth_token
-
-    def _do_request(self, endpoint):
-        r = self.session.get(self.GITHUB_API_URL + endpoint)
-        r.raise_for_status()
-        return r.json()
-
-    def get_commits_between_revs(self, r1, r2):
-        r = self._do_request(
-            '/repos/{owner}/{project}/compare/{previous}...{current}'.format(
-                owner=self.GITHUB_REPO_OWNER,
-                project=self.project,
-                previous=r1,
-                current=r2,
-            )
-        )
-        commits = r.get('commits', [])
-        rv = []
-        for commit in commits:
-            rv.append({
-                'sha': commit.get('sha'),
-                'message': commit.get('commit', {}).get('message'),
-            })
-        return rv
 
 
 class GerritGitProject(object):
