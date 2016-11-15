@@ -23,9 +23,9 @@ Github.
 
 To run it:
 
-    $ ./release_notes_github.py ovirt-3.6.5 > notes.md
+    $ ./release_notes_github.py ovirt-3.6.5 [1] > notes.md
 
-Where  'ovirt-3.6.5' is the current milestone.
+Where  'ovirt-3.6.5' is the current milestone and 1 is the RC number, if any.
 
 WARNING: when running this, if user gets '403 Forbidden' errors from
 Github API, it is due to API rate limiting. To work around this, just
@@ -47,11 +47,143 @@ import tempfile
 
 from collections import OrderedDict
 from ConfigParser import ConfigParser
+from datetime import datetime
 
 import bugzilla
 import git
+import jinja2
 
 import requests
+
+
+ORDINALS = {
+    1: 'First',
+    2: 'Second',
+    3: 'Third',
+    4: 'Fourth',
+    5: 'Fifth',
+    6: 'Sixth',
+    7: 'Seventh',
+    8: 'Eighth',
+    9: 'Ninth',
+    10: 'Tenth',
+    # more than 10 RCs? lol
+}
+
+
+TEMPLATE = jinja2.Template(u'''\
+---
+title: oVirt {{ milestone }} Release Notes
+category: documentation
+---
+
+# oVirt {{ milestone }} Release Notes
+
+The oVirt Project is pleased to announce the availability of {{ milestone }}
+{% if rc %}{{ rc }} Release Candidate{% else %}Release{% endif %} as
+of {{ current_date }}.
+
+oVirt is an open source alternative to VMware™ vSphere™, and provides an awesome
+KVM management interface for multi-node virtualization.
+This release is available now for Red Hat Enterprise Linux 7.2, CentOS Linux 7.2
+(or similar).
+
+{% if rc %}
+This is pre-release software.
+Please take a look at our [community page](/community/) to know how to
+ask questions and interact with developers and users.
+All issues or bugs should be reported via the [Red Hat Bugzilla](https://bugzilla.redhat.com/).
+The oVirt Project makes no guarantees as to its suitability or usefulness.
+This pre-release should not to be used in production, and it is not feature complete.
+{% endif %}
+
+To find out more about features which were added in previous oVirt releases,
+check out the [previous versions release notes](/develop/release-management/releases/).
+For a general overview of oVirt, read [the Quick Start Guide](Quick_Start_Guide)
+and the [about oVirt](about oVirt) page.
+
+An updated documentation has been provided by our downstream
+[Red Hat Virtualization](https://access.redhat.com/documentation/en/red-hat-virtualization?version=4.0/)
+
+
+## Install / Upgrade from previous versions
+
+Users upgrading from 3.6 should be aware of following 4.0 changes around
+authentication and certificates handling:
+
+1. Single Sign-On using OAUTH2 protocol has been implemented in engine to
+   allow SSO between webadmin, userportal and RESTAPI. More information can
+   be found at https://bugzilla.redhat.com/1092744
+
+2. Due to SSO it's required to access engine only using the same FQDN which
+   was specified during engine-setup invocation. If your engine FQDN is not
+   accessible from all engine clients, you will not be able to login. Please
+   use ovirt-engine-rename tool to fix your FQDN, more information can be
+   found at https://www.ovirt.org/documentation/how-to/networking/changing-engine-hostname/ .
+   If you try to access engine using IP or DNS alias, an error will be
+   thrown. Please consult following bugs targeted to oVirt 4.0.4 which
+   should fix this limitation:
+     https://bugzilla.redhat.com/1325746
+     https://bugzilla.redhat.com/1362196
+
+3. If you have used Kerberos SSO to access engine, please consult
+   https://bugzilla.redhat.com/1342192 how to update your Apache
+   configuration after upgrade to 4.0
+
+4. If you are using HTTPS certificate signed by custom certificate
+   authority, please take a look at https://bugzilla.redhat.com/1336838
+   for steps which need to be done after migration to 4.0. Also please
+   consult https://bugzilla.redhat.com/1313379 how to setup this custom
+   CA for use with virt-viewer clients.
+
+
+### Fedora / CentOS / RHEL
+
+{% if rc %}
+## RELEASE CANDIDATE
+
+In order to install this Release Candidate you will need to enable pre-release repository.
+{% endif %}
+
+In order to install it on a clean system, you need to install
+
+{% if rc %}
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release40-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release40-pre.rpm)
+{% else %}
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm)
+{% endif%}
+
+{% if rc %}To test this pre release, you may read our
+[Quick Start Guide](Quick Start Guide) or{% else %}and then follow our
+[Quick Start Guide](Quick Start Guide) or{% endif %} a more updated documentation
+from our downstream
+[Red Hat Virtualization](https://access.redhat.com/documentation/en/red-hat-virtualization/4.0/)
+
+{% if not rc %}
+If you're upgrading from a previous release on Enterprise Linux 7 you just need
+to execute:
+
+      # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm
+      # yum update "ovirt-*-setup*"
+      # engine-setup
+
+Upgrade on Fedora 22 and Enterprise Linux 6 is not supported and you should
+follow our [Migration Guide](../../documentation/migration-engine-36-to-40/) in
+order to migrate to Enterprise Linux 7 or Fedora 23.
+{% endif %}
+
+### oVirt Hosted Engine
+
+If you're going to install oVirt as Hosted Engine on a clean system please
+follow [Hosted_Engine_Howto#Fresh_Install](Hosted_Engine_Howto#Fresh_Install)
+guide or the corresponding Red Hat Virtualization
+[Self Hosted Engine Guide](https://access.redhat.com/documentation/en/red-hat-virtualization/4.0/paged/self-hosted-engine-guide/)
+
+If you're upgrading an existing Hosted Engine setup, please follow
+[Hosted_Engine_Howto#Upgrade_Hosted_Engine](Hosted_Engine_Howto#Upgrade_Hosted_Engine)
+guide or the corresponding Red Hat Virtualization
+[Upgrade Guide](https://access.redhat.com/documentation/en/red-hat-virtualization/4.0/paged/upgrade-guide/)
+''')
 
 
 class Bugzilla(object):
@@ -213,7 +345,7 @@ class GerritGitProject(object):
         return rv
 
 
-def generate_notes(milestone):
+def generate_notes(milestone, rc=None):
 
     def sort_function(x, y):
         priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
@@ -310,6 +442,12 @@ def generate_notes(milestone):
 
         sys.stderr.write('\n')
 
+    sys.stdout.write(TEMPLATE.render(
+        rc=ORDINALS[rc] if rc else None,
+        milestone=milestone.split('-')[-1],
+        current_date=datetime.utcnow().strftime('%B %d, %Y')
+    ))
+
     sys.stdout.write('## What\'s New in %s?\n\n' % milestone.split('-')[-1])
 
     bug_fixes = None
@@ -358,10 +496,18 @@ def generate_notes(milestone):
 
 
 def main(argv):
-    if len(argv) != 1:
-        sys.stderr.write('You must provide target release as argument.\n')
+    if len(argv) < 1 or len(argv) > 2:
+        sys.stderr.write(
+            'You must provide target release and (optionally) the '
+            'RC number as arguments.\n'
+        )
         return 1
-    generate_notes(argv[0])
+    rc = None
+    try:
+        rc = int(argv[1].strip())
+    except IndexError:
+        pass
+    generate_notes(argv[0], rc)
     return 0
 
 
