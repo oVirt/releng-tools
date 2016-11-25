@@ -396,11 +396,17 @@ def generate_notes(milestone, rc=None):
 
         sys.stderr.write('\n')
 
-    sys.stdout.write(TEMPLATE.render(
-        rc=ORDINALS[rc] if rc else None,
-        milestone=milestone.split('-')[-1],
-        current_date=datetime.utcnow().strftime('%B %d, %Y')
-    ))
+    sys.stdout.write(
+        codecs.encode(
+            TEMPLATE.render(
+                rc=ORDINALS[rc] if rc else None,
+                milestone=milestone.split('-')[-1],
+                current_date=datetime.utcnow().strftime('%B %d, %Y')
+            ),
+            'utf-8',
+            'xmlcharrefreplace'
+        )
+    )
 
     sys.stdout.write('## What\'s New in %s?\n\n' % milestone.split('-')[-1])
 
