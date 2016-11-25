@@ -64,7 +64,7 @@
     "mocha": "^2.5.3",
     "object-assign": "4.1.0",
     "opn": "4.0.2",
-    "ovirt-ui-components": "0.0.9",
+    "ovirt-ui-components": "0.1.0",
     "path-exists": "3.0.0",
     "patternfly": "~3.11.0",
     "phantomjs-prebuilt": "~2.1.7",

@@ -3,6 +3,17 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.16 / Nov 25 2016
+
+.Updated packages
+|===
+|Name | Version
+
+|ovirt-ui-components
+|0.1.0
+
+|===
+
 == 0.0.14 / Nov 14 2016
 
 .New packages
@@ -123,6 +134,8 @@ package.
 |whatwg-fetch
 |1.0.0
 
+|===
+
 
 .Updated packages
 |===
@@ -188,6 +201,7 @@ package.
 |webpack
 |1.13.2
 
+|===
 
 == 0.0.13 / Aug 4 2016
 
@@ -197,6 +211,7 @@ package.
 
 |license-checker
 |5.1.0
+|===
 
 == 0.0.10 / Jul 28 2016
 
@@ -206,6 +221,8 @@ package.
 
 |intl
 |1.2.4
+
+|===
 
 == 0.0.9 / Jun 28 2016
 
@@ -249,6 +266,8 @@ package.
 |sinon
 |1.17.4
 
+|===
+
 == 0.0.8 / May 26 2016
 
 .New packages
@@ -264,6 +283,8 @@ package.
 |react-intl
 |2.1.2
 
+|===
+
 == 0.0.7 / May 10 2016
 
 .New packages
@@ -273,6 +294,8 @@ package.
 |jquery
 |2.2.3
 
+|===
+
 == 0.0.5 / Apr 22 2016
 
 .New packages
@@ -281,6 +304,8 @@ package.
 
 |po2json
 |0.4.1
+
+|===
 
 == 0.0.4 / Apr 21 2016
 
@@ -296,6 +321,8 @@ package.
 
 |eslint-config-standard-jsx
 |1.1.1
+
+|===
 
 .Updated packages
 |===
@@ -324,6 +351,8 @@ package.
 
 |webpack
 |1.13.0
+
+|===
 
 == 0.0.3 / Apr 15 2016
 
@@ -360,6 +389,8 @@ package.
 
 |url-loader
 |0.5.7
+
+|===
 
 == 0.0.2 / Apr 3 2016
 
