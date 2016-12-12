@@ -29,9 +29,11 @@ Where  'ovirt-3.6.5' is the current milestone and 1 is the RC number, if any.
 
 """
 
+BUGZILLA_SERVER = 'bugzilla.redhat.com'
+BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
+
 import atexit
 import codecs
-import os
 import re
 import shutil
 import sys
@@ -45,8 +47,6 @@ from datetime import datetime
 import bugzilla
 import git
 import jinja2
-
-import requests
 
 
 ORDINALS = {
@@ -332,6 +332,7 @@ def generate_notes(milestone, rc=None):
     bz = Bugzilla()
 
     generated = OrderedDict()
+    bug_list = []
 
     for project in cp.sections():
         if project == 'default':
@@ -431,6 +432,7 @@ def generate_notes(milestone, rc=None):
                         ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
                         '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
                     )
+                    bug_list.append(bug)
 
                 sys.stdout.write('\n')
 
@@ -451,8 +453,13 @@ def generate_notes(milestone, rc=None):
                     ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
                     '<b>{summary}</b><br>\n'.format(**bug)
                 )
+                bug_list.append(bug)
 
             sys.stdout.write('\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in set(bug['id'] for bug in bug_list):
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write('\n\n\n'+list_url+'\n')
 
 
 def main(argv):
