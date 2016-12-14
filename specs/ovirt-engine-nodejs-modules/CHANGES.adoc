@@ -3,6 +3,17 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.17 / Dec 14 2016
+
+.Update packages
+|===
+|Name | Version
+
+|ovirt-ui-components
+|0.1.2
+
+|===
+
 == 0.0.16 / Nov 25 2016
 
 .Updated packages
