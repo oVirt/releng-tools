@@ -3,6 +3,17 @@
 This document describes the relevant changes between versions of this
 package.
 
+== 0.0.18 / Dec 18 2016
+
+.New packages
+|===
+|Name | Version
+
+|highlight.js
+|9.9.0
+
+|===
+
 == 0.0.17 / Dec 14 2016
 
 .Update packages
