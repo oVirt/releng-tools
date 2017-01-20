@@ -1,5 +1,5 @@
 #!/bin/bash -e
-src="qemu-kvm-rhev-2.6.0-27.el7.src.rpm"
+src="qemu-kvm-rhev-2.6.0-28.el7_3.3.src.rpm"
 url="ftp://ftp.redhat.com/pub/redhat/linux/enterprise/7Server/en/RHEV/SRPMS/${src}"
 patches=(
     "0001-qemu-kvm-spec-remove-branding.patch"
@@ -12,7 +12,6 @@ then
 fi
 rpm2cpio "${src}.orig" | cpio -idmv
 cp qemu-kvm.spec qemu-kvm.spec.orig
-
 # Apply patches for qemu re-branding
 for patchset in "${patches[@]}" ; do
   patch -p1 < "${patchset}"
