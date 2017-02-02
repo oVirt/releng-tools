@@ -77,8 +77,6 @@ class GetReleaseNotes(object):
                 sys.stderr.write(
                     "%d - has product %s\n" % (bz.id, bz.product)
                 )
-            #if bz.cf_fixed_in != "ovirt 4.0.0 alpha1":
-                #continue
             if bz.status not in (
                 'MODIFIED',
                 'ON_QA',
@@ -90,10 +88,14 @@ class GetReleaseNotes(object):
                     "%d - is in %s state\n" % (bz.id, bz.status)
                 )
                 continue
-            if '---' in bz.target_release:
+            if bz.resolution in (
+                'WONTFIX',
+                'DUPLICATE',
+                'NOTABUG',
+                'DEFERRED',
+            ):
                 sys.stderr.write(
-                    "%d - has no target release so we consider it "
-                    "not fixed\n" % (bz.id,)
+                    "%d - is in resolution %s\n" % (bz.id, bz.resolution)
                 )
                 continue
 
@@ -111,7 +113,14 @@ class GetReleaseNotes(object):
 
         for doc_type in self._bugs:
             print('\n' *10)
-            print('\n## ' + doc_type + '\n')
+
+            if doc_type == 'Bug Fix':
+                print('\n## Bug fixes:\n')
+            elif doc_type == 'Enhancement':
+                print('\n## Enhancements:\n')
+            else:
+                print('\n## ' + doc_type + '\n')
+
             for product in self._bugs[doc_type]:
                 print('\n### ' + product + '\n')
                 for bz in self._bugs[doc_type][product]:
