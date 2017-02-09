@@ -28,7 +28,7 @@ import bugzilla
 import codecs
 import sys
 import copy
-
+import collections
 
 BUGZILLA_SERVER = 'bugzilla.redhat.com'
 BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
@@ -39,7 +39,14 @@ class GetReleaseNotes(object):
     def __init__(self):
         super(GetReleaseNotes, self).__init__()
         self._args = None
-        self._bugs = {}
+        self._bugs = collections.OrderedDict()
+        self._bugs['ovirt-engine'] = collections.OrderedDict()
+        self._bugs['ovirt-engine']['en'] = []
+        self._bugs['ovirt-engine']['bug'] = []
+        self._bugs['vdsm'] = collections.OrderedDict()
+        self._bugs['vdsm']['en'] = []
+        self._bugs['vdsm']['bug'] = []
+
 
     def parse_args(self):
         parser = argparse.ArgumentParser(
@@ -99,31 +106,37 @@ class GetReleaseNotes(object):
                 )
                 continue
 
-            if bz.cf_doc_type not in self._bugs:
-                self._bugs[bz.cf_doc_type] = {}
-
-            product = bz.product
             if bz.classification != 'oVirt':
                 product = bz.component
-
-            if product not in self._bugs[bz.cf_doc_type]:
-                self._bugs[bz.cf_doc_type][product] = []
-
-            self._bugs[bz.cf_doc_type][product].append(copy.copy(bz))
-
-        for doc_type in self._bugs:
-            print('\n' *10)
-
-            if doc_type == 'Bug Fix':
-                print('\n## Bug fixes:\n')
-            elif doc_type == 'Enhancement':
-                print('\n## Enhancements:\n')
             else:
-                print('\n## ' + doc_type + '\n')
+                product = bz.product
 
-            for product in self._bugs[doc_type]:
-                print('\n### ' + product + '\n')
-                for bz in self._bugs[doc_type][product]:
+            if product not in self._bugs:
+                self._bugs[product] = collections.OrderedDict()
+                self._bugs[product]['en'] = []
+                self._bugs[product]['bug'] = []
+
+            if bz.cf_doc_type == 'Enhancement':
+                self._bugs[product]['en'].append(copy.copy(bz))
+            else:
+                self._bugs[product]['bug'].append(copy.copy(bz))
+
+        for product in self._bugs:
+            print('\n' *3)
+
+            print('\n## ' + product + '\n')
+
+            for bugtype in self._bugs[product]:
+                if len(self._bugs[product][bugtype]) == 0:
+                    continue
+
+                if bugtype == 'bug':
+                    print('\n### Bug fixes:\n')
+                else:
+                    print('\n### Enhancements:\n')
+
+
+                for bz in self._bugs[product][bugtype]:
                     print ' - [BZ %s](%s%s) <b>%s</b><br>' % (
                         str(bz.id),
                         BUGZILLA_HOME,
@@ -133,7 +146,7 @@ class GetReleaseNotes(object):
                         )
 
                     )
-                    if doc_type != "Bug Fix":
+                    if bugtype != "bug":
                         notes = bz.cf_release_notes.splitlines()
                         for line in notes:
                             print(
