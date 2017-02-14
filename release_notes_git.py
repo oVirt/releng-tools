@@ -385,7 +385,9 @@ def generate_notes(milestone, rc=None):
                         bug.summary, "utf-8", "xmlcharrefreplace"
                     ),
                 })
-                if cf_doc_type.lower() != 'bug fix':
+                if cf_doc_type.lower() == 'no doc update':
+                    team[-1]['release_notes'] = ''
+                elif cf_doc_type.lower() != 'bug fix':
                     team[-1]['release_notes'] = '<br>'.join(
                         codecs.encode(
                             bug.cf_release_notes,
