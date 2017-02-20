@@ -76,59 +76,31 @@ The oVirt Project is pleased to announce the availability of {{ milestone }}
 {% if rc %}{{ rc }} Release Candidate{% else %}Release{% endif %} as
 of {{ current_date }}.
 
-oVirt is an open source alternative to VMware™ vSphere™, and provides an awesome
-KVM management interface for multi-node virtualization.
-This release is available now for Red Hat Enterprise Linux 7.2, CentOS Linux 7.2
-(or similar).
+oVirt is an open source alternative to VMware™ vSphere™, and provides an
+awesome KVM management interface for multi-node virtualization.
+This release is available now for Red Hat Enterprise Linux 7.3,
+CentOS Linux 7.3 (or similar).
 
 {% if rc %}
 This is pre-release software.
 Please take a look at our [community page](/community/) to know how to
 ask questions and interact with developers and users.
-All issues or bugs should be reported via the [Red Hat Bugzilla](https://bugzilla.redhat.com/).
+All issues or bugs should be reported via the
+[Red Hat Bugzilla](https://bugzilla.redhat.com/enter_bug.cgi?classification=oVirt).
 The oVirt Project makes no guarantees as to its suitability or usefulness.
-This pre-release should not to be used in production, and it is not feature complete.
+This pre-release should not to be used in production, and it is not feature
+complete.
 {% endif %}
 
 To find out more about features which were added in previous oVirt releases,
-check out the [previous versions release notes](/develop/release-management/releases/).
-For a general overview of oVirt, read [the Quick Start Guide](Quick_Start_Guide)
+check out the
+[previous versions release notes](/develop/release-management/releases/).
+For a general overview of oVirt, read
+[the Quick Start Guide](Quick_Start_Guide)
 and the [about oVirt](about oVirt) page.
 
-An updated documentation has been provided by our downstream
-[Red Hat Virtualization](https://access.redhat.com/documentation/en/red-hat-virtualization?version=4.0/)
-
-
-## Install / Upgrade from previous versions
-
-Users upgrading from 3.6 should be aware of following 4.0 changes around
-authentication and certificates handling:
-
-1. Single Sign-On using OAUTH2 protocol has been implemented in engine to
-   allow SSO between webadmin, userportal and RESTAPI. More information can
-   be found at https://bugzilla.redhat.com/1092744
-
-2. Due to SSO it's required to access engine only using the same FQDN which
-   was specified during engine-setup invocation. If your engine FQDN is not
-   accessible from all engine clients, you will not be able to login. Please
-   use ovirt-engine-rename tool to fix your FQDN, more information can be
-   found at https://www.ovirt.org/documentation/how-to/networking/changing-engine-hostname/ .
-   If you try to access engine using IP or DNS alias, an error will be
-   thrown. Please consult following bugs targeted to oVirt 4.0.4 which
-   should fix this limitation:
-     https://bugzilla.redhat.com/1325746
-     https://bugzilla.redhat.com/1362196
-
-3. If you have used Kerberos SSO to access engine, please consult
-   https://bugzilla.redhat.com/1342192 how to update your Apache
-   configuration after upgrade to 4.0
-
-4. If you are using HTTPS certificate signed by custom certificate
-   authority, please take a look at https://bugzilla.redhat.com/1336838
-   for steps which need to be done after migration to 4.0. Also please
-   consult https://bugzilla.redhat.com/1313379 how to setup this custom
-   CA for use with virt-viewer clients.
-
+[Installation guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/)
+is available for updated and detailed installation instructions.
 
 ### Fedora / CentOS / RHEL
 
@@ -141,41 +113,35 @@ In order to install this Release Candidate you will need to enable pre-release r
 In order to install it on a clean system, you need to install
 
 {% if rc %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release40-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release40-pre.rpm)
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release41-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release41-pre.rpm)
 {% else %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm)
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release41.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release41.rpm)
 {% endif%}
 
-{% if rc %}To test this pre release, you may read our
-[Quick Start Guide](Quick Start Guide) or{% else %}and then follow our
-[Quick Start Guide](Quick Start Guide) or{% endif %} a more updated documentation
-from our downstream
-[Red Hat Virtualization](https://access.redhat.com/documentation/en/red-hat-virtualization/4.0/)
+and then follow our
+[Installation guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/)
 
 {% if not rc %}
 If you're upgrading from a previous release on Enterprise Linux 7 you just need
 to execute:
 
-      # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm
+      # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release41.rpm
       # yum update "ovirt-*-setup*"
       # engine-setup
 
-Upgrade on Fedora 22 and Enterprise Linux 6 is not supported and you should
-follow our [Migration Guide](../../documentation/migration-engine-36-to-40/) in
-order to migrate to Enterprise Linux 7 or Fedora 23.
 {% endif %}
 
 ### oVirt Hosted Engine
 
 If you're going to install oVirt as Hosted Engine on a clean system please
 follow [Hosted_Engine_Howto#Fresh_Install](Hosted_Engine_Howto#Fresh_Install)
-guide or the corresponding Red Hat Virtualization
-[Self Hosted Engine Guide](https://access.redhat.com/documentation/en/red-hat-virtualization/4.0/paged/self-hosted-engine-guide/)
+guide or the corresponding section in
+[Self Hosted Engine Guide](/documentation/self-hosted/Self-Hosted_Engine_Guide/)
 
 If you're upgrading an existing Hosted Engine setup, please follow
 [Hosted_Engine_Howto#Upgrade_Hosted_Engine](Hosted_Engine_Howto#Upgrade_Hosted_Engine)
-guide or the corresponding Red Hat Virtualization
-[Upgrade Guide](https://access.redhat.com/documentation/en/red-hat-virtualization/4.0/paged/upgrade-guide/)
+guide or the corresponding section within the
+[Upgrade Guide](/documentation/upgrade-guide/upgrade-guide/)
 ''')
 
 
