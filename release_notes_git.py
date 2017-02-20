@@ -364,9 +364,8 @@ def generate_notes(milestone, rc=None):
                 if 'docs needed' in cf_doc_type.lower():
                     cf_doc_type = 'Unclassified'
                 doc_type = generated.setdefault(cf_doc_type, OrderedDict())
-                proj = doc_type.setdefault(project_name or project, {})
-                team = proj.setdefault(bug.cf_ovirt_team, [])
-                team.append({
+                proj = doc_type.setdefault(project_name or project, [])
+                proj.append({
                     'id': bug_id,
                     'priority': bug.priority,
                     'summary': codecs.encode(
@@ -374,16 +373,16 @@ def generate_notes(milestone, rc=None):
                     ),
                 })
                 if cf_doc_type.lower() == 'no doc update':
-                    team[-1]['release_notes'] = ''
+                    proj[-1]['release_notes'] = ''
                 elif cf_doc_type.lower() != 'bug fix':
-                    team[-1]['release_notes'] = '<br>'.join(
+                    proj[-1]['release_notes'] = '<br>'.join(
                         codecs.encode(
                             bug.cf_release_notes,
                             'utf-8',
                             'xmlcharrefreplace'
                         ).splitlines()
                     )
-                team.sort(sort_function)
+                proj.sort(sort_function)
 
         sys.stderr.write('\n')
 
@@ -416,19 +415,14 @@ def generate_notes(milestone, rc=None):
 
         for project in generated[bug_type]:
             sys.stdout.write('#### %s\n\n' % project)
-            teams = generated[bug_type][project].keys()
-            teams.sort()
-            for team in teams:
-                sys.stdout.write('##### Team: %s\n\n' % team)
+            for bug in generated[bug_type][project]:
+                sys.stdout.write(
+                    ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                    '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
+                )
+                bug_list.append(bug)
 
-                for bug in generated[bug_type][project][team]:
-                    sys.stdout.write(
-                        ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                        '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
-                    )
-                    bug_list.append(bug)
-
-                sys.stdout.write('\n')
+            sys.stdout.write('\n')
 
     if not bug_fixes:
         return
@@ -437,19 +431,14 @@ def generate_notes(milestone, rc=None):
 
     for project in bug_fixes:
         sys.stdout.write('### %s\n\n' % project)
-        teams = bug_fixes[project].keys()
-        teams.sort()
-        for team in teams:
-            sys.stdout.write('#### Team: %s\n\n' % team)
+        for bug in bug_fixes[project]:
+            sys.stdout.write(
+                ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                '<b>{summary}</b><br>\n'.format(**bug)
+            )
+            bug_list.append(bug)
 
-            for bug in bug_fixes[project][team]:
-                sys.stdout.write(
-                    ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                    '<b>{summary}</b><br>\n'.format(**bug)
-                )
-                bug_list.append(bug)
-
-            sys.stdout.write('\n')
+        sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     for bug in set(bug['id'] for bug in bug_list):
         list_url += "{id}%2C%20".format(id=bug)
