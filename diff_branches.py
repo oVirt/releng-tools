@@ -28,6 +28,7 @@ import argparse
 import bugzilla
 import codecs
 import git
+import os
 import sys
 
 BUGZILLA_SERVER = 'bugzilla.redhat.com'
@@ -41,6 +42,7 @@ class PatchesChecker(object):
         self._repo = git.Git('.')
         self._args = None
         self.bzobj = None
+        self.waive_list = []
 
     def parse_args(self):
         parser = argparse.ArgumentParser(
@@ -117,6 +119,17 @@ class PatchesChecker(object):
                 )
             )
 
+    def load_waive_list(self):
+        try:
+            with open(
+                os.path.expanduser("~/.config/diff_branches_waive.list"),
+                "r"
+            ) as f:
+                content = f.read()
+                self.waive_list = content.splitlines()
+        except OSError:
+            pass
+
     def main(self):
         self.parse_args()
         if self._args.target_milestone is not None:
@@ -130,6 +143,7 @@ class PatchesChecker(object):
         self.parse_log(branch, branch_data)
 
         print('%d patches on %s' % (len(branch_data), self._args.branch))
+        self.load_waive_list()
 
         in_branch = [
             branch_data[x]['Change']
@@ -141,7 +155,8 @@ class PatchesChecker(object):
         for commit in master_data:
             if (
                 'Change' in master_data[commit] and
-                master_data[commit]['Change'] not in in_branch
+                master_data[commit]['Change'] not in in_branch and
+                master_data[commit]['Change'] not in self.waive_list
             ):
                 count += 1
                 bug = master_data[commit].get('Bug', '')
