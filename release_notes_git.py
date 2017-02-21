@@ -420,7 +420,9 @@ def generate_notes(milestone, rc=None):
         if bug_type.lower() == 'bug fix':
             bug_fixes = generated[bug_type]
             continue
-        sys.stdout.write('### %s\n\n' % bug_type)
+        sys.stdout.write(
+            '### %s\n\n' % bug_type.replace("Enhancement", "Enhancements")
+        )
 
         for project in generated[bug_type]:
             sys.stdout.write('#### %s\n\n' % project)
