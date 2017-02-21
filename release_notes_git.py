@@ -142,6 +142,28 @@ If you're upgrading an existing Hosted Engine setup, please follow
 [Hosted_Engine_Howto#Upgrade_Hosted_Engine](Hosted_Engine_Howto#Upgrade_Hosted_Engine)
 guide or the corresponding section within the
 [Upgrade Guide](/documentation/upgrade-guide/upgrade-guide/)
+
+### EPEL
+
+TL;DR Don't enable all of EPEL on oVirt machines.
+
+The ovirt-release package enables the epel repositories and includes several
+specific packages that are required from there. It also enables and uses
+the CentOS OpsTools SIG repos, for other packages.
+
+EPEL currently includes collectd 5.7.1, and the collectd package there includes
+the write_http plugin.
+
+OpsTools currently includes collectd 5.7.0, and the write_http plugin is
+packaged separately.
+
+ovirt-release does not use collectd from epel, so if you only use it, you
+should be ok.
+
+If you want to use other packages from EPEL, you should make sure to not
+include collectd. Either use `includepkgs` and add those you need, or use
+`excludepkgs=collectd*`.
+
 ''')
 
 
