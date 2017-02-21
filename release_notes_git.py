@@ -399,7 +399,9 @@ def generate_notes(milestone, rc=None):
         )
     )
 
-    sys.stdout.write('## What\'s New in %s?\n\n' % milestone.split('-')[-1])
+    sys.stdout.write(
+        '\n\n## What\'s New in %s?\n\n' % milestone.split('-')[-1]
+    )
 
     bug_fixes = None
     bug_types = generated.keys()
