@@ -21,19 +21,18 @@
 This script generates release notes for oVirt projects, fetching commits from
 Gerrit.
 
-To run it:
+For details on how to run the script, run:
 
-    $ ./release_notes_github.py ovirt-3.6.5 [1] > notes.md
-
-Where  'ovirt-3.6.5' is the current milestone and 1 is the RC number, if any.
-
+    $ ./release_notes_git.py --help
 """
 
 BUGZILLA_SERVER = 'bugzilla.redhat.com'
 BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
 
+import argparse
 import atexit
 import codecs
+import os
 import re
 import shutil
 import sys
@@ -256,13 +255,22 @@ class GerritGitProject(object):
 
     GERRIT_GIT_BASE_URL = 'https://gerrit.ovirt.org/'
 
-    def __init__(self, project):
-        # this creates a brand new bare repository for the sake of
-        # consistency
+    def __init__(self, project, basedir=None):
         self.repo_url = self.GERRIT_GIT_BASE_URL + project
-        self.repo_path = tempfile.mkdtemp(prefix='release-notes-')
-        atexit.register(shutil.rmtree, self.repo_path)
-        git.Repo.clone_from(self.repo_url, self.repo_path, bare=True)
+
+        if basedir is not None:
+            self.repo_path = os.path.join(basedir, '%s.git' % project)
+        else:
+            self.repo_path = tempfile.mkdtemp(prefix='release-notes-')
+            atexit.register(shutil.rmtree, self.repo_path)
+
+        # this tests if the repo was actually cloned
+        if os.path.isdir(os.path.join(self.repo_path, 'objects')):
+            self.repo = git.Git(self.repo_path)
+            self.repo.fetch('-p')
+        else:
+            git.Repo.clone_from(self.repo_url, self.repo_path, bare=True)
+
         self.repo = git.Git(self.repo_path)
 
     def get_commits_between_revs(self, r1, r2):
@@ -287,7 +295,7 @@ class GerritGitProject(object):
         return rv
 
 
-def generate_notes(milestone, rc=None):
+def generate_notes(milestone, rc=None, git_basedir=None):
 
     def sort_function(x, y):
         priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
@@ -328,7 +336,7 @@ def generate_notes(milestone, rc=None):
 
         sys.stderr.write('Project: %s\n\n' % (project,))
 
-        gh = GerritGitProject(project)
+        gh = GerritGitProject(project, git_basedir)
         previous = cp.get(project, 'previous')
         current = cp.get(project, 'current')
         project_name = cp.get(project, 'name')
@@ -445,21 +453,26 @@ def generate_notes(milestone, rc=None):
     sys.stderr.write('\n\n\n'+list_url+'\n')
 
 
-def main(argv):
-    if len(argv) < 1 or len(argv) > 2:
-        sys.stderr.write(
-            'You must provide target release and (optionally) the '
-            'RC number as arguments.\n'
-        )
-        return 1
-    rc = None
-    try:
-        rc = int(argv[1].strip())
-    except IndexError:
-        pass
-    generate_notes(argv[0], rc)
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--rc', type=int,
+                        help='RC number of the release, if any')
+    parser.add_argument('--git-basedir', metavar='DIR',
+                        help=(
+                            'base directory to store git repositories. will '
+                            'use temp dirs by default'
+                        ))
+    parser.add_argument('target_release', metavar='TARGET-RELEASE',
+                        help='target release. e.g. ovirt-3.6.5')
+
+    args = parser.parse_args()
+
+    generate_notes(args.target_release, args.rc, args.git_basedir)
+
     return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main())
