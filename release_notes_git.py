@@ -268,6 +268,7 @@ class GerritGitProject(object):
         if os.path.isdir(os.path.join(self.repo_path, 'objects')):
             self.repo = git.Git(self.repo_path)
             self.repo.fetch('-p')
+            self.repo.fetch('-t')
         else:
             git.Repo.clone_from(self.repo_url, self.repo_path, bare=True)
 
