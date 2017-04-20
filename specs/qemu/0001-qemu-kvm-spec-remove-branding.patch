@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2017-03-02 11:12:09.390449926 +0100
-+++ b/qemu-kvm.spec	2017-03-02 11:16:21.155101778 +0100
+--- a/qemu-kvm.spec	2017-04-20 15:17:05.721898387 +0200
++++ b/qemu-kvm.spec	2017-04-20 15:22:14.560336615 +0200
 @@ -64,8 +64,9 @@
  # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
@@ -25,19 +25,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a FAST! processor emulator
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.6.0
--Release: 28%{?dist}.6
-+Release: 28%{?dist}_3.6.1
+-Release: 28%{?dist}.9
++Release: 28%{?dist}_3.9.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2417,6 +2422,9 @@
+@@ -2468,6 +2473,9 @@
  %endif
  
  %changelog
-+* Thu Mar  2 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.6.0-28.el7_3.6.1
++* Thu Apr 20 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.6.0-28.el7_3.9.1
 +- Removing RH branding from package name
 +
- * Mon Feb 13 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.6.0-28.el7_3.6
- - kvm-cirrus-fix-patterncopy-checks.patch [bz#1420493]
- - kvm-Revert-cirrus-allow-zero-source-pitch-in-pattern-fil.patch [bz#1420493]
-Solo in b: qemu-kvm.spec.orig
+ * Fri Mar 24 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.6.0-28.el7_3.9
+ - kvm-block-gluster-memory-usage-use-one-glfs-instance-per.patch [bz#1413044]
+ - kvm-gluster-Fix-use-after-free-in-glfs_clear_preopened.patch [bz#1413044]
