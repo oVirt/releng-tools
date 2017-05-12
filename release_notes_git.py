@@ -26,9 +26,6 @@ For details on how to run the script, run:
     $ ./release_notes_git.py --help
 """
 
-BUGZILLA_SERVER = 'bugzilla.redhat.com'
-BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
-
 import argparse
 import atexit
 import codecs
@@ -47,6 +44,8 @@ import bugzilla
 import git
 import jinja2
 
+BUGZILLA_SERVER = 'bugzilla.redhat.com'
+BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
 
 ORDINALS = {
     1: 'First',
@@ -67,6 +66,7 @@ TEMPLATE = jinja2.Template(u'''\
 ---
 title: oVirt {{ milestone }} Release Notes
 category: documentation
+layout: toc
 ---
 
 # oVirt {{ milestone }} Release Notes
@@ -161,7 +161,7 @@ should be ok.
 
 If you want to use other packages from EPEL, you should make sure to not
 include collectd. Either use `includepkgs` and add those you need, or use
-`excludepkgs=collectd*`.
+`exclude=collectd*`.
 
 ''')
 
@@ -455,7 +455,6 @@ def generate_notes(milestone, rc=None, git_basedir=None):
 
 
 def main():
-    import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--rc', type=int,
