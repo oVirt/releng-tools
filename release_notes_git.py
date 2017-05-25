@@ -79,6 +79,7 @@ oVirt is an open source alternative to VMware™ vSphere™, and provides an
 awesome KVM management interface for multi-node virtualization.
 This release is available now for Red Hat Enterprise Linux 7.3,
 CentOS Linux 7.3 (or similar).
+Packages for Fedora 24 are also available as a Tech Preview.
 
 {% if rc %}
 This is pre-release software.
