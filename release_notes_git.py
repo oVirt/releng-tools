@@ -241,6 +241,22 @@ class Bugzilla(object):
                         )
                     )
                 )
+                # May have been cloned to zstream.
+                for blocked in bug.blocks:
+                    blocked_bug = self.validate_bug(blocked, target_milestones)
+                    if (
+                        blocked_bug and
+                        bug.summary in blocked_bug.summary and
+                        'ZStream' in blocked_bug.keywords and
+                        blocked_bug.target_milestone in target_milestones
+                    ):
+                        sys.stderr.write(
+                            '%d - has been cloned to %s;\n' % (
+                                bug_id,
+                                blocked_bug.id,
+                            )
+                        )
+                        return blocked_bug
                 return None
         else:
             sys.stderr.write(
@@ -269,8 +285,9 @@ class GerritGitProject(object):
             self.repo = git.Git(self.repo_path)
             self.repo.fetch('-p')
             self.repo.fetch('-t')
+            self.repo.pull()
         else:
-            git.Repo.clone_from(self.repo_url, self.repo_path, bare=True)
+            git.Repo.clone_from(self.repo_url, self.repo_path)
 
         self.repo = git.Git(self.repo_path)
 
@@ -367,6 +384,14 @@ def generate_notes(milestone, rc=None, git_basedir=None):
                 bug_id,
             ))
             bug = bz.validate_bug(bug_id, target_milestones)
+            if bug and bug.id != bug_id:
+                # A clone has been created after the patch has been merged
+                bug_id = bug.id
+                if bug_id in bugs_found:
+                    sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
+                        bug_id,
+                    ))
+                    continue
             bugs_found.append(bug_id)
             if bug:
                 cf_doc_type = bug.cf_doc_type
