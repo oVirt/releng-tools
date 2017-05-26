@@ -282,7 +282,7 @@ class GerritGitProject(object):
             atexit.register(shutil.rmtree, self.repo_path)
 
         # this tests if the repo was actually cloned
-        if os.path.isdir(os.path.join(self.repo_path, 'objects')):
+        if os.path.isdir(self.repo_path):
             self.repo = git.Git(self.repo_path)
             self.repo.fetch('-p')
             self.repo.fetch('-t')
