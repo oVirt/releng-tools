@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2017-04-20 15:17:05.721898387 +0200
-+++ b/qemu-kvm.spec	2017-04-20 15:22:14.560336615 +0200
+--- a/qemu-kvm.spec	2017-06-23 09:35:48.015242819 +0200
++++ b/qemu-kvm.spec	2017-06-23 09:38:30.799453808 +0200
 @@ -64,8 +64,9 @@
  # - extra_provides_suffix: used for dependency checking of other packages
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
@@ -25,18 +25,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a FAST! processor emulator
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.6.0
--Release: 28%{?dist}.9
-+Release: 28%{?dist}_3.9.1
+-Release: 28%{?dist}.10
++Release: 28%{?dist}.10.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2468,6 +2473,9 @@
+@@ -2471,6 +2476,9 @@
  %endif
  
  %changelog
-+* Thu Apr 20 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.6.0-28.el7_3.9.1
++* Fri Jun 23 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.6.0-28.el7_3.10.1
 +- Removing RH branding from package name
 +
- * Fri Mar 24 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.6.0-28.el7_3.9
- - kvm-block-gluster-memory-usage-use-one-glfs-instance-per.patch [bz#1413044]
- - kvm-gluster-Fix-use-after-free-in-glfs_clear_preopened.patch [bz#1413044]
+ * Mon May 22 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.6.0-28.el7_3.10
+ - kvm-virtio-rng-stop-virtqueue-while-the-CPU-is-stopped.patch [bz#1450375]
+ - Resolves: bz#1450375
