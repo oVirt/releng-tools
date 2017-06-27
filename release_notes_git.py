@@ -75,7 +75,7 @@ The oVirt Project is pleased to announce the availability of {{ milestone }}
 {% if rc %}{{ rc }} Release Candidate{% else %}Release{% endif %} as
 of {{ current_date }}.
 
-oVirt is an open source alternative to VMware™ vSphere™, and provides an
+oVirt is an open source alternative to VMware™ vSphere™, providing an
 awesome KVM management interface for multi-node virtualization.
 This release is available now for Red Hat Enterprise Linux 7.3,
 CentOS Linux 7.3 (or similar).
@@ -92,15 +92,15 @@ This pre-release should not to be used in production, and it is not feature
 complete.
 {% endif %}
 
-To find out more about features which were added in previous oVirt releases,
-check out the
-[previous versions release notes](/develop/release-management/releases/).
-For a general overview of oVirt, read
-[the Quick Start Guide](Quick_Start_Guide)
-and the [about oVirt](about oVirt) page.
+For a general overview of oVirt, read the [Quick Start Guide](/documentation/quickstart/quickstart-guide/)
+and visit the [About oVirt](/documentation/introduction/about-ovirt/) page.
 
-[Installation guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/)
-is available for updated and detailed installation instructions.
+For detailed installation instructions, read the [Installation Guide](/documentation/install-guide/Installation_Guide/).
+
+To learn about features introduced before {{ milestone }}, see the [release notes for previous versions](/documentation/#previous-release-notes).
+
+
+## Install / Upgrade from previous versions
 
 ### Fedora / CentOS / RHEL
 
