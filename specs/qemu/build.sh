@@ -1,9 +1,8 @@
 #!/bin/bash -e
-src="qemu-kvm-rhev-2.6.0-28.el7_3.10.src.rpm"
+src="qemu-kvm-rhev-2.9.0-16.el7_4.5.src.rpm"
 url="ftp://ftp.redhat.com/pub/redhat/linux/enterprise/7Server/en/RHEV/SRPMS/${src}"
 patches=(
     "0001-qemu-kvm-spec-remove-branding.patch"
-    "0002-fix-qemu-img-require.patch"
 )
 # Download the source RPM and extract it
 if ! [[ -f "${src}.orig" ]]

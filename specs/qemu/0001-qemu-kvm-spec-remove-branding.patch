@@ -1,18 +1,18 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2017-06-23 09:35:48.015242819 +0200
-+++ b/qemu-kvm.spec	2017-06-23 09:38:30.799453808 +0200
-@@ -64,8 +64,9 @@
- # - extra_provides_suffix: used for dependency checking of other packages
+--- a/qemu-kvm.spec	2017-09-11 16:20:14.538688900 +0200
++++ b/qemu-kvm.spec	2017-09-11 16:22:34.622342608 +0200
+@@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
--%global pkgsuffix %{rhev_suffix}
-+%global pkgsuffix -ev
- %global extra_provides_suffix %{nil}
-+%global rhev_provide_suffix %{rhev_suffix}
- %global conflicts_suffix %{rhel_suffix}
- %global obsoletes_version 15:0-0
- 
-@@ -73,12 +74,16 @@
+ %if %{rhev}
+-    %global pkgsuffix %{rhev_suffix}
++    %global pkgsuffix -ev
+     %global extra_provides_suffix %{nil}
++    %global rhev_provide_suffix %{rhev_suffix}
+     %global conflicts_suffix %{rhel_suffix}
+     %global obsoletes_version 15:0-0
+ %else
+@@ -84,6 +85,10 @@
  %define rhel_rhev_conflicts()                                         \
  Conflicts: %1%{conflicts_suffix}                                      \
  Provides: %1%{extra_provides_suffix} = %{epoch}:%{version}-%{release} \
@@ -20,23 +20,25 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
 +Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}   \
 +Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}  \
 +    %endif                                                            \
- Obsoletes: %1 < %{obsoletes_version}
- 
- Summary: QEMU is a FAST! processor emulator
+ %if 0%{?obsoletes_version:1}                                          \
+ Obsoletes: %1 < %{obsoletes_version}                                  \
+ %endif
+@@ -91,7 +96,7 @@
+ Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
- Version: 2.6.0
--Release: 28%{?dist}.10
-+Release: 28%{?dist}.10.1
+ Version: 2.9.0
+-Release: 16%{?dist}.5
++Release: 16.el7_4.5.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2471,6 +2476,9 @@
+@@ -1345,6 +1350,9 @@
  %endif
  
  %changelog
-+* Fri Jun 23 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.6.0-28.el7_3.10.1
++* Thu Aug 24 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.5.1
 +- Removing RH branding from package name
 +
- * Mon May 22 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.6.0-28.el7_3.10
- - kvm-virtio-rng-stop-virtqueue-while-the-CPU-is-stopped.patch [bz#1450375]
- - Resolves: bz#1450375
+ * Wed Aug 23 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.5
+ - kvm-trace-use-static-event-ID-mapping-in-simpletrace.stp.patch [bz#1482515]
+ - kvm-simpletrace-fix-flight-recorder-no-header-option.patch [bz#1482515]
