@@ -272,8 +272,8 @@ class GerritGitProject(object):
 
     GERRIT_GIT_BASE_URL = 'https://gerrit.ovirt.org/'
 
-    def __init__(self, project, basedir=None):
-        self.repo_url = self.GERRIT_GIT_BASE_URL + project
+    def __init__(self, project, basedir=None, base_url=GERRIT_GIT_BASE_URL):
+        self.repo_url = base_url + project
 
         if basedir is not None:
             self.repo_path = os.path.join(basedir, '%s.git' % project)
@@ -354,8 +354,14 @@ def generate_notes(milestone, rc=None, git_basedir=None):
             continue
 
         sys.stderr.write('Project: %s\n\n' % (project,))
-
-        gh = GerritGitProject(project, git_basedir)
+        if cp.has_option(project, 'baseurl'):
+            gh = GerritGitProject(
+                project,
+                git_basedir,
+                cp.get(project, 'baseurl')
+            )
+        else:
+            gh = GerritGitProject(project, git_basedir)
         previous = cp.get(project, 'previous')
         current = cp.get(project, 'current')
         project_name = cp.get(project, 'name')
