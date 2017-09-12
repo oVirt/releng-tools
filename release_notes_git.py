@@ -62,6 +62,10 @@ ORDINALS = {
 }
 
 
+
+
+
+
 TEMPLATE = jinja2.Template(u'''\
 ---
 title: oVirt {{ milestone }} Release Notes
@@ -72,16 +76,17 @@ layout: toc
 # oVirt {{ milestone }} Release Notes
 
 The oVirt Project is pleased to announce the availability of {{ milestone }}
-{% if rc %}{{ rc }} Release Candidate{% else %}Release{% endif %} as
-of {{ current_date }}.
+{% if release_type == "rc" %}{{ release }} Release Candidate
+{% elif release_type == "alpha" %}{{ release }} Alpha release
+{% elif release_type == "beta" %}{{ release }} Beta release
+{% else %}Release{% endif %} as of {{ current_date }}.
 
 oVirt is an open source alternative to VMware™ vSphere™, providing an
 awesome KVM management interface for multi-node virtualization.
-This release is available now for Red Hat Enterprise Linux 7.3,
-CentOS Linux 7.3 (or similar).
-Packages for Fedora 24 are also available as a Tech Preview.
+This release is available now for Red Hat Enterprise Linux 7.4,
+CentOS Linux 7.4 (or similar).
 
-{% if rc %}
+{% if release_type %}
 This is pre-release software.
 Please take a look at our [community page](/community/) to know how to
 ask questions and interact with developers and users.
@@ -104,28 +109,40 @@ To learn about features introduced before {{ milestone }}, see the [release note
 
 ### Fedora / CentOS / RHEL
 
-{% if rc %}
+{% if release_type == "rc" %}
 ## RELEASE CANDIDATE
 
 In order to install this Release Candidate you will need to enable pre-release repository.
 {% endif %}
 
+{% if release_type == "alpha" %}
+## ALPHA RELEASE
+
+In order to install this Alplha Release you will need to enable pre-release repository.
+{% endif %}
+
+{% if release_type == "beta" %}
+## BETA RELEASE
+
+In order to install this Beta Release you will need to enable pre-release repository.
+{% endif %}
+
 In order to install it on a clean system, you need to install
 
-{% if rc %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release41-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release41-pre.rpm)
+{% if release_type %}
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm)
 {% else %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release41.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release41.rpm)
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-releaserelease{{ release_rpm  }}.rpm)
 {% endif%}
 
 and then follow our
 [Installation guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/)
 
-{% if not rc %}
+{% if not release_type %}
 If you're upgrading from a previous release on Enterprise Linux 7 you just need
 to execute:
 
-      # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release41.rpm
+      # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm
       # yum update "ovirt-*-setup*"
       # engine-setup
 
@@ -149,21 +166,11 @@ TL;DR Don't enable all of EPEL on oVirt machines.
 
 The ovirt-release package enables the epel repositories and includes several
 specific packages that are required from there. It also enables and uses
-the CentOS OpsTools SIG repos, for other packages.
+the CentOS SIG repos, for other packages.
 
-EPEL currently includes collectd 5.7.1, and the collectd package there includes
-the write_http plugin.
-
-OpsTools currently includes collectd 5.7.0, and the write_http plugin is
-packaged separately.
-
-ovirt-release does not use collectd from epel, so if you only use it, you
-should be ok.
-
-If you want to use other packages from EPEL, you should make sure to not
-include collectd. Either use `includepkgs` and add those you need, or use
-`exclude=collectd*`.
-
+If you want to use other packages from EPEL, you should make sure to
+use `includepkgs` and add only those you need avoiding to override
+packages from other repos.
 ''')
 
 
@@ -314,7 +321,7 @@ class GerritGitProject(object):
         return rv
 
 
-def generate_notes(milestone, rc=None, git_basedir=None):
+def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
 
     def sort_function(x, y):
         priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
@@ -432,7 +439,9 @@ def generate_notes(milestone, rc=None, git_basedir=None):
             TEMPLATE.render(
                 rc=ORDINALS[rc] if rc else None,
                 milestone=milestone.split('-')[-1],
-                current_date=datetime.utcnow().strftime('%B %d, %Y')
+                current_date=datetime.utcnow().strftime('%B %d, %Y'),
+                release_type=release_type,
+                release_rpm="".join(milestone.split('-')[1].split('.')[0:2])
             ),
             'utf-8',
             'xmlcharrefreplace'
@@ -489,8 +498,10 @@ def generate_notes(milestone, rc=None, git_basedir=None):
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--rc', type=int,
-                        help='RC number of the release, if any')
+    parser.add_argument('--release', type=int,
+                        help='RC number of the release, if type is specified')
+    parser.add_argument('--release-type', type=str,
+                        help='release type: alpha, beta, rc, empty if GA')
     parser.add_argument('--git-basedir', metavar='DIR',
                         help=(
                             'base directory to store git repositories. will '
@@ -501,7 +512,7 @@ def main():
 
     args = parser.parse_args()
 
-    generate_notes(args.target_release, args.rc, args.git_basedir)
+    generate_notes(args.target_release, args.release, args.git_basedir, args.release_type)
 
     return 0
 
