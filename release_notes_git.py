@@ -300,7 +300,10 @@ class GerritGitProject(object):
         self.repo = git.Git(self.repo_path)
 
     def get_commits_between_revs(self, r1, r2):
-        log = self.repo.log('%s..%s' % (r1, r2))
+        if not r1:
+            log = self.repo.log('%s' % (r2,))
+        else:
+            log = self.repo.log('%s..%s' % (r1, r2))
         current = None
         rv = []
         for line in log.splitlines():
@@ -369,11 +372,13 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
             )
         else:
             gh = GerritGitProject(project, git_basedir)
-        previous = cp.get(project, 'previous')
+        if cp.has_option(project, 'previous'):
+            previous = cp.get(project, 'previous')
+        else:
+            previous = None
         current = cp.get(project, 'current')
         project_name = cp.get(project, 'name')
-
-        if not previous or not current:
+        if not current:
             raise RuntimeError(
                 'Every project must provide previous and current revisions')
 
