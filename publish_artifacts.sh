@@ -134,9 +134,11 @@ publish_artifacts() {
     done
 
     for repo in "${dst_dir}"/rpm/*; do
-        createrepo -q "${repo}" || die "Cannot create repository under ${repo}"
+        createrepo -q --excludes="*.src.rpm" "${repo}" || die "Cannot create repository under ${repo}"
     done
-
+    for repo in "${dst_dir}"/rpm/*/SRPMS; do
+        createrepo -q "${repo}" || die "Cannot create SRPMS repository under ${repo}"
+    done
     #
     # Copy sources to non default directory SOURCES_DST
     #
