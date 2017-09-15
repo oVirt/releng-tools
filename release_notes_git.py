@@ -222,10 +222,11 @@ class Bugzilla(object):
             ):
                 sys.stderr.write(
                     (
-                        '{bug} - is in status {status} and targeted '
+                        '{bugzilla}{bug} - is in status {status} and targeted '
                         'to {milestone}; '
                         'assignee: {assignee}\n'
                     ).format(
+                        bugzilla=BUGZILLA_HOME,
                         bug=bug_id,
                         status=bug.status,
                         milestone=bug.target_milestone,
@@ -238,10 +239,18 @@ class Bugzilla(object):
 
             elif (
                 target_milestones and
-                bug.target_milestone not in target_milestones
+                bug.target_milestone not in target_milestones and (
+                    (
+                        bug.product in (
+                            'Red Hat Enterprise Virtualization Manager',
+                            'oVirt',
+                        )
+                    ) or (bug.classification == 'oVirt')
+                )
             ):
                 sys.stderr.write(
-                    '%d - is targeted to %s; assignee: %s\n' % (
+                    '%s%d - is targeted to %s; assignee: %s\n' % (
+                        BUGZILLA_HOME,
                         bug_id,
                         bug.target_milestone,
                         codecs.encode(
@@ -268,7 +277,11 @@ class Bugzilla(object):
                 return None
         else:
             sys.stderr.write(
-                '%d - has product %s\n' % (bug_id, bug.product)
+                '%s%d - has product %s\n' % (
+                    BUGZILLA_HOME,
+                    bug_id,
+                    bug.product
+                )
             )
             return None
 
