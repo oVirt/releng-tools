@@ -455,7 +455,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
     sys.stdout.write(
         codecs.encode(
             TEMPLATE.render(
-                rc=ORDINALS[rc] if rc else None,
+                release=ORDINALS[rc] if rc else None,
                 milestone=milestone.split('-')[-1],
                 current_date=datetime.utcnow().strftime('%B %d, %Y'),
                 release_type=release_type,
