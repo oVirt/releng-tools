@@ -87,10 +87,9 @@ This release is available now for Red Hat Enterprise Linux 7.4,
 CentOS Linux 7.4 (or similar).
 
 {% if release_type %}
-This is pre-release software.
-Please take a look at our [community page](/community/) to know how to
-ask questions and interact with developers and users.
-All issues or bugs should be reported via the
+To find out how to interact with oVirt developers and users and ask questions,
+visit our [community page]"(/community/).
+All issues or bugs should be reported via
 [Red Hat Bugzilla](https://bugzilla.redhat.com/enter_bug.cgi?classification=oVirt).
 The oVirt Project makes no guarantees as to its suitability or usefulness.
 This pre-release should not to be used in production, and it is not feature
@@ -114,13 +113,11 @@ To learn about features introduced before {{ milestone }}, see the [release note
 
 In order to install this Release Candidate you will need to enable pre-release repository.
 {% endif %}
-
 {% if release_type == "alpha" %}
 ## ALPHA RELEASE
 
 In order to install this Alplha Release you will need to enable pre-release repository.
 {% endif %}
-
 {% if release_type == "beta" %}
 ## BETA RELEASE
 
@@ -136,7 +133,7 @@ In order to install it on a clean system, you need to install
 {% endif%}
 
 and then follow our
-[Installation Guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/)
+[Installation Guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/).
 
 {% if not release_type %}
 If you're upgrading from a previous release on Enterprise Linux 7 you just need
@@ -150,7 +147,7 @@ to execute:
 
 ### oVirt Hosted Engine
 
-If you're going to install oVirt as Hosted Engine on a clean system please
+If you're going to install oVirt as a Hosted Engine on a clean system please
 follow [Hosted_Engine_Howto#Fresh_Install](/documentation/how-to/hosted-engine/#fresh-install)
 guide or the corresponding section in
 [Self Hosted Engine Guide](/documentation/self-hosted/Self-Hosted_Engine_Guide/).
@@ -164,7 +161,7 @@ guide or the corresponding section within the
 
 TL;DR Don't enable all of EPEL on oVirt machines.
 
-The ovirt-release package enables the epel repositories and includes several
+The ovirt-release package enables the EPEL repositories and includes several
 specific packages that are required from there. It also enables and uses
 the CentOS SIG repos, for other packages.
 
@@ -322,13 +319,14 @@ class GerritGitProject(object):
         for line in log.splitlines():
             if line.startswith('commit '):
                 if current is not None:
-                    current.setdefault('message', '')
+                    current.setdefault('message', [])
                     rv.append(current)
                 current = {
                     'sha': line[7:].strip(),
                 }
             elif line.strip().lower().startswith('bug-url'):
-                current['message'] = line.strip()
+                current.setdefault('message', [])
+                current['message'].append(line.strip())
 
         if current is not None:
             current.setdefault('message', '')
@@ -354,6 +352,33 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
             get_priority_index(y.get('priority')) -
             get_priority_index(x.get('priority'))
         )
+
+    def section_sort_function(x, y):
+        # From lowest to highest priority
+        sections = [
+            "No Doc Update",
+            "Unclassified",
+            "Bug Fix",
+            "Rebase: Bug Fixes Only",
+            "Known Issue",
+            "Deprecated Functionality",
+            "Technology Preview",
+            "Rebase: Bug Fixes and Enhancements",
+            "Rebase: Enhancements Only",
+            "Enhancement",
+            "Release Note",
+        ]
+
+        def get_section_index(a):
+            if a is None:
+                return 0
+            try:
+                return sections.index(a.strip())
+            except ValueError:
+                sys.stderr.write("%s is not a known doc_type\n" % a)
+                return 0
+
+        return (get_section_index(y) - get_section_index(x))
 
     cp = ConfigParser()
     if not cp.read(['milestones/%s.conf' % milestone]):
@@ -400,55 +425,58 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
         bugs_found = []
 
         for commit in commits:
-            bug_id = bz.get_bug_id_from_message(commit['message'])
-            if bug_id is None:
-                sys.stderr.write('Ignoring commit %s; no bug url found\n' % (
-                    commit['sha'],
-                ))
-                continue
-            if bug_id in bugs_found:
-                sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
-                    bug_id,
-                ))
-                continue
-            sys.stderr.write('Fetching commit %s; bug #%d\n' % (
-                commit['sha'],
-                bug_id,
-            ))
-            bug = bz.validate_bug(bug_id, target_milestones)
-            if bug and bug.id != bug_id:
-                # A clone has been created after the patch has been merged
-                bug_id = bug.id
+            for message in commit['message']:
+                bug_id = bz.get_bug_id_from_message(message)
+                if bug_id is None:
+                    sys.stderr.write(
+                        'Ignoring commit %s; no bug url found\n' % (
+                            commit['sha'],
+                        )
+                    )
+                    continue
                 if bug_id in bugs_found:
                     sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
                         bug_id,
                     ))
                     continue
-            bugs_found.append(bug_id)
-            if bug:
-                cf_doc_type = bug.cf_doc_type
-                if 'docs needed' in cf_doc_type.lower():
-                    cf_doc_type = 'Unclassified'
-                doc_type = generated.setdefault(cf_doc_type, OrderedDict())
-                proj = doc_type.setdefault(project_name or project, [])
-                proj.append({
-                    'id': bug_id,
-                    'priority': bug.priority,
-                    'summary': codecs.encode(
-                        bug.summary, "utf-8", "xmlcharrefreplace"
-                    ),
-                })
-                if cf_doc_type.lower() == 'no doc update':
-                    proj[-1]['release_notes'] = ''
-                elif cf_doc_type.lower() != 'bug fix':
-                    proj[-1]['release_notes'] = '<br>'.join(
-                        codecs.encode(
-                            bug.cf_release_notes,
-                            'utf-8',
-                            'xmlcharrefreplace'
-                        ).splitlines()
-                    )
-                proj.sort(sort_function)
+                sys.stderr.write('Fetching commit %s; bug #%d\n' % (
+                    commit['sha'],
+                    bug_id,
+                ))
+                bug = bz.validate_bug(bug_id, target_milestones)
+                if bug and bug.id != bug_id:
+                    # A clone has been created after the patch has been merged
+                    bug_id = bug.id
+                    if bug_id in bugs_found:
+                        sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
+                            bug_id,
+                        ))
+                        continue
+                bugs_found.append(bug_id)
+                if bug:
+                    cf_doc_type = bug.cf_doc_type
+                    if 'docs needed' in cf_doc_type.lower():
+                        cf_doc_type = 'Unclassified'
+                    doc_type = generated.setdefault(cf_doc_type, OrderedDict())
+                    proj = doc_type.setdefault(project_name or project, [])
+                    proj.append({
+                        'id': bug_id,
+                        'priority': bug.priority,
+                        'summary': codecs.encode(
+                            bug.summary, "utf-8", "xmlcharrefreplace"
+                        ),
+                    })
+                    if cf_doc_type.lower() == 'no doc update':
+                        proj[-1]['release_notes'] = ''
+                    elif cf_doc_type.lower() != 'bug fix':
+                        proj[-1]['release_notes'] = '<br>'.join(
+                            codecs.encode(
+                                bug.cf_release_notes,
+                                'utf-8',
+                                'xmlcharrefreplace'
+                            ).splitlines()
+                        )
+                    proj.sort(sort_function)
 
         sys.stderr.write('\n')
 
@@ -470,43 +498,32 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
         '\n\n## What\'s New in %s?\n\n' % milestone.split('-')[-1]
     )
 
-    bug_fixes = None
     bug_types = generated.keys()
-    bug_types.sort()
+    bug_types.sort(section_sort_function)
     for bug_type in bug_types:
-        if bug_type.lower() == 'bug fix':
-            bug_fixes = generated[bug_type]
-            continue
         sys.stdout.write(
-            '### %s\n\n' % bug_type.replace("Enhancement", "Enhancements")
+            '### %s\n\n' % bug_type
+            .replace("Enhancement", "Enhancements")
+            .replace("Unclassified", "Other")
         )
 
         for project in generated[bug_type]:
             sys.stdout.write('#### %s\n\n' % project)
             for bug in generated[bug_type][project]:
-                sys.stdout.write(
-                    ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                    '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
-                )
+                if bug_type.lower() == 'bug fix':
+                    sys.stdout.write(
+                        ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                        '<b>{summary}</b><br>\n'.format(**bug)
+                    )
+                else:
+                    sys.stdout.write(
+                        ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                        '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
+                    )
+
                 bug_list.append(bug)
 
             sys.stdout.write('\n')
-
-    if not bug_fixes:
-        return
-
-    sys.stdout.write('## Bug fixes\n\n')
-
-    for project in bug_fixes:
-        sys.stdout.write('### %s\n\n' % project)
-        for bug in bug_fixes[project]:
-            sys.stdout.write(
-                ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                '<b>{summary}</b><br>\n'.format(**bug)
-            )
-            bug_list.append(bug)
-
-        sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     for bug in set(bug['id'] for bug in bug_list):
         list_url += "{id}%2C%20".format(id=bug)
@@ -530,7 +547,12 @@ def main():
 
     args = parser.parse_args()
 
-    generate_notes(args.target_release, args.release, args.git_basedir, args.release_type)
+    generate_notes(
+        args.target_release,
+        args.release,
+        args.git_basedir,
+        args.release_type
+    )
 
     return 0
 
