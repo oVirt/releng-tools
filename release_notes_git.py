@@ -505,6 +505,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
             '### %s\n\n' % bug_type
             .replace("Enhancement", "Enhancements")
             .replace("Unclassified", "Other")
+            .replace("Bug Fix", "Bug Fixes")
         )
 
         for project in generated[bug_type]:
