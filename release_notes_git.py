@@ -129,7 +129,7 @@ In order to install it on a clean system, you need to install
 {% if release_type %}
 `# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm)
 {% else %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-releaserelease{{ release_rpm  }}.rpm)
+`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm)
 {% endif%}
 
 and then follow our
