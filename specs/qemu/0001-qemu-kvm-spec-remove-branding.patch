@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2017-09-11 16:20:14.538688900 +0200
-+++ b/qemu-kvm.spec	2017-09-11 16:22:34.622342608 +0200
+--- a/qemu-kvm.spec	2017-10-18 17:00:27.153778471 +0200
++++ b/qemu-kvm.spec	2017-10-18 17:03:18.308914201 +0200
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -27,18 +27,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.9.0
--Release: 16%{?dist}.5
-+Release: 16.el7_4.5.1
+-Release: 16%{?dist}.8
++Release: 16.el7_4.8.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1345,6 +1350,9 @@
+@@ -1378,6 +1383,9 @@
  %endif
  
  %changelog
-+* Thu Aug 24 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.5.1
++* Wed Oct 18 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.8.1
 +- Removing RH branding from package name
 +
- * Wed Aug 23 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.5
- - kvm-trace-use-static-event-ID-mapping-in-simpletrace.stp.patch [bz#1482515]
- - kvm-simpletrace-fix-flight-recorder-no-header-option.patch [bz#1482515]
+ * Fri Sep 15 2017 Danilo Cesar Lemes de Paula <ddepaula@redhat.com> - rhev-2.9.0-16.el7_4.8
+ - kvm-ui-move-qemu_input_linux_to_qcode.patch [bz#1482388]
+ - kvm-ui-update-keymaps.patch [bz#1482388]
