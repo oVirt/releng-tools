@@ -34,6 +34,7 @@ import re
 import shutil
 import sys
 import tempfile
+import time
 
 
 from collections import OrderedDict
@@ -185,7 +186,15 @@ class Bugzilla(object):
 
     def get_bug(self, bug_id):
         q = self.bz.build_query(bug_id=str(bug_id))
-        r = self.bz.query(q)
+        retry = 5
+        while retry > 0:
+            try:
+                r = self.bz.query(q)
+                retry = 0
+            except IOError:
+                sys.stderr.write("Error fetching bug, retrying")
+                time.sleep(1)
+                retry -= 1
         if r:
             return r[0]
 
