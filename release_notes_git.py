@@ -245,16 +245,23 @@ class Bugzilla(object):
                     ) or (bug.classification == 'oVirt')
                 )
             ):
-                sys.stderr.write(
-                    '%s%d - is targeted to %s; assignee: %s\n' % (
-                        BUGZILLA_HOME,
-                        bug_id,
-                        bug.target_milestone,
-                        codecs.encode(
-                            bug.assigned_to, 'utf-8', 'xmlcharrefreplace'
+                if not (
+                    bug.status == 'CLOSED' and
+                    bug.resolution in (
+                        'CURRENTRELEASE',
+                        'ERRATA',
+                    )
+                ):
+                    sys.stderr.write(
+                        '%s%d - is targeted to %s; assignee: %s\n' % (
+                            BUGZILLA_HOME,
+                            bug_id,
+                            bug.target_milestone,
+                            codecs.encode(
+                                bug.assigned_to, 'utf-8', 'xmlcharrefreplace'
+                            )
                         )
                     )
-                )
                 # May have been cloned to zstream.
                 for blocked in bug.blocks:
                     blocked_bug = self.validate_bug(blocked, target_milestones)
