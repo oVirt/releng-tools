@@ -198,6 +198,24 @@ class Bugzilla(object):
         if r:
             return r[0]
 
+    def get_bugs_in_milestone(self, milestone):
+        q = self.bz.build_query(target_milestone=str(milestone))
+        retry = 5
+        while retry > 0:
+            try:
+                r = self.bz.query(q)
+                retry = 0
+            except IOError:
+                sys.stderr.write(
+                    "Error fetching milestone {milestone}, retrying".format(
+                        milestone=milestone,
+                    )
+                )
+                time.sleep(1)
+                retry -= 1
+        if r:
+            return r
+
     def get_bug_id_from_message(self, message):
         m = self.re_bug_id.search(message)
         if m:
@@ -350,6 +368,19 @@ class GerritGitProject(object):
 
         return rv
 
+
+def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
+    bz = Bugzilla()
+    targeted_bugs = set()
+    for milestone in target_milestones:
+        bug_list = bz.get_bugs_in_milestone(milestone)
+        targeted_bugs |= set(bug.id for bug in bug_list)
+    not_referenced = targeted_bugs ^ bugs_listed_in_git_logs
+    sys.stderr.write('\nBugs not referenced but targeted for this release:\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in not_referenced:
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write(list_url+'\n')
 
 def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
 
@@ -542,9 +573,13 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
 
             sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
-    for bug in set(bug['id'] for bug in bug_list):
+    bugs_listed_in_git_logs = set(bug['id'] for bug in bug_list)
+    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs)
+
+    for bug in bugs_listed_in_git_logs:
         list_url += "{id}%2C%20".format(id=bug)
-    sys.stderr.write('\n\n\n'+list_url+'\n')
+    sys.stderr.write('\n\n\nBugs included in this release notes:\n')
+    sys.stderr.write(list_url+'\n')
 
 
 def main():
