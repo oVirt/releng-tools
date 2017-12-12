@@ -107,7 +107,7 @@ To learn about features introduced before {{ milestone }}, see the [release note
 
 ## Install / Upgrade from previous versions
 
-### Fedora / CentOS / RHEL
+### CentOS / RHEL
 
 {% if release_type == "rc" %}
 ## RELEASE CANDIDATE
@@ -145,6 +145,15 @@ to execute:
       # engine-setup
 
 {% endif %}
+
+### No Fedora support
+
+Regretfully, Fedora is not supported anymore, and RPMs for it are not provided.
+These are still built for the master branch, so users that want to test them,
+can use the [nightly snapshot](/develop/dev-process/install-nightly-snapshot/).
+At this point, we only try to fix problems specific to Fedora if they affect
+developers. For some of the work to be done to restore support for Fedora, see
+also tracker [bug 1460625](https://bugzilla.redhat.com/showdependencytree.cgi?id=1460625&hide_resolved=0).
 
 ### oVirt Hosted Engine
 
