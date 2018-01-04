@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2017-12-11 16:56:11.558012468 +0100
-+++ b/qemu-kvm.spec	2017-12-11 16:59:14.269072472 +0100
+--- a/qemu-kvm.spec	2018-01-04 20:44:31.800471302 +0100
++++ b/qemu-kvm.spec	2018-01-04 20:47:54.205672075 +0100
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -27,18 +27,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.9.0
--Release: 16%{?dist}.11
-+Release: 16.el7_4.11.1
+-Release: 16%{?dist}.13
++Release: 16.el7_4.13.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1417,6 +1422,9 @@
+@@ -1429,6 +1434,9 @@
  %endif
  
  %changelog
-+* Mon Dec 11 2017 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.11.1
++* Thu Jan  4 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.13.1
 +- Removing RH branding from package name
 +
- * Mon Nov 13 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.11
- - kvm-exec-use-qemu_ram_ptr_length-to-access-guest-ram.patch [bz#1472185]
- - kvm-multiboot-validate-multiboot-header-address-values.patch [bz#1501123]
+ * Thu Dec 14 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.13
+ - Fix CVE-2017-5715
+ 
