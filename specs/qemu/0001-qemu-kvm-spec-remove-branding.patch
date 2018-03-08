@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2018-01-04 20:44:31.800471302 +0100
-+++ b/qemu-kvm.spec	2018-01-04 20:47:54.205672075 +0100
+--- a/qemu-kvm.spec	2018-03-08 16:02:31.718960652 +0100
++++ b/qemu-kvm.spec	2018-03-08 16:05:54.618650620 +0100
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -27,18 +27,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.9.0
--Release: 16%{?dist}.13
-+Release: 16.el7_4.13.1
+-Release: 16%{?dist}.14
++Release: 16.el7_4.14.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1429,6 +1434,9 @@
+@@ -1435,6 +1440,9 @@
  %endif
  
  %changelog
-+* Thu Jan  4 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.13.1
++* Thu Mar  8 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.14.1
 +- Removing RH branding from package name
 +
- * Thu Dec 14 2017 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.13
- - Fix CVE-2017-5715
- 
+ * Thu Jan 18 2018 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.14
+ - kvm-fw_cfg-fix-memory-corruption-when-all-fw_cfg-slots-a.patch [bz#1534649]
+ - kvm-mirror-Fix-inconsistent-backing-AioContext-for-after.patch [bz#1535125]
