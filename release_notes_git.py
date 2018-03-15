@@ -530,6 +530,12 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                                 bug.cf_release_notes,
                                 'utf-8',
                                 'xmlcharrefreplace'
+                            ).replace(
+                                # kramdown, our site's processor, replaces --
+                                # with an en-dash. Escape to prevent that.
+                                # https://kramdown.gettalong.org/syntax.html
+                                ' -- ',
+                                ' \-- '
                             ).splitlines()
                         )
                     proj.sort(sort_function)
@@ -620,3 +626,5 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+
+# vim: expandtab tabstop=4 shiftwidth=4
