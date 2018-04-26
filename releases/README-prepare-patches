@@ -1,0 +1,100 @@
+This is a short guide on preparing a patch to include your package in the release.
+Please note that it's important to send the patch *before* the compose process begins.
+Sending it afterwards won't magically add your package to the release.
+Please note that in most cases, if you missed the deadline you'll need to fix the patch for the next release.
+
+Each single patch should include a package (or packages) for only one release.
+Please don't send patches that are adding the package(s) to 2 or more releases at once.
+These won't be accepted.
+
+The patch should normally include an update to 2 files:
+
+    - to a release file (under releases/ e.g. releases/ovirt-4.2.3_rc3.conf),
+          to include the package in a specific release during it's compose.
+    - to a milestone file (under milestones/ e.g. milestones/ovirt-4.2.3.conf),
+          to update the package version information.
+
+Important hint:
+While the release file mostly deals with links (in most cases to the Jenkins job(s) where you built
+your packages), the milestone file deals with the source code information.
+So when dealing with the release file think about *wget* and with the milestone file think about *git*.
+We use the release file to get the location(s) of the built packages and milestone file to understand
+which commits (and through it BZs) have made it into the built package.
+
+Updating the release file:
+
+General guidelines here are to:
+    - add your package info to the end of the file
+    - add an empty line for a good readability, to separate between package entries (not required for
+          the very first package of course)
+    - include a comment (# ) with a name and version of the package (for review)
+    - include URL(s) - one per line, in case of Jenkins the link to the specific job that built artifacts
+
+
+Updating the milestone file:
+
+General guidelines here are to:
+    - (if missing) add the component section
+    - component section are separated with empty line for readability
+    - each component section begins with the git repo name enclosed in square brackets e.g. [ovirt-engine]
+      Please Note - the section name should be same as the git repo name. This is important!
+    - add human readable package name with name = specifier, e.g. name = oVirt Engine
+    - If the git repo is not hosted on gerrit.ovirt.org you need to add a baseurl= specifier to tell where
+          to look for the git repo.
+      E.g. baseurl = https://github.com/oVirt/
+    - add previous =  and set to the commit hash/tags used to build the package for the previous milestone
+          of oVirt. For completelly new package this not required.
+      If this is a new package, then this should be set to the initial commit of the repo.
+    - add current = and set to the commit hash/tags used to build the current package.
+
+Common mistakes we see in patches:
+
+In release file update:
+
+These are not critical and only have effect on readability of the patches.
+
+- No empty line to separate between packages
+
+- The comment text is not separated by space from the hashtag - "# "
+
+
+In milestone file update:
+
+These are critical, as will cause the processing of the file to either fail or not return all the information.
+
+- No "baseurl" for packages with git repos not hosted on gerrit.ovirt.org
+
+    Every component which is built from a git repository not located under gerrit.ovirt.org should provide
+    a baseurl declaration.
+    So that combining a baseurl plus the component git repo name (defined within the square brackets) will
+    form a valid git clone URL.
+
+- The tags are incorrect
+
+    If it's *not* a new package then both previous and current identifiers must be defined, and point to a
+    valid git commit identifier, either commit hash or (preferrably) tag.
+    Commonly we see the package version (e.g. 1.1.2-1) being used instead of the actual tag that was used
+    to build the package (e.g. v1.1.2).
+
+- The previous tag is missing
+
+    As already mentioned both must be defined, unless this is a new package.
+    The previous points to the commit that was used to build the component that was included in the previous
+    milestone (i.e. 4.2.2 in case of 4.2.3).
+    If it's a new component then it's OK to dismiss it.
+
+- The previous tag points to the tag that was used to build the package for the previous release,
+      not the previous milestone
+
+    That mistake is actually (mostly) caused by "over-doing".
+    For each new milestone you should normally set the previous = to the tag/hash that was used
+    as the current = in the previous milestone.
+    Once you included your package in, say 4.2.3 rc1, you only need to update the current tag in
+    rc2, rc3 etc., leaving the previous intact.
+
+
+Please note that commit(s) should include a Bug-Url meta data to point to the relevant BZ# it fixes in the form of :
+
+Bug-Url: "Bug-Url: https://bugzilla.redhat.com/NNNNNNN
+
+That allows us to get a list of the bugs that were solved by the package, since the previous version.
