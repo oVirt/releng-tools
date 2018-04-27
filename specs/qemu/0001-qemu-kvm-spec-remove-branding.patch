@@ -1,6 +1,6 @@
-diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2018-03-08 16:02:31.718960652 +0100
-+++ b/qemu-kvm.spec	2018-03-08 16:05:54.618650620 +0100
+diff -ru a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2018-04-27 13:46:35.148834948 +0200
++++ b/qemu-kvm.spec	2018-04-27 13:50:41.853020618 +0200
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -11,34 +11,34 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
 +    %global rhev_provide_suffix %{rhev_suffix}
      %global conflicts_suffix %{rhel_suffix}
      %global obsoletes_version 15:0-0
- %else
+     %global obsoletes_version2 15:0-0
 @@ -84,6 +85,10 @@
- %define rhel_rhev_conflicts()                                         \
- Conflicts: %1%{conflicts_suffix}                                      \
- Provides: %1%{extra_provides_suffix} = %{epoch}:%{version}-%{release} \
+     %global have_live_block_ops 0
+     %global have_vhost_user 0
+     %global obsoletes_version 15:0-0
 +    %if 0%{?rhev_provide_suffix:1}                                    \
 +Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}   \
 +Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}  \
 +    %endif                                                            \
- %if 0%{?obsoletes_version:1}                                          \
- Obsoletes: %1 < %{obsoletes_version}                                  \
  %endif
-@@ -91,7 +96,7 @@
+ 
+ # Macro to properly setup RHEL/RHEV conflict handling
+@@ -106,7 +111,7 @@
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
- Version: 2.9.0
--Release: 16%{?dist}.14
-+Release: 16.el7_4.14.1
+ Version: 2.10.0
+-Release: 21%{?dist}_5.1
++Release: 21.el7_5.1.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -1435,6 +1440,9 @@
+@@ -2181,6 +2186,9 @@
  %endif
  
  %changelog
-+* Thu Mar  8 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.9.0-16.el7_4.14.1
++* Fri Apr 27 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.1.1
 +- Removing RH branding from package name
 +
- * Thu Jan 18 2018 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.9.0-16.el7_4.14
- - kvm-fw_cfg-fix-memory-corruption-when-all-fw_cfg-slots-a.patch [bz#1534649]
- - kvm-mirror-Fix-inconsistent-backing-AioContext-for-after.patch [bz#1535125]
+ * Wed Mar 14 2018 Miroslav Rezanina <mrezanin@redhat.com> - 2.10.0-21.el7_5.1
+ - kvm-hw-ppc-spapr_hcall-set-htab_shift-after-kvmppc_resiz.patch [bz#1554956]
+ - kvm-memory-inline-some-performance-sensitive-accessors.patch [bz#1554929]
