@@ -1,6 +1,6 @@
-diff -ru a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2018-04-27 13:46:35.148834948 +0200
-+++ b/qemu-kvm.spec	2018-04-27 13:50:41.853020618 +0200
+diff -u -r a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2018-05-02 16:30:42.699512459 +0200
++++ b/qemu-kvm.spec	2018-05-02 16:34:09.383719423 +0200
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -12,30 +12,31 @@ diff -ru a/qemu-kvm.spec b/qemu-kvm.spec
      %global conflicts_suffix %{rhel_suffix}
      %global obsoletes_version 15:0-0
      %global obsoletes_version2 15:0-0
-@@ -84,6 +85,10 @@
-     %global have_live_block_ops 0
-     %global have_vhost_user 0
-     %global obsoletes_version 15:0-0
-+    %if 0%{?rhev_provide_suffix:1}                                    \
-+Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}   \
-+Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}  \
-+    %endif                                                            \
+@@ -101,12 +102,16 @@
+ %endif                                                                 \
+ %if 0%{?obsoletes_version2:1}                                          \
+ Obsoletes: %1%{rhel_ma_suffix} < %{obsoletes_version2}                 \
++    %if 0%{?rhev_provide_suffix:1}                                     \
++Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}    \
++Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}   \
++    %endif                                                             \
  %endif
  
- # Macro to properly setup RHEL/RHEV conflict handling
-@@ -106,7 +111,7 @@
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.10.0
 -Release: 21%{?dist}_5.1
-+Release: 21.el7_5.1.1
++Release: 21.el7_5.1.2
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2181,6 +2186,9 @@
+@@ -2181,6 +2186,12 @@
  %endif
  
  %changelog
++* Wed May  2 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.1.2
++- Fix Provides / Obsoletes for -rhev suffixes
++
 +* Fri Apr 27 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.1.1
 +- Removing RH branding from package name
 +
