@@ -1,9 +1,9 @@
-diff -u -r a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2018-05-02 16:30:42.699512459 +0200
-+++ b/qemu-kvm.spec	2018-05-02 16:34:09.383719423 +0200
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2018-05-10 18:09:23.447494958 +0200
++++ b/qemu-kvm.spec	2018-05-10 18:14:20.411213837 +0200
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
- 
+
  %if %{rhev}
 -    %global pkgsuffix %{rhev_suffix}
 +    %global pkgsuffix -ev
@@ -16,30 +16,27 @@ diff -u -r a/qemu-kvm.spec b/qemu-kvm.spec
  %endif                                                                 \
  %if 0%{?obsoletes_version2:1}                                          \
  Obsoletes: %1%{rhel_ma_suffix} < %{obsoletes_version2}                 \
-+    %if 0%{?rhev_provide_suffix:1}                                     \
++%endif                                                                 \
++%if 0%{?rhev_provide_suffix:1}                                         \
 +Provides: %1%{rhev_provide_suffix} = %{epoch}:%{version}-%{release}    \
 +Obsoletes: %1%{rhev_provide_suffix} < %{epoch}:%{version}-%{release}   \
-+    %endif                                                             \
  %endif
- 
+
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.10.0
--Release: 21%{?dist}_5.1
-+Release: 21.el7_5.1.2
+-Release: 21%{?dist}_5.2
++Release: 21.el7_5.2.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2181,6 +2186,12 @@
+@@ -2244,6 +2249,9 @@
  %endif
- 
+
  %changelog
-+* Wed May  2 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.1.2
-+- Fix Provides / Obsoletes for -rhev suffixes
-+
-+* Fri Apr 27 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.1.1
++* Thu May 10 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.2.1
 +- Removing RH branding from package name
 +
- * Wed Mar 14 2018 Miroslav Rezanina <mrezanin@redhat.com> - 2.10.0-21.el7_5.1
- - kvm-hw-ppc-spapr_hcall-set-htab_shift-after-kvmppc_resiz.patch [bz#1554956]
- - kvm-memory-inline-some-performance-sensitive-accessors.patch [bz#1554929]
+ * Fri Apr 13 2018 Miroslav Rezanina <mrezanin@redhat.com> - 2.10.0-21.el7_5.2
+ - kvm-arm-postpone-device-listener-unregister.patch [bz#1555213]
+ - kvm-vfio-listener-unregister-before-unset-container.patch [bz#1555213]
