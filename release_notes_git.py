@@ -539,8 +539,17 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                             ).splitlines()
                         )
                     proj.sort(sort_function)
-
-        sys.stderr.write('\n')
+        list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+        for bug in bugs_found:
+            list_url += "{id}%2C%20".format(id=bug)
+        if bugs_found:
+            sys.stderr.write(
+                '\nBugs in {project} fixed in version {version}:\n'.format(
+                    project=project,
+                    version=current,
+                )
+            )
+            sys.stderr.write(list_url+'\n\n\n\n')
 
     sys.stdout.write(
         codecs.encode(
