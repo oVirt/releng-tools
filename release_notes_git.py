@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (C) 2016 Red Hat, Inc.
+# Copyright (C) 2016-2018 Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,8 +84,8 @@ The oVirt Project is pleased to announce the availability of the {{ milestone }}
 
 oVirt is an open source alternative to VMware™ vSphere™, providing an
 awesome KVM management interface for multi-node virtualization.
-This release is available now for Red Hat Enterprise Linux 7.4,
-CentOS Linux 7.4 (or similar).
+This release is available now for Red Hat Enterprise Linux 7.5,
+CentOS Linux 7.5 (or similar).
 
 {% if release_type %}
 To find out how to interact with oVirt developers and users and ask questions,
