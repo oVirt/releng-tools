@@ -338,7 +338,10 @@ class GerritGitProject(object):
         if basedir is not None:
             self.repo_path = os.path.join(basedir, '%s.git' % project)
         else:
-            self.repo_path = tempfile.mkdtemp(prefix='release-notes-')
+            self.repo_path = os.path.join(
+                tempfile.mkdtemp(prefix='release-notes-'),
+                '%s.git' % project
+            )
             atexit.register(shutil.rmtree, self.repo_path)
 
         # this tests if the repo was actually cloned
@@ -613,7 +616,7 @@ def main():
                         help='RC number of the release, if type is specified')
     parser.add_argument('--release-type', type=str,
                         help='release type: alpha, beta, rc, empty if GA')
-    parser.add_argument('--git-basedir', metavar='DIR',
+    parser.add_argument('--git-basedir', metavar='DIR', default=None,
                         help=(
                             'base directory to store git repositories. will '
                             'use temp dirs by default'
