@@ -6,7 +6,7 @@ if git show --pretty="format:" --name-only | egrep -q "^releases/.*conf$"; then
     do
         repoman exported-artifacts add conf:"${config_file}"
     done
-    if [[ -n `find exported-artifacts -name "*.git*.rpm"` ]] ; then
+    if [[ -n `find exported-artifacts -name "*.git*.rpm" | grep -v ovirt-release` ]] ; then
         echo "RPMs with git hash in NVR are not allowed within releases" >&2
         exit 1
     fi
