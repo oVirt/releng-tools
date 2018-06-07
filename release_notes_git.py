@@ -76,10 +76,10 @@ layout: toc
 
 # oVirt {{ milestone }} Release Notes
 
-The oVirt Project is pleased to announce the availability of the {{ milestone }}
-{% if release_type == "rc" %}{{ release }} Release Candidate
-{% elif release_type == "alpha" %}{{ release }} Alpha release
-{% elif release_type == "beta" %}{{ release }} Beta release
+The oVirt Project is pleased to announce the availability of the {{ milestone }} \
+{% if release_type == "rc" %}{{ release }} Release Candidate\
+{% elif release_type == "alpha" %}{{ release }} Alpha release\
+{% elif release_type == "beta" %}{{ release }} Beta release\
 {% else %}release{% endif %} as of {{ current_date }}.
 
 oVirt is an open source alternative to VMware™ vSphere™, providing an
