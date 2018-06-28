@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2018-05-21 13:00:13.572317658 +0200
-+++ b/qemu-kvm.spec	2018-05-21 13:03:59.087287582 +0200
+--- a/qemu-kvm.spec	2018-06-28 13:36:24.700862646 +0200
++++ b/qemu-kvm.spec	2018-06-28 13:47:22.912805915 +0200
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -25,18 +25,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.10.0
--Release: 21%{?dist}.3
-+Release: 21.el7_5.3.1
+-Release: 21%{?dist}.4
++Release: 21.el7_5.4.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
-@@ -2247,6 +2252,9 @@
+@@ -2256,6 +2261,9 @@
  %endif
  
  %changelog
-+* Mon May 21 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.3.1
++* Thu Jun 28 2018 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.10.0-21.el7_5.4.1
 +- Removing RH branding from package name
 +
- * Fri May 11 2018 Miroslav Rezanina <mrezanin@redhat.com> - 2.10.0-21.el7_5.3
- - kvm-i386-define-the-ssbd-CPUID-feature-bit-CVE-2018-3639.patch [bz#1574214]
- - Resolves: bz#1574214
+ * Sat Jun 09 2018 Miroslav Rezanina <mrezanin@redhat.com> - rhev-2.10.0-21.el7_5.4
+ - kvm-scsi-disk-allow-customizing-the-SCSI-version.patch [bz#1571370]
+ - kvm-hw-scsi-support-SCSI-2-passthrough-without-PI.patch [bz#1571370]
