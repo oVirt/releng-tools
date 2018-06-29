@@ -298,8 +298,17 @@ class Bugzilla(object):
                             )
                         )
                     )
+                    # Not returning None because it could have been cloned
                 # May have been cloned to zstream.
                 for blocked in bug.blocks:
+                    sys.stderr.write(
+                        'checking if %s%d has been cloned to %s%d\n' % (
+                            BUGZILLA_HOME,
+                            bug_id,
+                            BUGZILLA_HOME,
+                            blocked,
+                        )
+                    )
                     blocked_bug = self.validate_bug(blocked, target_milestones)
                     if (
                         blocked_bug and
@@ -502,17 +511,34 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                     commit['sha'],
                     bug_id,
                 ))
+                sys.stderr.write('Validating bug #%d\n' % (
+                    bug_id,
+                ))
                 bug = bz.validate_bug(bug_id, target_milestones)
-                if bug and bug.id != bug_id:
-                    # A clone has been created after the patch has been merged
-                    bug_id = bug.id
-                    if bug_id in bugs_found:
-                        sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
+                if bug is None:
+                    sys.stderr.write('Bug #%d is not valid\n' % (
+                        bug_id,
+                    ))
+                else:
+                    sys.stderr.write('Bug #%d is valid\n' % (
+                        bug.id,
+                    ))
+                    if bug.id != bug_id:
+                        # A clone has been created after the patch has been merged
+                        sys.stderr.write(
+                            'A clone of bug #%d has been created after the patch '
+                            'has been merged; clone is bug #%d\n' % (
                             bug_id,
+                            bug.id
                         ))
-                        continue
-                bugs_found.append(bug_id)
-                if bug:
+                        bug_id = bug.id
+                        if bug_id in bugs_found:
+                            sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
+                                bug_id,
+                            ))
+                            continue
+                    bugs_found.append(bug_id)
+
                     cf_doc_type = bug.cf_doc_type
                     if 'docs needed' in cf_doc_type.lower():
                         cf_doc_type = 'Unclassified'
