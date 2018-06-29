@@ -395,13 +395,99 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
     targeted_bugs = set()
     for milestone in target_milestones:
         bug_list = bz.get_bugs_in_milestone(milestone)
-        targeted_bugs |= set(bug.id for bug in bug_list)
+        targeted_bugs |= set(
+            bug.id for bug in bug_list
+            if not (bug.status == 'CLOSED' and bug.resolution == 'DUPLICATE')
+        )
     not_referenced = targeted_bugs ^ bugs_listed_in_git_logs
-    sys.stderr.write('\nBugs not referenced but targeted for this release:\n')
+    still_open = set(
+        bug.id for bug in bug_list
+        if bug.status in ('NEW', 'ASSIGNED', 'POST')
+    )
+
+    downstream_rebase = set(
+        bug.id for bug in bug_list
+        if (
+            (bug.id in (not_referenced - still_open)) and
+            (bug.product == 'Red Hat Enterprise Virtualization Manager') and
+            (bug.cf_doc_type.lower().find('rebase') != -1)
+        )
+    )
+
+    trackers = set(
+        bug.id for bug in bug_list
+        if (
+            (bug.id in (not_referenced - still_open - downstream_rebase)) and
+            ('Tracking' in bug.keywords)
+        )
+    )
+
+    test_only = set(
+        bug.id for bug in bug_list
+        if (
+            (bug.id in (not_referenced - still_open - downstream_rebase)) and
+            ('TestOnly' in bug.keywords)
+        )
+    )
+
+    downstream_only = set(
+        bug.id for bug in bug_list
+        if (
+            (bug.id in (not_referenced - still_open)) and
+            (bug.product == 'Red Hat Enterprise Virtualization Manager') and
+            (bug.component in (
+                'Documentation',
+                'rhv-log-collector-analyzer',
+                'rhevm-setup-plugins',
+                'rhev-guest-tools',
+                'ansible',
+                'cockpit',
+                )
+            )
+        )
+    )
+
+    sys.stderr.write('\nBugs not yet fixed for this release:\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
-    for bug in not_referenced:
+    for bug in still_open:
         list_url += "{id}%2C%20".format(id=bug)
     sys.stderr.write(list_url+'\n')
+
+    sys.stderr.write('\nDownstream rebase bugs:\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in downstream_rebase:
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write(list_url+'\n')
+
+
+    sys.stderr.write('\nDownstream only bugs:\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in downstream_only:
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write(list_url+'\n')
+
+
+    sys.stderr.write('\nTracker bugs:\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in trackers:
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write(list_url+'\n')
+
+    sys.stderr.write('\nTest Only bugs:\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in test_only:
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write(list_url+'\n')
+
+    sys.stderr.write('\nBugs not referenced but targeted for this release:\n')
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in (
+        not_referenced - still_open - downstream_rebase - trackers - downstream_only - test_only
+    ):
+        list_url += "{id}%2C%20".format(id=bug)
+    sys.stderr.write(list_url+'\n')
+
+
 
 def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
 
