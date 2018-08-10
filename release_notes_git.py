@@ -356,12 +356,26 @@ class GerritGitProject(object):
         # this tests if the repo was actually cloned
         if os.path.isdir(self.repo_path):
             self.repo = git.Git(self.repo_path)
-            self.repo.fetch('-p')
-            self.repo.fetch('-t')
-            self.repo.pull()
+            retry = 10
+            while retry > 0:
+                try:
+                    self.repo.fetch('-p')
+                    self.repo.fetch('-t')
+                    self.repo.pull()
+                except git.exc.GitCommandError as e:
+                    sys.stderr.write("Error updating repo, retrying\n")
+                    time.sleep(1)
+                    retry -= 1
         else:
-            git.Repo.clone_from(self.repo_url, self.repo_path)
-
+            retry = 10
+            while retry > 0:
+                try:
+                    git.Repo.clone_from(self.repo_url, self.repo_path)
+                    retry = 0
+                except git.exc.GitCommandError as e:
+                    sys.stderr.write("Error cloning repo, retrying\n")
+                    time.sleep(1)
+                    retry -= 1
         self.repo = git.Git(self.repo_path)
 
     def get_commits_between_revs(self, r1, r2):
