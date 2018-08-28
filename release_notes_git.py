@@ -359,9 +359,11 @@ class GerritGitProject(object):
             retry = 10
             while retry > 0:
                 try:
+                    sys.stderr.write("Updating %s\n" % self.repo_path)
                     self.repo.fetch('-p')
                     self.repo.fetch('-t')
                     self.repo.pull()
+                    retry = 0
                 except git.exc.GitCommandError as e:
                     sys.stderr.write("Error updating repo, retrying\n")
                     time.sleep(1)
@@ -370,6 +372,7 @@ class GerritGitProject(object):
             retry = 10
             while retry > 0:
                 try:
+                    sys.stderr.write("Cloning %s\n" % self.repo_url)
                     git.Repo.clone_from(self.repo_url, self.repo_path)
                     retry = 0
                 except git.exc.GitCommandError as e:
