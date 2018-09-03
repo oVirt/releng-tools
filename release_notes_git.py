@@ -191,7 +191,12 @@ class Bugzilla(object):
     )
 
     def __init__(self):
-        self.bz = bugzilla.RHBugzilla(url=self.BUGZILLA_API_URL)
+        self.bz = bugzilla.RHBugzilla(
+            url=self.BUGZILLA_API_URL,
+            cookiefile=None,
+            tokenfile=None,
+            use_creds=False,
+        )
 
     def get_bug(self, bug_id):
         q = self.bz.build_query(bug_id=str(bug_id))
