@@ -45,6 +45,7 @@ import bugzilla
 import git
 import jinja2
 
+
 BUGZILLA_SERVER = 'bugzilla.redhat.com'
 BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
 
@@ -413,14 +414,16 @@ class GerritGitProject(object):
 
 
 def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
+    sys.stderr.write("\n\n\n------------ REPORTS ------------\n\n\n")
     bz = Bugzilla()
     targeted_bugs = set()
+    bug_list = []
     for milestone in target_milestones:
-        bug_list = bz.get_bugs_in_milestone(milestone)
-        targeted_bugs |= set(
-            bug.id for bug in bug_list
-            if not (bug.status == 'CLOSED' and bug.resolution == 'DUPLICATE')
-        )
+        bug_list += bz.get_bugs_in_milestone(milestone)
+    targeted_bugs |= set(
+        bug.id for bug in bug_list
+        if not (bug.status == 'CLOSED' and bug.resolution == 'DUPLICATE')
+    )
     not_referenced = targeted_bugs ^ bugs_listed_in_git_logs
     still_open = set(
         bug.id for bug in bug_list
@@ -461,6 +464,9 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
                 'Documentation',
                 'rhv-log-collector-analyzer',
                 'rhevm-setup-plugins',
+                'rhvm-setup-plugins',
+                'rhevm-dependencies',
+                'rhvm-dependencies',
                 'rhev-guest-tools',
                 'ansible',
                 'cockpit',
