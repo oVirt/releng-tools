@@ -467,9 +467,12 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
                 'rhvm-setup-plugins',
                 'rhevm-dependencies',
                 'rhvm-dependencies',
+                'rhevm-appliance',
+                'rhvm-appliance',
                 'rhev-guest-tools',
                 'ansible',
                 'cockpit',
+                'rhvm-branding-rhv',
                 )
             )
         )
