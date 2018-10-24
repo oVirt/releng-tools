@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2018-10-23 17:23:05.984769881 +0200
-+++ b/qemu-kvm.spec	2018-10-23 17:27:04.197659567 +0200
+--- a/qemu-kvm.spec	2018-10-24 08:55:10.534617004 +0200
++++ b/qemu-kvm.spec	2018-10-24 08:57:05.856546120 +0200
 @@ -69,8 +69,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -26,7 +26,7 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.10.0
 -Release: 21%{?dist}.7
-+Release: 21%{?dist}.7.1
++Release: 21.el7_5.7.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2+ and LGPLv2+ and BSD
