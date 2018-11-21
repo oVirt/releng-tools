@@ -6,14 +6,18 @@ if git show --pretty="format:" --name-only | egrep -q "^releases/.*conf$"; then
     do
         if [[ -e "${config_file}" ]] ; then
             repoman exported-artifacts add conf:"${config_file}"
+            if [[ "${config_file}" =~ "alpha" ]] || [[ "${config_file}" =~ "beta" ]]; then
+                echo "Skipping git hash test being pre-release compose"
+            else
+                if [[ -n `find exported-artifacts -name "*.git*.rpm"` ]] ; then
+                    echo "RPMs with git hash in NVR are not allowed within releases" >&2
+                    exit 1
+                fi
+            fi
         else
             echo "Skipping ${config_file} since it has been removed."
         fi
     done
-    if [[ -n `find exported-artifacts -name "*.git*.rpm"` ]] ; then
-        echo "RPMs with git hash in NVR are not allowed within releases" >&2
-        exit 1
-    fi
 fi
 
 
