@@ -547,6 +547,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
             "Rebase: Bug Fixes Only",
             "Known Issue",
             "Deprecated Functionality",
+            "Removed functionality",
             "Technology Preview",
             "Rebase: Bug Fixes and Enhancements",
             "Rebase: Enhancements Only",
