@@ -68,6 +68,13 @@ class PatchesChecker(object):
             help='restrict bugs to the given target milestone',
             default=None,
         )
+        parser.add_argument(
+            '--skip-bugless-patches',
+            action="store_true",
+            help='ignore patches without bug-urls',
+            default=False,
+        )
+
         self._args = parser.parse_args()
 
     def parse_log(self, logs, data):
@@ -158,8 +165,10 @@ class PatchesChecker(object):
                 master_data[commit]['Change'] not in in_branch and
                 master_data[commit]['Change'] not in self.waive_list
             ):
-                count += 1
                 bug = master_data[commit].get('Bug', '')
+                if self._args.skip_bugless_patches and not bug:
+                    continue
+                count += 1
                 print(master_data[commit]['commit'])
                 print(
                     codecs.encode(
