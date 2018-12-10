@@ -216,17 +216,18 @@ class Bugzilla(object):
     def get_bugs_in_milestone(self, milestone):
         q = self.bz.build_query(target_milestone=str(milestone))
         retry = 5
+        r = None
         while retry > 0:
             try:
                 r = self.bz.query(q)
                 retry = 0
             except IOError:
                 sys.stderr.write(
-                    "Error fetching milestone {milestone}, retrying".format(
+                    "Error fetching milestone {milestone}, retrying\n".format(
                         milestone=milestone,
                     )
                 )
-                time.sleep(1)
+                time.sleep(5)
                 retry -= 1
         if r:
             return r
