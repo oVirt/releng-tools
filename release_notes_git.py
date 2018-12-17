@@ -200,7 +200,12 @@ class Bugzilla(object):
         )
 
     def get_bug(self, bug_id):
-        q = self.bz.build_query(bug_id=str(bug_id))
+        # Excluding attachments when querying milestones.
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1658176
+        q = self.bz.build_query(
+            bug_id=str(bug_id),
+            exclude_fields=["attachments"]
+        )
         retry = 5
         while retry > 0:
             try:
@@ -214,7 +219,12 @@ class Bugzilla(object):
             return r[0]
 
     def get_bugs_in_milestone(self, milestone):
-        q = self.bz.build_query(target_milestone=str(milestone))
+        # Excluding attachments when querying milestones.
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1658176
+        q = self.bz.build_query(
+            target_milestone=str(milestone),
+            exclude_fields=["attachments"]
+        )
         retry = 5
         r = []
         while retry > 0:
