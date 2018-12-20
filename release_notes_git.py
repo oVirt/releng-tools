@@ -374,18 +374,6 @@ class GerritGitProject(object):
         # this tests if the repo was actually cloned
         if os.path.isdir(self.repo_path):
             self.repo = git.Git(self.repo_path)
-            retry = 10
-            while retry > 0:
-                try:
-                    sys.stderr.write("Updating %s\n" % self.repo_path)
-                    self.repo.fetch('-p')
-                    self.repo.fetch('-t')
-                    self.repo.pull()
-                    retry = 0
-                except git.exc.GitCommandError as e:
-                    sys.stderr.write("Error updating repo, retrying\n")
-                    time.sleep(1)
-                    retry -= 1
         else:
             retry = 10
             while retry > 0:
@@ -400,10 +388,29 @@ class GerritGitProject(object):
         self.repo = git.Git(self.repo_path)
 
     def get_commits_between_revs(self, r1, r2):
-        if not r1:
-            log = self.repo.log('%s' % (r2,))
-        else:
-            log = self.repo.log('%s..%s' % (r1, r2))
+        try:
+            if not r1:
+                log = self.repo.log('%s' % (r2,))
+            else:
+                log = self.repo.log('%s..%s' % (r1, r2))
+        except git.exc.GitCommandError:
+            retry = 10
+            while retry > 0:
+                try:
+                    sys.stderr.write("Updating %s\n" % self.repo_path)
+                    self.repo.fetch('-p')
+                    self.repo.fetch('-t')
+                    self.repo.pull()
+                    retry = 0
+                except git.exc.GitCommandError as e:
+                    sys.stderr.write("Error updating repo, retrying\n")
+                    time.sleep(1)
+                    retry -= 1
+            if not r1:
+                log = self.repo.log('%s' % (r2,))
+            else:
+                log = self.repo.log('%s..%s' % (r1, r2))
+
         current = None
         rv = []
         for line in log.splitlines():
@@ -417,6 +424,10 @@ class GerritGitProject(object):
             elif line.strip().lower().startswith('bug-url'):
                 current.setdefault('message', [])
                 current['message'].append(line.strip())
+            elif line.startswith('Author:'):
+                current['author'] = codecs.encode(
+                    line.split(':')[1].split('<')[0].strip(), 'utf-8', 'xmlcharrefreplace'
+                )
 
         if current is not None:
             current.setdefault('message', '')
@@ -594,6 +605,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
 
     generated = OrderedDict()
     bug_list = []
+    authors = {}
 
     for project in cp.sections():
         if project == 'default':
@@ -623,6 +635,9 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
         bugs_found = []
 
         for commit in commits:
+            count = authors.get(commit['author'], 0)
+            count += 1
+            authors[commit['author']] = count
             for message in commit['message']:
                 bug_id = bz.get_bug_id_from_message(message)
                 if bug_id is None:
@@ -765,6 +780,16 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
         list_url += "{id}%2C%20".format(id=bug)
     sys.stderr.write('\n\n\nBugs included in this release notes:\n')
     sys.stderr.write(list_url+'\n')
+
+    sys.stdout.write('#### Contributors\n\n')
+    sys.stdout.write('{count} people contributed to this release:\n\n'.format(count=len(authors)))
+    top_authors = sorted(authors.items())
+    for author, count in top_authors:
+        sys.stdout.write(
+            '\t{name}\n'.format(
+                name=author,
+            )
+        )
 
 
 def main():
