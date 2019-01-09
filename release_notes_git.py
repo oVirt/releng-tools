@@ -772,9 +772,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
             sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     bugs_listed_in_git_logs = set(bug['id'] for bug in bug_list)
-    # Disabling following reporting due to following bug:
-    # https://bugzilla.redhat.com/show_bug.cgi?id=1658176
-    # search_for_missing_builds(target_milestones, bugs_listed_in_git_logs)
+    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs)
 
     for bug in bugs_listed_in_git_logs:
         list_url += "{id}%2C%20".format(id=bug)
