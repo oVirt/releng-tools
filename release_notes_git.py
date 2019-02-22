@@ -138,22 +138,28 @@ and then follow our
 [Installation Guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/).
 
 {% if not release_type %}
-If you're upgrading from a previous release on Enterprise Linux 7 you just need
-to execute:
+
+If you are upgrading from older versions please upgrade to 4.2.8 before upgrading to {{ release }}
+
+If you're upgrading from oVirt Engine 4.2.8 you just need to execute:
 
       # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm
       # yum update "ovirt-*-setup*"
       # engine-setup
 
+If you're upgrading from oVirt Node NG 4.2 you just need to execute:
+
+      # yum install https://resources.ovirt.org/pub/ovirt-{{ slot }}/rpm/el7/noarch/ovirt-node-ng-image-update-{{ milestone }}-1.el7.noarch.rpm
+      # reboot
+
 {% endif %}
 
-### No Fedora support
+### Fedora Tech Preview
 
-Regretfully, Fedora is not supported anymore, and RPMs for it are not provided.
-These are still built for the master branch, so users that want to test them,
+With oVirt 4.3 we are reintroducing Fedora 28 as platform for running oVirt in tech preview.
+More recent builds for Fedora are built for the master branch, so users that want to test them,
 can use the [nightly snapshot](/develop/dev-process/install-nightly-snapshot/).
-At this point, we only try to fix problems specific to Fedora if they affect
-developers. For some of the work to be done to restore support for Fedora, see
+For some of the work to be done to completely restore support for Fedora, see
 also tracker [bug 1460625](https://bugzilla.redhat.com/showdependencytree.cgi?id=1460625&hide_resolved=0).
 
 ### oVirt Hosted Engine
@@ -179,6 +185,11 @@ the CentOS SIG repos, for other packages.
 If you want to use other packages from EPEL, you should make sure to
 use `includepkgs` and add only those you need avoiding to override
 packages from other repos.
+
+## Known Issues
+- oVirt Node and oVirt Engine Appliance are not available for Fedora 28 due to a bug in Lorax which has not yet been fixed in Fedora 28 (https://github.com/weldr/lorax/pull/612).
+
+
 ''')
 
 
@@ -381,7 +392,7 @@ class GerritGitProject(object):
                     sys.stderr.write("Cloning %s\n" % self.repo_url)
                     git.Repo.clone_from(self.repo_url, self.repo_path)
                     retry = 0
-                except git.exc.GitCommandError as e:
+                except git.exc.GitCommandError:
                     sys.stderr.write("Error cloning repo, retrying\n")
                     time.sleep(1)
                     retry -= 1
@@ -402,7 +413,7 @@ class GerritGitProject(object):
                     self.repo.fetch('-t')
                     self.repo.pull()
                     retry = 0
-                except git.exc.GitCommandError as e:
+                except git.exc.GitCommandError:
                     sys.stderr.write("Error updating repo, retrying\n")
                     time.sleep(1)
                     retry -= 1
@@ -732,7 +743,8 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                 milestone=milestone.split('-')[-1],
                 current_date=datetime.utcnow().strftime('%B %d, %Y'),
                 release_type=release_type,
-                release_rpm="".join(milestone.split('-')[1].split('.')[0:2])
+                release_rpm="".join(milestone.split('-')[1].split('.')[0:2]),
+                slot=".".join(milestone.split('-')[1].split('.')[0:2])
             ),
             'utf-8',
             'xmlcharrefreplace'
