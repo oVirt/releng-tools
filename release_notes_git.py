@@ -152,6 +152,9 @@ If you're upgrading from oVirt Node NG 4.2 you just need to execute:
       # yum install https://resources.ovirt.org/pub/ovirt-{{ slot }}/rpm/el7/noarch/ovirt-node-ng-image-update-{{ milestone }}-1.el7.noarch.rpm
       # reboot
 
+If you're upgrading from oVirt Node NG 4.3 please use oVirt Engine Administration portal for handling the upgrade.
+
+
 {% endif %}
 
 ### Fedora Tech Preview
