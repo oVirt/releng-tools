@@ -139,7 +139,7 @@ and then follow our
 
 {% if not release_type %}
 
-If you are upgrading from older versions please upgrade to 4.2.8 before upgrading to {{ release }}
+If you are upgrading from older versions please upgrade to 4.2.8 before upgrading to {{ milestone }}
 
 If you're upgrading from oVirt Engine 4.2.8 you just need to execute:
 
