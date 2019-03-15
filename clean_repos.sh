@@ -77,9 +77,7 @@ clean_pkgs() {
 	for snapshot in "${REPO_PATH[@]}"; do
 		echo "Cleaning ${snapshot}"
 		find "${snapshot}" -type f -mtime +"${DAYS_TO_KEEP}" ! -name "*.xml" -exec rm -f -v {} \;
-		for repo in "${snapshot}/rpm"/*; do
-			createrepo "${repo}" || die "Cannot createrepo for ${repo}"
-		done
+		repoman createrepo "${snapshot}" || die "Cannot createrepo for ${snapshot}"
 	done
 }
 
