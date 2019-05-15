@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2019-01-29 14:06:35.695198972 +0100
-+++ b/qemu-kvm.spec	2019-01-29 14:10:24.594224381 +0100
+--- a/qemu-kvm.spec	2019-05-15 08:34:08.084089988 +0200
++++ b/qemu-kvm.spec	2019-05-15 08:38:05.044194048 +0200
 @@ -71,8 +71,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -25,18 +25,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.12.0
--Release: 18%{?dist}_6.3
-+Release: 18%{?dist}_6.3.1
+-Release: 18%{?dist}_6.5
++Release: 18%{?dist}_6.5.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2 and GPLv2+ and CC-BY
-@@ -2425,6 +2430,9 @@
+@@ -2443,6 +2448,9 @@
  %endif
  
  %changelog
-+* Tue Jan 29 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-18.el7_6.3.1
++* Wed May 15 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-18.el7_6.5.1
 +- Removing RH branding from package name
 +
- * Thu Dec 06 2018 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-18.el7_6.3
- - kvm-include-Add-IEC-binary-prefixes-in-qemu-units.h.patch [bz#1640927]
- - kvm-hw-scsi-cleanups-before-VPD-BL-emulation.patch [bz#1640927]
+ * Wed Apr 10 2019 Danilo de Paula <ddepaula@redhat.com>- 2.12.0-18.el7_6.5
+ - kvm-target-i386-define-md-clear-bit-rhev.patch [bz#1693219]
+ - Resolves: bz#1693219
