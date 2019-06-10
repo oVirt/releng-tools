@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # coding: utf-8
 
 # Copyright (C) 2016-2019 Red Hat, Inc.
@@ -35,10 +35,10 @@ import shutil
 import sys
 import tempfile
 import time
-
+import functools
 
 from collections import OrderedDict
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from datetime import datetime
 
 import bugzilla
@@ -297,7 +297,7 @@ class Bugzilla(object):
                         milestone=bug.target_milestone,
                         assignee=codecs.encode(
                             bug.assigned_to, 'utf-8', 'xmlcharrefreplace'
-                        )
+                        ).decode(encoding='utf-8', errors='strict')
                     )
                 )
                 return None
@@ -327,7 +327,7 @@ class Bugzilla(object):
                             bug.target_milestone,
                             codecs.encode(
                                 bug.assigned_to, 'utf-8', 'xmlcharrefreplace'
-                            )
+                            ).decode(encoding='utf-8', errors='strict')
                         )
                     )
                     # Not returning None because it could have been cloned
@@ -441,7 +441,7 @@ class GerritGitProject(object):
             elif line.startswith('Author:'):
                 current['author'] = codecs.encode(
                     line.split(':')[1].split('<')[0].strip(), 'utf-8', 'xmlcharrefreplace'
-                )
+                ).decode(encoding='utf-8', errors='strict')
 
         if current is not None:
             current.setdefault('message', '')
@@ -708,7 +708,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                         'priority': bug.priority,
                         'summary': codecs.encode(
                             bug.summary, "utf-8", "xmlcharrefreplace"
-                        ),
+                        ).decode(encoding='utf-8', errors='strict'),
                     })
                     if cf_doc_type.lower() == 'no doc update':
                         proj[-1]['release_notes'] = ''
@@ -718,7 +718,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                                 bug.cf_release_notes,
                                 'utf-8',
                                 'xmlcharrefreplace'
-                            ).replace(
+                            ).decode(encoding='utf-8', errors='strict').replace(
                                 # kramdown, our site's processor, replaces --
                                 # with an en-dash. Escape to prevent that.
                                 # https://kramdown.gettalong.org/syntax.html
@@ -726,7 +726,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                                 ' \-- '
                             ).splitlines()
                         )
-                    proj.sort(sort_function)
+                    proj=sorted(proj, key=functools.cmp_to_key(sort_function))
         list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
         for bug in bugs_found:
             list_url += "{id}%2C%20".format(id=bug)
@@ -751,15 +751,14 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
             ),
             'utf-8',
             'xmlcharrefreplace'
-        )
+        ).decode(encoding='utf-8', errors='strict')
     )
 
     sys.stdout.write(
         '\n\n## What\'s New in %s?\n\n' % milestone.split('-')[-1]
     )
 
-    bug_types = generated.keys()
-    bug_types.sort(section_sort_function)
+    bug_types = sorted(generated.keys(), key=functools.cmp_to_key(section_sort_function))
     for bug_type in bug_types:
         sys.stdout.write(
             '### %s\n\n' % bug_type
