@@ -1,4 +1,4 @@
-#!/usr/bin/python -O
+#!/usr/bin/python3 -O
 # -*- coding: utf-8 -*-
 
 
@@ -176,7 +176,7 @@ class GetBugs(object):
                                 milestone=r.target_milestone,
                                 assignee=codecs.encode(
                                     r.assigned_to, "utf-8", "xmlcharrefreplace"
-                                )
+                                ).decode(encoding='utf-8', errors='strict')
                             )
                         )
                     elif (
@@ -189,7 +189,7 @@ class GetBugs(object):
                                 r.target_milestone,
                                 codecs.encode(
                                     r.assigned_to, "utf-8", "xmlcharrefreplace"
-                                )
+                                ).decode(encoding='utf-8', errors='strict')
 
                             )
                         )
@@ -212,7 +212,7 @@ class GetBugs(object):
                         sys.stdout.write(
                             codecs.encode(
                                 r.summary, "utf-8", "xmlcharrefreplace"
-                            )
+                            ).decode(encoding='utf-8', errors='strict')
                         )
                         sys.stdout.write('\n')
                 else:
