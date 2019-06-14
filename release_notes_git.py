@@ -229,6 +229,11 @@ class Bugzilla(object):
                 sys.stderr.write("Error fetching bug, retrying")
                 time.sleep(1)
                 retry -= 1
+            except xmlrpc.client.Fault:
+                sys.stderr.write("Internal error fetching bug, retrying in a while")
+                # waiting 60 seconds because internal error may take a while to recover
+                time.sleep(60)
+                retry -= 1
         if r:
             return r[0]
 
