@@ -157,14 +157,6 @@ If you're upgrading from oVirt Node NG 4.3 please use oVirt Engine Administratio
 
 {% endif %}
 
-### Fedora Tech Preview
-
-With oVirt 4.3 we are reintroducing Fedora 28 as platform for running oVirt in tech preview.
-More recent builds for Fedora are built for the master branch, so users that want to test them,
-can use the [nightly snapshot](/develop/dev-process/install-nightly-snapshot/).
-For some of the work to be done to completely restore support for Fedora, see
-also tracker [bug 1460625](https://bugzilla.redhat.com/showdependencytree.cgi?id=1460625&hide_resolved=0).
-
 ### oVirt Hosted Engine
 
 If you're going to install oVirt as a Hosted Engine on a clean system please
@@ -188,10 +180,6 @@ the CentOS SIG repos, for other packages.
 If you want to use other packages from EPEL, you should make sure to
 use `includepkgs` and add only those you need avoiding to override
 packages from other repos.
-
-## Known Issues
-- oVirt Node and oVirt Engine Appliance are not available for Fedora 28 due to a bug in Lorax which has not yet been fixed in Fedora 28 (https://github.com/weldr/lorax/pull/612).
-
 
 ''')
 
