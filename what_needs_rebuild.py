@@ -17,6 +17,10 @@ def main(milestone):
             if (bug.component != 'Documentation'):
                 products.setdefault(bug.component, [])
                 products[bug.component].append(bug.id)
+        elif(bug.product == 'ovirt-engine'):
+            if (bug.component == 'ovirt-engine-ui-extensions'):
+                products.setdefault(bug.component, [])
+                products[bug.component].append(bug.id)
         else:
             products.setdefault(bug.product, [])
             products[bug.product].append(bug.id)
