@@ -1,5 +1,0 @@
-kexec-tools-2.0.0-273.1 is needed for oVirt 3.5 on EL6 based systems
-to enabled kdump detection feature. This package will be obsoleted
-after RHEL 6.6 release, which will contain regular kexec-tools-2.0.0-274
-with needed patches.
-

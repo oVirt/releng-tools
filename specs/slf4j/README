@@ -1,6 +1,0 @@
-slf4j 1.7.x for centos build time
-
-jboss supports slf4j 1.7.x, we need build time dependency which
-is missing at centos.
-
-this is build time only not to be distributed to users.
