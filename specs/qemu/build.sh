@@ -1,5 +1,5 @@
 #!/bin/bash -e
-src="qemu-kvm-rhev-2.12.0-18.el7_6.5.src.rpm"
+src="qemu-kvm-rhev-2.12.0-18.el7_6.7.src.rpm"
 url="ftp://ftp.redhat.com/pub/redhat/linux/enterprise/7Server/en/RHEV/SRPMS/${src}"
 patches=(
     "0001-qemu-kvm-spec-remove-branding.patch"
