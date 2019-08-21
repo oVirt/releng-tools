@@ -75,6 +75,12 @@ category: documentation
 layout: toc
 ---
 
+<style>
+h1, h2, h3, h4, h5, h6, li, a, p {
+    font-family: 'Open Sans', sans-serif !important;
+}
+</style>
+
 # oVirt {{ milestone }} Release Notes
 
 The oVirt Project is pleased to announce the availability of the {{ milestone }} \
@@ -83,9 +89,12 @@ The oVirt Project is pleased to announce the availability of the {{ milestone }}
 {% elif release_type == "beta" %}{{ release }} Beta release\
 {% else %}release{% endif %} as of {{ current_date }}.
 
-oVirt is an open source alternative to VMware™ vSphere™, providing an
-awesome KVM management interface for multi-node virtualization.
-This release is available now for Red Hat Enterprise Linux 7.7,
+oVirt is a free open-source distributed virtualization solution,
+designed to manage your entire enterprise infrastructure.
+oVirt uses the trusted KVM hypervisor and is built upon several other community
+projects, including libvirt, Gluster, PatternFly, and Ansible.
+
+This release is available now for Red Hat Enterprise Linux 7.7 and
 CentOS Linux 7.7 (or similar).
 
 {% if release_type %}
@@ -98,88 +107,32 @@ This pre-release should not to be used in production, and it is not feature
 complete.
 {% endif %}
 
-For a general overview of oVirt, read the [Quick Start Guide](/documentation/quickstart/quickstart-guide/)
-and visit the [About oVirt](/documentation/introduction/about-ovirt/) page.
+If you'd like to try oVirt as quickly as possible, follow the instructions on
+the [Download](/download/) page.
 
-For detailed installation instructions, read the [Installation Guide](/documentation/install-guide/Installation_Guide/).
+For complete installation, administration, and usage instructions, see
+the [oVirt Documentation](/documentation/).
 
-To learn about features introduced before {{ milestone }}, see the [release notes for previous versions](/documentation/#previous-release-notes).
+For a general overview of oVirt, read the [About oVirt](/community/about.html)
+page.
 
-
-## Install / Upgrade from previous versions
-
-### CentOS / RHEL
-
+To learn about features introduced before {{ milestone }}, see the
+[release notes for previous versions](/documentation/#previous-release-notes).
 {% if release_type == "rc" %}
 ## RELEASE CANDIDATE
 
 In order to install this Release Candidate you will need to enable pre-release repository.
-{% endif %}
-{% if release_type == "alpha" %}
+{% endif %}{% if release_type == "alpha" %}
 ## ALPHA RELEASE
 
 In order to install this Alplha Release you will need to enable pre-release repository.
-{% endif %}
-{% if release_type == "beta" %}
+{% endif %}{% if release_type == "beta" %}
 ## BETA RELEASE
 
 In order to install this Beta Release you will need to enable pre-release repository.
-{% endif %}
-
-In order to install it on a clean system, you need to install
-
-{% if release_type %}
+{% endif %}{% if release_type %}
 `# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm)
-{% else %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm)
 {% endif%}
-
-and then follow our
-[Installation Guide](http://www.ovirt.org/documentation/install-guide/Installation_Guide/).
-
-{% if not release_type %}
-
-If you are upgrading from older versions please upgrade to 4.2.8 before upgrading to {{ milestone }}
-
-If you're upgrading from oVirt Engine 4.2.8 you just need to execute:
-
-      # yum install http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}.rpm
-      # yum update "ovirt-*-setup*"
-      # engine-setup
-
-If you're upgrading from oVirt Node NG 4.2 you just need to execute:
-
-      # yum install https://resources.ovirt.org/pub/ovirt-{{ slot }}/rpm/el7/noarch/ovirt-node-ng-image-update-{{ milestone }}-1.el7.noarch.rpm
-      # reboot
-
-If you're upgrading from oVirt Node NG 4.3 please use oVirt Engine Administration portal for handling the upgrade.
-
-
-{% endif %}
-
-### oVirt Hosted Engine
-
-If you're going to install oVirt as a Hosted Engine on a clean system please
-follow [Hosted_Engine_Howto#Fresh_Install](/documentation/how-to/hosted-engine/#fresh-install)
-guide or the corresponding section in
-[Self Hosted Engine Guide](/documentation/self-hosted/Self-Hosted_Engine_Guide/).
-
-If you're upgrading an existing Hosted Engine setup, please follow
-[Hosted_Engine_Howto#Upgrade_Hosted_Engine](/documentation/how-to/hosted-engine/#upgrade-hosted-engine)
-guide or the corresponding section within the
-[Upgrade Guide](/documentation/upgrade-guide/upgrade-guide/).
-
-### EPEL
-
-Don't enable all of EPEL on oVirt machines.
-
-The ovirt-release package enables the EPEL repositories and includes several
-specific packages that are required from there. It also enables and uses
-the CentOS SIG repos, for other packages.
-
-If you want to use other packages from EPEL, you should make sure to
-use `includepkgs` and add only those you need avoiding to override
-packages from other repos.
 
 ''')
 
