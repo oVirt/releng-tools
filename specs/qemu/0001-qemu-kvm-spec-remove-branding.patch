@@ -1,6 +1,6 @@
 diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2019-08-02 07:26:49.494354869 +0200
-+++ b/qemu-kvm.spec	2019-08-02 07:30:43.891262412 +0200
+--- a/qemu-kvm.spec	2019-08-23 08:33:48.170139812 +0200
++++ b/qemu-kvm.spec	2019-08-23 08:38:35.687185854 +0200
 @@ -71,8 +71,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -25,18 +25,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.12.0
--Release: 18%{?dist}_6.7
-+Release: 18%{?dist}_6.7.1
+-Release: 33%{?dist}
++Release: 33.1%{?dist}
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2 and GPLv2+ and CC-BY
-@@ -2461,6 +2466,9 @@
+@@ -3458,6 +3463,9 @@
  %endif
  
  %changelog
-+* Fri Aug 02 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-18.el7_6.7.1
++* Fri Aug 23 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-33.1.el7
 +- Removing RH branding from package name
 +
- * Tue May 28 2019 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-18.el7_6.7
- - kvm-slirp-check-sscanf-result-when-emulating-ident.patch [bz#1669070]
- - kvm-slirp-fix-big-little-endian-conversion-in-ident-prot.patch [bz#1669070]
+ * Thu Jun 20 2019 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-33.el7
+ - kvm-vhost_net-don-t-set-backend-for-the-uninitialized-vi.patch [bz#1608226]
+ - Resolves: bz#1608226
