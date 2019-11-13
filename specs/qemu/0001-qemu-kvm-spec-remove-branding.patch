@@ -1,6 +1,6 @@
-diff -u a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2019-08-23 08:33:48.170139812 +0200
-+++ b/qemu-kvm.spec	2019-08-23 08:38:35.687185854 +0200
+diff -u -r a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2019-11-13 13:07:31.515644036 +0100
++++ b/qemu-kvm.spec	2019-11-13 13:11:13.258561647 +0100
 @@ -71,8 +71,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -25,18 +25,18 @@ diff -u a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.12.0
--Release: 33%{?dist}
-+Release: 33.1%{?dist}
+-Release: 33%{?dist}_7.4
++Release: 33.1%{?dist}_7.4
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2 and GPLv2+ and CC-BY
-@@ -3458,6 +3463,9 @@
+@@ -3543,6 +3548,9 @@
  %endif
  
  %changelog
-+* Fri Aug 23 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-33.1.el7
++* Wed Nov 13 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-33.1.el7_7.4
 +- Removing RH branding from package name
 +
- * Thu Jun 20 2019 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-33.el7
- - kvm-vhost_net-don-t-set-backend-for-the-uninitialized-vi.patch [bz#1608226]
- - Resolves: bz#1608226
+ * Tue Sep 10 2019 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-33.el7_7.4
+ - kvm-block-Drain-source-node-in-bdrv_replace_node.patch [bz#1750322]
+ - Resolves: bz#1750322
