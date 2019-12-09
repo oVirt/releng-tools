@@ -659,7 +659,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                     if cf_doc_type.lower() == 'no doc update':
                         proj[-1]['release_notes'] = ''
                     elif cf_doc_type.lower() != 'bug fix':
-                        proj[-1]['release_notes'] = '<br>'.join(
+                        proj[-1]['release_notes'] = '\n\n'.join(
                             codecs.encode(
                                 bug.cf_release_notes,
                                 'utf-8',
@@ -719,12 +719,12 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                 if bug_type.lower() == 'bug fix':
                     sys.stdout.write(
                         ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                        '<b>{summary}</b><br>\n'.format(**bug)
+                        '**{summary}**\n\n'.format(**bug)
                     )
                 else:
                     sys.stdout.write(
                         ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                        '<b>{summary}</b><br>{release_notes}\n'.format(**bug)
+                        '**{summary}**\n\n   {release_notes}\n\n'.format(**bug)
                     )
 
                 bug_list.append(bug)
