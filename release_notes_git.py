@@ -72,7 +72,7 @@ TEMPLATE = jinja2.Template(u'''\
 ---
 title: oVirt {{ milestone }} Release Notes
 category: documentation
-layout: toc
+toc: true
 ---
 
 <style>
