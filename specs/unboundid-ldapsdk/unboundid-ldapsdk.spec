@@ -32,7 +32,7 @@ This package contains the API documentation for %{name}.
 
 %prep
 %setup -q -n ldapsdk-%{version}
-#remove external prebuilt libraries
+# remove external prebuilt libraries
 rm -rf ext
 
 %build
