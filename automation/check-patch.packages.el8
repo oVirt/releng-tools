@@ -1,12 +1,9 @@
 git
-python2-GitPython
-python2-jinja2
 python3
 python3-bugzilla
 python3-GitPython
 python3-jinja2
 python3-libs
-python-bugzilla
-repoman
+dnf-utils
 rpmdevtools
 rpm-build
