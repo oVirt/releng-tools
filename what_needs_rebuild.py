@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
 from release_notes_git import Bugzilla
+import os
 import sys
 
 
 def main(milestone):
+    if not os.path.exists('milestones/%s.conf' % milestone):
+        sys.exit('Invalid milestone: %s' % (milestone))
     bz = Bugzilla()
     bug_list = bz.get_bugs_in_milestone(milestone)
     products = {}
