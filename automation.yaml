@@ -1,3 +1,18 @@
+---
 distros:
-    - fc29
     - el8
+sub-stages:
+    - compose-test:
+          script:
+              fromfile: automation/compose-test.sh
+          stage: check-patch
+          runif:
+              file-changed:
+                  - releases/*.conf
+    - milestone-test:
+          script:
+              fromfile: automation/milestone-test.sh
+          stage: check-patch
+          runif:
+              file-changed:
+                  - releases/*.conf
