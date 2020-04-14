@@ -1,6 +1,6 @@
-diff -u -r a/qemu-kvm.spec b/qemu-kvm.spec
---- a/qemu-kvm.spec	2019-11-13 13:07:31.515644036 +0100
-+++ b/qemu-kvm.spec	2019-11-13 13:11:13.258561647 +0100
+diff -u a/qemu-kvm.spec b/qemu-kvm.spec
+--- a/qemu-kvm.spec	2020-04-15 08:29:23.453751458 +0200
++++ b/qemu-kvm.spec	2020-04-15 08:31:54.328141673 +0200
 @@ -71,8 +71,9 @@
  # - conflicts_suffix:      used to prevent installation of both RHEL and RHEV
  
@@ -25,18 +25,39 @@ diff -u -r a/qemu-kvm.spec b/qemu-kvm.spec
  Summary: QEMU is a machine emulator and virtualizer
  Name: %{pkgname}%{?pkgsuffix}
  Version: 2.12.0
--Release: 33%{?dist}_7.4
-+Release: 33.1%{?dist}_7.4
+-Release: 44%{?dist}_8.1
++Release: 44.1%{?dist}_8.1
  # Epoch because we pushed a qemu-1.0 package. AIUI this can't ever be dropped
  Epoch: 10
  License: GPLv2 and GPLv2+ and CC-BY
-@@ -3543,6 +3548,9 @@
+@@ -1962,6 +1967,10 @@
+ Patch899: kvm-util-add-slirp_fmt-helpers.patch
+ # For bz#1798972 - CVE-2020-8608 qemu-kvm-rhev: QEMU: Slirp: potential OOB access due to unsafe snprintf() usages [rhel-7.8.z]
+ Patch900: kvm-tcp_emu-fix-unsafe-snprintf-usages.patch
++# For bz#1822236 - Add support for newer glusterfs [rhel-7.8.z]
++Patch907: kvm-gluster-Handle-changed-glfs_ftruncate-signature.patch
++# For bz#1822236 - Add support for newer glusterfs [rhel-7.8.z]
++Patch908: kvm-gluster-the-glfs_io_cbk-callback-function-pointer-ad.patch
+ 
+ BuildRequires: zlib-devel
+ BuildRequires: glib2-devel
+@@ -3080,6 +3089,8 @@
+ %patch898 -p1
+ %patch899 -p1
+ %patch900 -p1
++%patch907 -p1
++%patch908 -p1
+ 
+ # Fix executable permission for iotests
+ chmod 755 $(ls tests/qemu-iotests/???)
+@@ -3600,6 +3611,10 @@
  %endif
  
  %changelog
-+* Wed Nov 13 2019 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-33.1.el7_7.4
++* Tue Apr 14 2020 Sandro Bonazzola <sbonazzo@redhat.com> - ev-2.12.0-44.1.el7_8.1
 +- Removing RH branding from package name
++- Add support for newer glusterfs in CentOS 7.8
 +
- * Tue Sep 10 2019 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-33.el7_7.4
- - kvm-block-Drain-source-node-in-bdrv_replace_node.patch [bz#1750322]
- - Resolves: bz#1750322
+ * Wed Mar 04 2020 Miroslav Rezanina <mrezanin@redhat.com> - 2.12.0-44.el7_8.1
+ - kvm-util-add-slirp_fmt-helpers.patch [bz#1798972]
+ - kvm-tcp_emu-fix-unsafe-snprintf-usages.patch [bz#1798972]

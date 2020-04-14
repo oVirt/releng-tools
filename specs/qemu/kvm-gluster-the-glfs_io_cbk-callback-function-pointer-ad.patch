@@ -1,0 +1,112 @@
+From f7038bf48523cf7167bf2917379060881aeed74e Mon Sep 17 00:00:00 2001
+From: Miroslav Rezanina <mrezanin@redhat.com>
+Date: Tue, 14 Apr 2020 07:57:39 +0200
+Subject: [PATCH 8/8] gluster: the glfs_io_cbk callback function pointer adds
+ pre/post stat args
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+RH-Author: Miroslav Rezanina <mrezanin@redhat.com>
+Message-id: <c045a64efbbb1506721c6626c4b4f5ec493b5b50.1586441231.git.mrezanin@redhat.com>
+Patchwork-id: 94620
+O-Subject: [RHEL-7.8 qemu-kvm-rhev PATCH 2/2] gluster: the glfs_io_cbk callback function pointer adds pre/post stat args
+Bugzilla: 1822236
+RH-Acked-by: Philippe Mathieu-Daudé <philmd@redhat.com>
+RH-Acked-by: Stefano Garzarella <sgarzare@redhat.com>
+RH-Acked-by: Max Reitz <mreitz@redhat.com>
+
+From: Miroslav Rezanina <mrezanin@redhat.com>
+
+From: Niels de Vos <ndevos@redhat.com>
+
+The glfs_*_async() functions do a callback once finished. This callback
+has changed its arguments, pre- and post-stat structures have been
+added. This makes it possible to improve caching, which is useful for
+Samba and NFS-Ganesha, but not so much for QEMU. Gluster 6 is the first
+release that includes these new arguments.
+
+With an additional detection in ./configure, the new arguments can
+conditionally get included in the glfs_io_cbk handler.
+
+Signed-off-by: Niels de Vos <ndevos@redhat.com>
+Signed-off-by: Kevin Wolf <kwolf@redhat.com>
+(cherry picked from commit 0e3b891fefacc0e49f3c8ffa3a753b69eb7214d2)
+Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+Signed-off-by: Jon Maloy <jmaloy.redhat.com>
+
+Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
+---
+ block/gluster.c |  6 +++++-
+ configure       | 24 ++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/block/gluster.c b/block/gluster.c
+index e3ffa61..a6ac2b1 100644
+--- a/block/gluster.c
++++ b/block/gluster.c
+@@ -729,7 +729,11 @@ static struct glfs *qemu_gluster_init(BlockdevOptionsGluster *gconf,
+ /*
+  * AIO callback routine called from GlusterFS thread.
+  */
+-static void gluster_finish_aiocb(struct glfs_fd *fd, ssize_t ret, void *arg)
++static void gluster_finish_aiocb(struct glfs_fd *fd, ssize_t ret,
++#ifdef CONFIG_GLUSTERFS_IOCB_HAS_STAT
++                                 struct glfs_stat *pre, struct glfs_stat *post,
++#endif
++                                 void *arg)
+ {
+     GlusterAIOCB *acb = (GlusterAIOCB *)arg;
+ 
+diff --git a/configure b/configure
+index f786633..da50c09 100755
+--- a/configure
++++ b/configure
+@@ -430,6 +430,7 @@ glusterfs_discard="no"
+ glusterfs_fallocate="no"
+ glusterfs_zerofill="no"
+ glusterfs_ftruncate_has_stat="no"
++glusterfs_iocb_has_stat="no"
+ gtk=""
+ gtkabi=""
+ gtk_gl="no"
+@@ -3885,6 +3886,25 @@ EOF
+     if compile_prog "$glusterfs_cflags" "$glusterfs_libs" ; then
+       glusterfs_ftruncate_has_stat="yes"
+     fi
++    cat > $TMPC << EOF
++#include <glusterfs/api/glfs.h>
++
++/* new glfs_io_cbk() passes two additional glfs_stat structs */
++static void
++glusterfs_iocb(glfs_fd_t *fd, ssize_t ret, struct glfs_stat *prestat, struct glfs_stat *poststat, void *data)
++{}
++
++int
++main(void)
++{
++	glfs_io_cbk iocb = &glusterfs_iocb;
++	iocb(NULL, 0 , NULL, NULL, NULL);
++	return 0;
++}
++EOF
++    if compile_prog "$glusterfs_cflags" "$glusterfs_libs" ; then
++      glusterfs_iocb_has_stat="yes"
++    fi
+   else
+     if test "$glusterfs" = "yes" ; then
+       feature_not_found "GlusterFS backend support" \
+@@ -6547,6 +6567,10 @@ if test "$glusterfs_ftruncate_has_stat" = "yes" ; then
+   echo "CONFIG_GLUSTERFS_FTRUNCATE_HAS_STAT=y" >> $config_host_mak
+ fi
+ 
++if test "$glusterfs_iocb_has_stat" = "yes" ; then
++  echo "CONFIG_GLUSTERFS_IOCB_HAS_STAT=y" >> $config_host_mak
++fi
++
+ if test "$libssh2" = "yes" ; then
+   echo "CONFIG_LIBSSH2=m" >> $config_host_mak
+   echo "LIBSSH2_CFLAGS=$libssh2_cflags" >> $config_host_mak
+-- 
+1.8.3.1
+
