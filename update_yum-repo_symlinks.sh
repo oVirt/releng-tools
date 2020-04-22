@@ -2,7 +2,7 @@
 
 date
 
-export MASTER="/var/www/html/pub/ovirt-master-snapshot/rpm/el7/noarch"
+export MASTER="/var/www/html/pub/ovirt-master-snapshot/rpm/el8/noarch"
 export OVIRT42="/var/www/html/pub/ovirt-4.2-snapshot/rpm/el7/noarch"
 export OVIRT43="/var/www/html/pub/ovirt-4.3-snapshot/rpm/el7/noarch"
 export YUMREPO="/var/www/html/pub/yum-repo"
