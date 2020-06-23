@@ -73,13 +73,8 @@ TEMPLATE = jinja2.Template(u'''\
 title: oVirt {{ milestone }} Release Notes
 category: documentation
 toc: true
+page_classes: releases
 ---
-
-<style>
-h1, h2, h3, h4, h5, h6, li, a, p {
-    font-family: 'Open Sans', sans-serif !important;
-}
-</style>
 
 # oVirt {{ milestone }} Release Notes
 
