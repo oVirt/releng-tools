@@ -4,6 +4,7 @@ import argparse
 import configparser
 import glob
 import os
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument('config')
@@ -20,7 +21,7 @@ old_conf.sort()
 
 old_config = configparser.ConfigParser(strict=False)
 old_config.read(old_conf)
-
+exit_status = 0
 for section in current_config.sections():
     if section == "default":
         continue
@@ -33,3 +34,6 @@ for section in current_config.sections():
         if previous != known_last:
             print("%s has previous set to %s while last known is %s" % (
                 section, previous, known_last))
+            exit_status = 1
+            
+sys.exit(exit_status)
