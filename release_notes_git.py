@@ -94,7 +94,7 @@ CentOS Linux 8.2 (or similar).
 
 {% if release_type %}
 To find out how to interact with oVirt developers and users and ask questions,
-visit our [community page]"(/community/).
+visit our [community page](/community/).
 All issues or bugs should be reported via
 [Red Hat Bugzilla](https://bugzilla.redhat.com/enter_bug.cgi?classification=oVirt).
 The oVirt Project makes no guarantees as to its suitability or usefulness.
