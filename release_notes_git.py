@@ -561,6 +561,16 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
     generated = OrderedDict()
     bug_list = []
     authors = {}
+    authors_translate = {
+        'Gal-Zaidman': 'Gal Zaidman',
+        'Martin Necas': 'Martin Nečas',
+        'Martin Peřina': 'Martin Perina',
+        'Ori_Liel': 'Ori Liel',
+        'bamsalem': 'Ben Amsalem',
+        'eslutsky': 'Evgeny Slutsky',
+        'mnecas': 'Martin Nečas',
+        'parthdhanjal': 'Parth Dhanjal',
+    }
 
     for project in cp.sections():
         if project == 'default':
@@ -590,9 +600,13 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
         bugs_found = []
 
         for commit in commits:
-            count = authors.get(commit['author'], 0)
+            if commit['author'] in authors_translate:
+                commit_author = authors_translate[commit['author']]
+            else:
+                commit_author = commit['author']
+            count = authors.get(commit_author, 0)
             count += 1
-            authors[commit['author']] = count
+            authors[commit_author] = count
             for message in commit['message']:
                 bug_id = bz.get_bug_id_from_message(message)
                 if bug_id is None:
