@@ -1,2 +1,3 @@
 *.jar
 *.zip
+__pycache__
