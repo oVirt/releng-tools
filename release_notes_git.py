@@ -498,7 +498,7 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
 
 
 
-def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
+def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, contrib_project_list=False):
 
     def sort_function(x, y):
         priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
@@ -608,9 +608,22 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
                 commit_author = authors_translate[commit['author']]
             else:
                 commit_author = commit['author']
-            count = authors.get(commit_author, 0)
+            author_record = authors.get(commit_author, 0)
+            if not author_record:
+                author_record = {}
+                author_record['projects'] = {}
+                author_record['projects'][project] = [commit['sha']]
+            else:
+                if not author_record['projects'].get(project):
+                    author_record['projects'][project] = [commit['sha']]
+                else:
+                    author_record['projects'][project].append(commit['sha'])
+
+            count = author_record.get('count', 0)
             count += 1
-            authors[commit_author] = count
+            author_record['count'] = count
+
+            authors[commit_author] = author_record
             for message in commit['message']:
                 bug_id = bz.get_bug_id_from_message(message)
                 if bug_id is None:
@@ -755,12 +768,22 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
     sys.stdout.write('#### Contributors\n\n')
     sys.stdout.write('{count} people contributed to this release:\n\n'.format(count=len(authors)))
     top_authors = sorted(authors.items())
-    for author, count in top_authors:
-        sys.stdout.write(
-            '\t{name}\n'.format(
-                name=author,
+    for author, author_record in top_authors:
+        if contrib_project_list:
+            projects = ', '.join([project for project in sorted(author_record['projects'])])
+            sys.stdout.write(
+                '\t{name} (Contributed to: {projects})\n'.format(
+                    name=author,
+                    projects=projects,
+                )
             )
-        )
+        else:
+            sys.stdout.write(
+                '\t{name}\n'.format(
+                    name=author,
+                )
+            )
+
 
 
 def main():
@@ -778,6 +801,8 @@ def main():
                         ))
     parser.add_argument('target_release', metavar='TARGET-RELEASE',
                         help='target release. e.g. ovirt-3.6.5')
+    parser.add_argument('--contrib-project-list', action='store_true',
+                        help='list projects each author contributed to')
     parser.add_argument('--debug', action='store_true',
                         help='show extra debug information')
 
@@ -789,7 +814,8 @@ def main():
         args.target_release,
         args.release,
         args.git_basedir,
-        args.release_type
+        args.release_type,
+        args.contrib_project_list
     )
 
     return 0
