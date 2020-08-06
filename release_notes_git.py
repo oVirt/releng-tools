@@ -63,7 +63,7 @@ ORDINALS = {
     # more than 10 RCs? lol
 }
 
-
+DEBUG = False
 
 
 
@@ -600,6 +600,10 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
         bugs_found = []
 
         for commit in commits:
+            if DEBUG:
+                sys.stderr.write("\n")
+                for name, value in commit.items():
+                    sys.stderr.write("{}: {}\n".format(name, value))
             if commit['author'] in authors_translate:
                 commit_author = authors_translate[commit['author']]
             else:
@@ -760,6 +764,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None):
 
 
 def main():
+    global DEBUG
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--release', type=int,
@@ -773,8 +778,12 @@ def main():
                         ))
     parser.add_argument('target_release', metavar='TARGET-RELEASE',
                         help='target release. e.g. ovirt-3.6.5')
+    parser.add_argument('--debug', action='store_true',
+                        help='show extra debug information')
 
     args = parser.parse_args()
+
+    DEBUG = args.debug
 
     generate_notes(
         args.target_release,
