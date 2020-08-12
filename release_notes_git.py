@@ -568,6 +568,7 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
         'Ori_Liel': 'Ori Liel',
         'bamsalem': 'Ben Amsalem',
         'eslutsky': 'Evgeny Slutsky',
+        'kobihk': 'Kobi Hakimi',
         'mnecas': 'Martin Nečas',
         'parthdhanjal': 'Parth Dhanjal',
     }
