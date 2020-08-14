@@ -112,7 +112,9 @@ For a general overview of oVirt, read the [About oVirt](/community/about.html)
 page.
 
 To learn about features introduced before {{ milestone }}, see the
-[release notes for previous versions](/documentation/#previous-release-notes).
+{% if release_type %}[release notes for previous versions](/documentation/#latest-release-notes).\
+{% else %}[release notes for previous versions](/documentation/#previous-release-notes).\
+{% endif %}
 {% if release_type == "rc" %}
 ## RELEASE CANDIDATE
 
