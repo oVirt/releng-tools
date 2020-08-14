@@ -66,72 +66,7 @@ ORDINALS = {
 DEBUG = False
 
 
-
-
-TEMPLATE = jinja2.Template(u'''\
----
-title: oVirt {{ milestone }} Release Notes
-category: documentation
-toc: true
-page_classes: releases
----
-
-# oVirt {{ milestone }} Release Notes
-
-The oVirt Project is pleased to announce the availability of the {{ milestone }} \
-{% if release_type == "rc" %}{{ release }} Release Candidate\
-{% elif release_type == "alpha" %}{{ release }} Alpha release\
-{% elif release_type == "beta" %}{{ release }} Beta release\
-{% else %}release{% endif %} as of {{ current_date }}.
-
-oVirt is a free open-source distributed virtualization solution,
-designed to manage your entire enterprise infrastructure.
-oVirt uses the trusted KVM hypervisor and is built upon several other community
-projects, including libvirt, Gluster, PatternFly, and Ansible.
-
-This release is available now for Red Hat Enterprise Linux 8.2 and
-CentOS Linux 8.2 (or similar).
-
-To find out how to interact with oVirt developers and users and ask questions,
-visit our [community page](/community/).
-All issues or bugs should be reported via
-[Red Hat Bugzilla](https://bugzilla.redhat.com/enter_bug.cgi?classification=oVirt).
-{% if release_type %}
-The oVirt Project makes no guarantees as to its suitability or usefulness.
-This pre-release should not to be used in production, and it is not feature
-complete.
-{% endif %}
-
-If you'd like to try oVirt as quickly as possible, follow the instructions on
-the [Download](/download/) page.
-
-For complete installation, administration, and usage instructions, see
-the [oVirt Documentation](/documentation/).
-
-For a general overview of oVirt, read the [About oVirt](/community/about.html)
-page.
-
-To learn about features introduced before {{ milestone }}, see the
-{% if release_type %}[release notes for previous versions](/documentation/#latest-release-notes).\
-{% else %}[release notes for previous versions](/documentation/#previous-release-notes).\
-{% endif %}
-{% if release_type == "rc" %}
-## RELEASE CANDIDATE
-
-In order to install this Release Candidate you will need to enable pre-release repository.
-{% endif %}{% if release_type == "alpha" %}
-## ALPHA RELEASE
-
-In order to install this Alplha Release you will need to enable pre-release repository.
-{% endif %}{% if release_type == "beta" %}
-## BETA RELEASE
-
-In order to install this Beta Release you will need to enable pre-release repository.
-{% endif %}{% if release_type %}
-`# yum install `[`http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm`](http://resources.ovirt.org/pub/yum-repo/ovirt-release{{ release_rpm  }}-pre.rpm)
-{% endif%}
-
-''')
+TEMPLATE_FILE = 'release_notes.template'
 
 
 class Bugzilla(object):
@@ -714,9 +649,12 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
             )
             sys.stderr.write(list_url+'\n\n\n\n')
 
+    templateLoader = jinja2.FileSystemLoader(searchpath="./")
+    templateEnv = jinja2.Environment(loader=templateLoader)
+    template = templateEnv.get_template(TEMPLATE_FILE)
     sys.stdout.write(
         codecs.encode(
-            TEMPLATE.render(
+            template.render(
                 release=ORDINALS[rc] if rc else None,
                 milestone=milestone.split('-')[-1],
                 current_date=datetime.utcnow().strftime('%B %d, %Y'),
