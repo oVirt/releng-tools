@@ -655,7 +655,7 @@ def generate_notes(
                                 # with an en-dash. Escape to prevent that.
                                 # https://kramdown.gettalong.org/syntax.html
                                 ' -- ',
-                                ' \-- '
+                                ' \\-- '
                             ).splitlines()
                         )
                     proj = sorted(
