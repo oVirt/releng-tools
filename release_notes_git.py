@@ -103,8 +103,11 @@ class Bugzilla(object):
                 time.sleep(1)
                 retry -= 1
             except xmlrpc.client.Fault:
-                sys.stderr.write("Internal error fetching bug, retrying in a while")
-                # waiting 60 seconds because internal error may take a while to recover
+                sys.stderr.write(
+                    "Internal error fetching bug, retrying in a while"
+                )
+                # waiting 60 seconds because internal error may
+                # take a while to recover
                 time.sleep(60)
                 retry -= 1
         if r:
@@ -125,7 +128,8 @@ class Bugzilla(object):
                 retry = 0
             except IOError as ioe:
                 sys.stderr.write(
-                    "Error fetching milestone {milestone}: {error}, retrying\n".format(
+                    "Error fetching milestone "
+                    "{milestone}: {error}, retrying\n".format(
                         milestone=milestone,
                         error=str(ioe)
                     )
@@ -318,7 +322,9 @@ class GerritGitProject(object):
                 current['message'].append(line.strip())
             elif line.startswith('Author:'):
                 current['author'] = codecs.encode(
-                    line.split(':')[1].split('<')[0].strip(), 'utf-8', 'xmlcharrefreplace'
+                    line.split(':')[1].split('<')[0].strip(),
+                    'utf-8',
+                    'xmlcharrefreplace'
                 ).decode(encoding='utf-8', errors='strict')
 
         if current is not None:
@@ -375,19 +381,20 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
         if (
             (bug.id in (not_referenced - still_open)) and
             (bug.product == 'Red Hat Enterprise Virtualization Manager') and
-            (bug.component in (
-                'Documentation',
-                'rhv-log-collector-analyzer',
-                'rhevm-setup-plugins',
-                'rhvm-setup-plugins',
-                'rhevm-dependencies',
-                'rhvm-dependencies',
-                'rhevm-appliance',
-                'rhvm-appliance',
-                'rhev-guest-tools',
-                'ansible',
-                'cockpit',
-                'rhvm-branding-rhv',
+            (
+                bug.component in (
+                    'Documentation',
+                    'rhv-log-collector-analyzer',
+                    'rhevm-setup-plugins',
+                    'rhvm-setup-plugins',
+                    'rhevm-dependencies',
+                    'rhvm-dependencies',
+                    'rhevm-appliance',
+                    'rhvm-appliance',
+                    'rhev-guest-tools',
+                    'ansible',
+                    'cockpit',
+                    'rhvm-branding-rhv',
                 )
             )
         )
@@ -405,13 +412,11 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
         list_url += "{id}%2C%20".format(id=bug)
     sys.stderr.write(list_url+'\n')
 
-
     sys.stderr.write('\nDownstream only bugs:\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     for bug in downstream_only:
         list_url += "{id}%2C%20".format(id=bug)
     sys.stderr.write(list_url+'\n')
-
 
     sys.stderr.write('\nTracker bugs:\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
@@ -428,14 +433,24 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
     sys.stderr.write('\nBugs not referenced but targeted for this release:\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     for bug in (
-        not_referenced - still_open - downstream_rebase - trackers - downstream_only - test_only
+        not_referenced -
+        still_open -
+        downstream_rebase -
+        trackers -
+        downstream_only -
+        test_only
     ):
         list_url += "{id}%2C%20".format(id=bug)
     sys.stderr.write(list_url+'\n')
 
 
-
-def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, contrib_project_list=False):
+def generate_notes(
+    milestone,
+    rc=None,
+    git_basedir=None,
+    release_type=None,
+    contrib_project_list=False
+):
 
     def sort_function(x, y):
         priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
@@ -593,18 +608,22 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
                         bug.id,
                     ))
                     if bug.id != bug_id:
-                        # A clone has been created after the patch has been merged
+                        # A clone has been created after
+                        # the patch has been merged
                         sys.stderr.write(
-                            'A clone of bug #%d has been created after the patch '
-                            'has been merged; clone is bug #%d\n' % (
-                            bug_id,
-                            bug.id
-                        ))
+                            'A clone of bug #%d has been created after the '
+                            'patch has been merged; clone is bug #%d\n' % (
+                                bug_id,
+                                bug.id,
+                            )
+                        )
                         bug_id = bug.id
                         if bug_id in bugs_found:
-                            sys.stderr.write('Ignoring repeated bug; bug #%d\n' % (
-                                bug_id,
-                            ))
+                            sys.stderr.write(
+                                'Ignoring repeated bug; bug #%d\n' % (
+                                    bug_id,
+                                )
+                            )
                             continue
                     bugs_found.append(bug_id)
 
@@ -628,7 +647,10 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
                                 bug.cf_release_notes,
                                 'utf-8',
                                 'xmlcharrefreplace'
-                            ).decode(encoding='utf-8', errors='strict').replace(
+                            ).decode(
+                                encoding='utf-8',
+                                errors='strict'
+                            ).replace(
                                 # kramdown, our site's processor, replaces --
                                 # with an en-dash. Escape to prevent that.
                                 # https://kramdown.gettalong.org/syntax.html
@@ -636,7 +658,10 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
                                 ' \-- '
                             ).splitlines()
                         )
-                    proj=sorted(proj, key=functools.cmp_to_key(sort_function))
+                    proj = sorted(
+                        proj,
+                        key=functools.cmp_to_key(sort_function)
+                    )
         list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
         for bug in bugs_found:
             list_url += "{id}%2C%20".format(id=bug)
@@ -671,7 +696,10 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
         '\n\n## What\'s New in %s?\n\n' % milestone.split('-')[-1]
     )
 
-    bug_types = sorted(generated.keys(), key=functools.cmp_to_key(section_sort_function))
+    bug_types = sorted(
+        generated.keys(),
+        key=functools.cmp_to_key(section_sort_function)
+    )
     for bug_type in bug_types:
         sys.stdout.write(
             '### %s\n\n' % bug_type
@@ -707,11 +735,15 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
     sys.stderr.write(list_url+'\n')
 
     sys.stdout.write('#### Contributors\n\n')
-    sys.stdout.write('{count} people contributed to this release:\n\n'.format(count=len(authors)))
+    sys.stdout.write(
+        '{count} people contributed to '
+        'this release:\n\n'.format(count=len(authors)))
     top_authors = sorted(authors.items())
     for author, author_record in top_authors:
         if contrib_project_list:
-            projects = ', '.join([project for project in sorted(author_record['projects'])])
+            projects = ', '.join(
+                [project for project in sorted(author_record['projects'])]
+            )
             sys.stdout.write(
                 '\t{name} (Contributed to: {projects})\n'.format(
                     name=author,
@@ -724,7 +756,6 @@ def generate_notes(milestone, rc=None, git_basedir=None, release_type=None, cont
                     name=author,
                 )
             )
-
 
 
 def main():
