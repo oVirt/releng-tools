@@ -514,10 +514,13 @@ def generate_notes(
     bug_list = []
     authors = {}
     authors_translate = {
+        'Bella': 'Bella Khizgiyev',
         'Gal-Zaidman': 'Gal Zaidman',
+        'KlettIT': 'Klett IT',
         'Martin Necas': 'Martin Nečas',
         'Martin Peřina': 'Martin Perina',
         'Ori_Liel': 'Ori Liel',
+        'Scott Dickerson': 'Scott J Dickerson',
         'bamsalem': 'Ben Amsalem',
         'eslutsky': 'Evgeny Slutsky',
         'kobihk': 'Kobi Hakimi',
