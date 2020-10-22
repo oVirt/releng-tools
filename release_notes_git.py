@@ -64,7 +64,10 @@ ORDINALS = {
 }
 
 DEBUG = False
-
+release_notes_authors = set([
+    'sandrobonazzola',
+    'lveyde',
+])
 
 TEMPLATE_FILE = 'release_notes.template'
 
@@ -688,7 +691,8 @@ def generate_notes(
                 current_date=datetime.utcnow().strftime('%B %d, %Y'),
                 release_type=release_type,
                 release_rpm="".join(milestone.split('-')[1].split('.')[0:2]),
-                slot=".".join(milestone.split('-')[1].split('.')[0:2])
+                slot=".".join(milestone.split('-')[1].split('.')[0:2]),
+                authors=' '.join(release_notes_authors),
             ),
             'utf-8',
             'xmlcharrefreplace'
@@ -763,6 +767,7 @@ def generate_notes(
 
 def main():
     global DEBUG
+    global release_notes_authors
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--release', type=int,
@@ -778,12 +783,19 @@ def main():
                         help='target release. e.g. ovirt-3.6.5')
     parser.add_argument('--contrib-project-list', action='store_true',
                         help='list projects each author contributed to')
+    parser.add_argument('--release-notes-author', type=str,
+                        help='add the specified (comma separated) author(s) '
+                             'id(s) to the \'authors:\' tag of the notes',
+                        metavar='RELEASE-NOTES-AUTHOR',)
     parser.add_argument('--debug', action='store_true',
                         help='show extra debug information')
 
     args = parser.parse_args()
 
     DEBUG = args.debug
+    if args.release_notes_author:
+        for author in args.release_notes_author.split(','):
+            release_notes_authors.add(author.strip())
 
     generate_notes(
         args.target_release,
