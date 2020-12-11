@@ -40,6 +40,7 @@ import functools
 from collections import OrderedDict
 from configparser import ConfigParser
 from datetime import datetime
+from xml.sax.saxutils import escape
 
 import bugzilla
 import git
@@ -720,13 +721,18 @@ def generate_notes(
             for bug in generated[bug_type][project]:
                 if bug_type.lower() == 'bug fix':
                     sys.stdout.write(
-                        ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                        '**{summary}**\n\n'.format(**bug)
+                        escape(
+                            ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                            '**{summary}**\n\n'.format(**bug)
+                        )
                     )
                 else:
                     sys.stdout.write(
-                        ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
-                        '**{summary}**\n\n   {release_notes}\n\n'.format(**bug)
+                        escape(
+                            ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                            '**{summary}**\n\n'
+                            '   {release_notes}\n\n'.format(**bug)
+                        )
                     )
 
                 bug_list.append(bug)
