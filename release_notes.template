@@ -5,6 +5,17 @@ authors: {{ authors }}
 toc: true
 page_classes: releases
 ---
+{% if release_type %}
+
+# oVirt {{ milestone }} release planning
+
+The oVirt {{ milestone }} code freeze is planned for {{ development_freeze }}.
+
+If no critical issues are discovered while testing this compose it will be released on {{ release_date }}.
+
+It has been planned to include in this release the content from this query:
+[Bugzilla tickets targeted to {{ milestone }}](https://bugzilla.redhat.com/buglist.cgi?quicksearch=ALL%20target_milestone%3A%22ovirt-{{ milestone }}%22%20-target_milestone%3A%22ovirt-{{ milestone }}-%22)
+{% endif %}
 
 # oVirt {{ milestone }} Release Notes
 

@@ -508,10 +508,24 @@ def generate_notes(
         ))
 
     target_milestones = [milestone]
-    if cp.has_section('default') and cp.get('default', 'target_milestones'):
-        milestones = cp.get('default', 'target_milestones')
-        if milestones:
-            target_milestones = [i.strip() for i in milestones.split(',')]
+    development_freeze = 'Not planned'
+    release_date = 'Not planned'
+
+    if cp.has_section('default'):
+        if cp.get('default', 'target_milestones'):
+            milestones = cp.get('default', 'target_milestones')
+            if milestones:
+                target_milestones = [i.strip() for i in milestones.split(',')]
+        if cp.get('default', 'development_freeze'):
+            development_freeze = datetime.strptime(
+                cp.get('default', 'development_freeze'),
+                '%Y-%m-%d'
+            ).strftime('%B %d, %Y')
+        if cp.get('default', 'release_date'):
+            release_date = datetime.strptime(
+                cp.get('default', 'release_date'),
+                '%Y-%m-%d'
+            ).strftime('%B %d, %Y')
 
     bz = Bugzilla()
 
@@ -695,6 +709,8 @@ def generate_notes(
                 release_rpm="".join(milestone.split('-')[1].split('.')[0:2]),
                 slot=".".join(milestone.split('-')[1].split('.')[0:2]),
                 authors=' '.join(release_notes_authors),
+                development_freeze=development_freeze,
+                release_date=release_date,
             ),
             'utf-8',
             'xmlcharrefreplace'
