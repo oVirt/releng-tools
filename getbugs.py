@@ -227,5 +227,6 @@ class GetBugs(object):
         sys.stdout.write('\n\n\n'+list_url+'\n')
         sys.stdout.flush()
 
+
 if __name__ == '__main__':
     GetBugs().main()
