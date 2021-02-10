@@ -61,7 +61,7 @@ def check(basedir):
 
     duplicates.sort()
     for d in duplicates:
-        print d
+        print(d)
 
 
 if __name__ == "__main__":
