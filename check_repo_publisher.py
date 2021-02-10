@@ -149,7 +149,7 @@ def main():
         "missing in the repo:"
     )
     for x in required:
-        print x
+        print(x)
 
 
 if __name__ == "__main__":
