@@ -36,6 +36,7 @@ import sys
 import tempfile
 import time
 import functools
+import xmlrpc
 
 from collections import OrderedDict
 from configparser import ConfigParser
