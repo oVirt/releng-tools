@@ -1,4 +1,4 @@
 # repoman
 repoman,https://jenkins.ovirt.org/job/repoman_standard-on-merge/lastSuccessfulBuild/artifact/check-merged.el8.x86_64/
-# python3-gnupg
+# python3-gnupg, python3-flake8
 ovirt-master-copr-sbonazzo-collection-el8,https://copr-be.cloud.fedoraproject.org/results/sbonazzo/EL8_collection/epel-8-x86_64/

@@ -16,3 +16,10 @@ sub-stages:
           runif:
               file-changed:
                   - releases/*.conf
+    - python-test:
+          script:
+              fromfile: automation/python-test.sh
+          stage: check-patch
+          runif:
+              file-changed:
+                  - '*.py'
