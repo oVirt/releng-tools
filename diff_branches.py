@@ -189,7 +189,7 @@ class PatchesChecker(object):
                     )
                 print('')
 
-        print (
+        print(
             '%d Patches in %s and not in %s branch according to Change-Id' % (
                 count, self._args.trunk, self._args.branch
             )
