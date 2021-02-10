@@ -26,12 +26,13 @@ import yum
 from yum.packageSack import ListPackageSack
 import rpmUtils.arch
 
+
 def main():
     base = yum.YumBase()
-    conf = base.doConfigSetup()
+    base.doConfigSetup()
     base.setCacheDir(force=True)
     base.doLock()
-    storage = base.doRepoSetup()
+    base.doRepoSetup()
     myrepos = []
 
     repo = sys.argv[1]
@@ -53,6 +54,7 @@ def main():
             print(pkg)
 
     base.closeRpmDB()
+
 
 if __name__ == "__main__":
     main()
