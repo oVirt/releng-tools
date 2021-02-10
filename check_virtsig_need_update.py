@@ -193,6 +193,7 @@ def check_cbs_tag(cbs_tag):
                     )
                 )
 
+
 for tag_to_check in (
     'virt7-ovirt-common-candidate',
     'virt7-ovirt-36-candidate',
