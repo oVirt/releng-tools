@@ -544,6 +544,7 @@ def generate_notes(
         'eslutsky': 'Evgeny Slutsky',
         'kobihk': 'Kobi Hakimi',
         'mnecas': 'Martin Nečas',
+        'nlevy@redhat.com': 'Nir Levy',
         'parthdhanjal': 'Parth Dhanjal',
     }
 
