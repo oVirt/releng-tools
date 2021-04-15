@@ -99,17 +99,18 @@ class Bugzilla(object):
             exclude_fields=["attachments"]
         )
         retry = 5
+        r = []
         while retry > 0:
             try:
                 r = self.bz.query(q)
                 retry = 0
             except IOError:
-                sys.stderr.write("Error fetching bug, retrying")
-                time.sleep(1)
+                sys.stderr.write("Error fetching bug, retrying\n")
+                time.sleep(5)
                 retry -= 1
             except xmlrpc.client.Fault:
                 sys.stderr.write(
-                    "Internal error fetching bug, retrying in a while"
+                    "Internal error fetching bug, retrying in a while\n"
                 )
                 # waiting 60 seconds because internal error may
                 # take a while to recover
