@@ -547,6 +547,10 @@ def generate_notes(
         'mnecas': 'Martin Nečas',
         'nlevy@redhat.com': 'Nir Levy',
         'parthdhanjal': 'Parth Dhanjal',
+        'imjoey': 'Joey Ma',
+        'Joey': 'Joey Ma',
+        'huihui.fu': 'Huihui Fu',
+        'huihui0311': 'Huihui Fu',
     }
 
     for project in cp.sections():

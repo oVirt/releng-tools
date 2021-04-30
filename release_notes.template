@@ -38,6 +38,12 @@ CentOS Linux 8.3 (or similar) and CentOS Stream.
 > Starting from oVirt 4.4.6 both oVirt Node and oVirt Engine Appliance are
 > based on CentOS Stream.
 
+{:.alert.alert-warning}
+Please note that if you are upgrading oVirt Node from previous version you should remove CentOS Linux related yum configuration.
+See Bug [1955617 - CentOS Repositories should be removed from yum.repo.d when upgrading to CentOS Stream](https://bugzilla.redhat.com/show_bug.cgi?id=1955617)
+For more details.
+
+
 To find out how to interact with oVirt developers and users and ask questions,
 visit our [community page](/community/).
 All issues or bugs should be reported via
