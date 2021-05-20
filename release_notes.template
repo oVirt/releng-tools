@@ -1,7 +1,8 @@
 ---
 title: oVirt {{ milestone }} Release Notes
 category: documentation
-authors: {{ authors }}
+authors:
+  - {{ authors }}
 toc: true
 page_classes: releases
 ---
