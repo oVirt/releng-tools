@@ -547,6 +547,7 @@ def generate_notes(
         'mnecas': 'Martin Nečas',
         'nlevy@redhat.com': 'Nir Levy',
         'parthdhanjal': 'Parth Dhanjal',
+        'IlanZuckerman': 'Ilan Zuckerman',
         'imjoey': 'Joey Ma',
         'Joey': 'Joey Ma',
         'huihui.fu': 'Huihui Fu',
