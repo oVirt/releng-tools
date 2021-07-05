@@ -715,7 +715,7 @@ def generate_notes(
                 release_type=release_type,
                 release_rpm="".join(milestone.split('-')[1].split('.')[0:2]),
                 slot=".".join(milestone.split('-')[1].split('.')[0:2]),
-                authors='\n  - '.join(release_notes_authors),
+                authors='\n  - '.join(sorted(release_notes_authors)),
                 development_freeze=development_freeze,
                 release_date=release_date,
             ),
