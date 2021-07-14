@@ -36,6 +36,9 @@ appliance_baseurl = ('https://jenkins.ovirt.org/job/ovirt-appliance_master_'
                      'exported-artifacts/'
                      'ovirt-engine-appliance-manifest-rpm')
 
+pkg_name_width = 40
+pkg_ver_width = 40
+
 
 class ColorPrint(object):
     Colors = {
@@ -133,18 +136,22 @@ def compare(package_list1, package_list2):
     pkg_list = combine_list(package_list1, package_list2)
 
     for pkg_name in pkg_list:
-        package_name = "{0:60}".format(pkg_name)
+        package_name = "{0:{pkg_name_width}}".format(
+            pkg_name,
+            pkg_name_width=pkg_name_width,
+        )
         if pkg_name in package_list1 and pkg_name in package_list2:
             cmp = version_compare(
                 package_list1[pkg_name],
                 package_list2[pkg_name],
             )
             if cmp:
-                versions = ("{0:40}{1:40}".format(
+                versions = ("{0:{pkg_ver_width}}{1:{pkg_ver_width}}".format(
                     package_list1[pkg_name]['version'] +
                     '-' + package_list1[pkg_name]['release'],
                     package_list2[pkg_name]['version'] +
-                    '-' + package_list2[pkg_name]['release']
+                    '-' + package_list2[pkg_name]['release'],
+                    pkg_ver_width=pkg_ver_width,
                 ))
 
                 if cmp < 0:
@@ -243,9 +250,10 @@ def compare(package_list1, package_list2):
             removed[pkg_name]['epoch'] = package_list1[pkg_name]['epoch']
             removed[pkg_name]['arch'] = package_list1[pkg_name]['arch']
 
-            versions = ("{0:40}".format(
+            versions = ("{0:{pkg_ver_width}}".format(
                 package_list1[pkg_name]['version'] + '-' +
                 package_list1[pkg_name]['release'],
+                pkg_ver_width=pkg_ver_width,
                 )
             )
             color = ColorPrint.Colors['blue']
@@ -265,10 +273,11 @@ def compare(package_list1, package_list2):
             added[pkg_name]['epoch'] = package_list2[pkg_name]['epoch']
             added[pkg_name]['arch'] = package_list2[pkg_name]['arch']
 
-            versions = ("{0:40}{1:40}".format(
-                '',
+            versions = ("{0:{pkg_ver_width}}{1:{pkg_ver_width}}".format(
+                '    ',
                 package_list2[pkg_name]['version'] + '-' +
                 package_list2[pkg_name]['release'],
+                pkg_ver_width=pkg_ver_width,
                 )
             )
             color = ColorPrint.Colors['blue']
@@ -313,6 +322,7 @@ def process_build_arg(arg, type):
 
 
 def main():
+    global pkg_name_width, pkg_ver_width
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -333,7 +343,21 @@ def main():
         default='node',
         help='build type: node or appliance. default=node'
     )
+    parser.add_argument(
+        '--name-width',
+        type=int,
+        default=40,
+        help='package name column width. default=40'
+    )
+    parser.add_argument(
+        '--version-width',
+        type=int,
+        default=40,
+        help='package version column width. default=40'
+    )
     args = parser.parse_args()
+    pkg_name_width = args.name_width
+    pkg_ver_width = args.version_width
 
     build1_content = process_build_arg(args.first_build, args.build_type)
     build2_content = process_build_arg(args.second_build, args.build_type)
