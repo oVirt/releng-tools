@@ -33,7 +33,10 @@ def main(milestone):
     for p in products:
         print(" - {p}".format(p=p))
         for v in products[p]:
-            print(" |- https://bugzilla.redhat.com/{v}".format(v=v))
+            print(
+                " |- https://bugzilla.redhat.com/"
+                "show_bug.cgi?id={v}".format(v=v)
+            )
 
 
 if __name__ == '__main__':

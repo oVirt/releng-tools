@@ -50,6 +50,7 @@ import jinja2
 
 BUGZILLA_SERVER = 'bugzilla.redhat.com'
 BUGZILLA_HOME = 'https://%s/' % BUGZILLA_SERVER
+BUGZILLA_ID = '%sshow_bug.cgi?id=' % BUGZILLA_HOME
 
 ORDINALS = {
     1: 'First',
@@ -179,7 +180,7 @@ class Bugzilla(object):
                         'to {milestone}; '
                         'assignee: {assignee}\n'
                     ).format(
-                        bugzilla=BUGZILLA_HOME,
+                        bugzilla=BUGZILLA_ID,
                         bug=bug_id,
                         status=bug.status,
                         milestone=bug.target_milestone,
@@ -210,7 +211,7 @@ class Bugzilla(object):
                 ):
                     sys.stderr.write(
                         '%s%d - is targeted to %s; assignee: %s\n' % (
-                            BUGZILLA_HOME,
+                            BUGZILLA_ID,
                             bug_id,
                             bug.target_milestone,
                             codecs.encode(
@@ -223,9 +224,9 @@ class Bugzilla(object):
                 for blocked in bug.blocks:
                     sys.stderr.write(
                         'checking if %s%d has been cloned to %s%d\n' % (
-                            BUGZILLA_HOME,
+                            BUGZILLA_ID,
                             bug_id,
-                            BUGZILLA_HOME,
+                            BUGZILLA_ID,
                             blocked,
                         )
                     )
@@ -247,7 +248,7 @@ class Bugzilla(object):
         else:
             sys.stderr.write(
                 '%s%d - has product %s\n' % (
-                    BUGZILLA_HOME,
+                    BUGZILLA_ID,
                     bug_id,
                     bug.product
                 )
@@ -746,14 +747,16 @@ def generate_notes(
                 if bug_type.lower() == 'bug fix':
                     sys.stdout.write(
                         escape(
-                            ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                            ' - [BZ {id}](https://bugzilla.redhat.com/'
+                            'show_bug.cgi?id={id}) '
                             '**{summary}**\n\n'.format(**bug)
                         )
                     )
                 else:
                     sys.stdout.write(
                         escape(
-                            ' - [BZ {id}](https://bugzilla.redhat.com/{id}) '
+                            ' - [BZ {id}](https://bugzilla.redhat.com/'
+                            'show_bug.cgi?id={id}) '
                             '**{summary}**\n\n'
                             '   {release_notes}\n\n'.format(**bug)
                         )
