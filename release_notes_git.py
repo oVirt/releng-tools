@@ -542,6 +542,7 @@ def generate_notes(
         'Martin Peřina': 'Martin Perina',
         'Ori_Liel': 'Ori Liel',
         'Scott Dickerson': 'Scott J Dickerson',
+        'Vojtech Juranek': 'Vojtěch Juránek',
         'bamsalem': 'Ben Amsalem',
         'eslutsky': 'Evgeny Slutsky',
         'kobihk': 'Kobi Hakimi',
