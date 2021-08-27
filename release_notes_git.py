@@ -536,7 +536,9 @@ def generate_notes(
     authors = {}
     authors_translate = {
         'Bella': 'Bella Khizgiyev',
+        'IlanZuckerman': 'Ilan Zuckerman',
         'Gal-Zaidman': 'Gal Zaidman',
+        'Joey': 'Joey Ma',
         'KlettIT': 'Klett IT',
         'Martin Necas': 'Martin Nečas',
         'Martin Peřina': 'Martin Perina',
@@ -545,15 +547,13 @@ def generate_notes(
         'Vojtech Juranek': 'Vojtěch Juránek',
         'bamsalem': 'Ben Amsalem',
         'eslutsky': 'Evgeny Slutsky',
+        'huihui.fu': 'Huihui Fu',
+        'huihui0311': 'Huihui Fu',
+        'imjoey': 'Joey Ma',
         'kobihk': 'Kobi Hakimi',
         'mnecas': 'Martin Nečas',
         'nlevy@redhat.com': 'Nir Levy',
         'parthdhanjal': 'Parth Dhanjal',
-        'IlanZuckerman': 'Ilan Zuckerman',
-        'imjoey': 'Joey Ma',
-        'Joey': 'Joey Ma',
-        'huihui.fu': 'Huihui Fu',
-        'huihui0311': 'Huihui Fu',
     }
 
     for project in cp.sections():
