@@ -556,6 +556,10 @@ def generate_notes(
         'parthdhanjal': 'Parth Dhanjal',
     }
 
+    authors_remove = [
+        'github-actions[bot]',
+    ]
+
     for project in cp.sections():
         if project == 'default':
             continue
@@ -593,6 +597,7 @@ def generate_notes(
             else:
                 commit_author = commit['author']
             author_record = authors.get(commit_author, 0)
+
             if not author_record:
                 author_record = {}
                 author_record['projects'] = {}
@@ -704,6 +709,22 @@ def generate_notes(
                 )
             )
             sys.stderr.write(list_url+'\n\n\n\n')
+
+    for author in authors_remove:
+        if author in authors:
+            if author in authors_translate.values():
+                sys.stderr.write("\n")
+                sys.stderr.write(
+                    f"Found {author} (translated) in authors "
+                    "removal table. Removing...\n"
+                )
+            else:
+                sys.stderr.write("\n")
+                sys.stderr.write(
+                    f"Found {author} in authors "
+                    "removal table. Removing...\n"
+                )
+            del(authors[author])
 
     templateLoader = jinja2.FileSystemLoader(searchpath="./")
     templateEnv = jinja2.Environment(loader=templateLoader)
