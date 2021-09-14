@@ -554,6 +554,10 @@ def generate_notes(
         'mnecas': 'Martin Nečas',
         'nlevy@redhat.com': 'Nir Levy',
         'parthdhanjal': 'Parth Dhanjal',
+        'sgoodman': 'Steve Goodman',
+        'avlitman': 'Aviv Litman',
+        'hunter86bg': 'Strahil Nikolov',
+        'Saif Abusaleh': 'Saif Abu Saleh',
     }
 
     authors_remove = [
