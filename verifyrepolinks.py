@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright (C) 2020 Red Hat, Inc.
+# Copyright (C) 2020-2021 Red Hat, Inc.
 # Author: Lev Veyde <lveyde@redhat.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ repos = (
         'pkg_name': 'ovirt-release-master',
         'dir': ('ovirt-master-snapshot',),
         'distro': 'el8',
-        'glob': 'ovirt-release-master-4.4.*',
+        'glob': 'ovirt-release-master-4.5.*',
     },
 )
 
