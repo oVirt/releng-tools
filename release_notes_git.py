@@ -305,6 +305,7 @@ class GerritGitProject(object):
                     self.repo.fetch('-t')
                     self.repo.pull()
                     retry = 0
+                    sys.stderr.write("Repo updated successfully\n")
                 except git.exc.GitCommandError:
                     sys.stderr.write("Error updating repo, retrying\n")
                     time.sleep(1)
@@ -562,6 +563,7 @@ def generate_notes(
 
     authors_remove = [
         'github-actions[bot]',
+        'dependabot[bot]'
     ]
 
     for project in cp.sections():
