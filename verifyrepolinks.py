@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-# Copyright (C) 2020-2021 Red Hat, Inc.
+# Copyright (C) 2020-2022 Red Hat, Inc.
 # Author: Lev Veyde <lveyde@redhat.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,10 @@
 #
 
 import glob
+import hawkey
 import os
 import rpm
 import sys
-
-from rpmUtils.miscutils import splitFilename
 
 DEBUG = 0
 base_dir = "/var/www/html/pub/"
@@ -106,13 +105,12 @@ def find_latest_package(repo):
         if dir_rpms:
             for rpm_file in dir_rpms:
                 rpm_base_filename = os.path.basename(rpm_file)
-                (
-                    pkg_name,
-                    version,
-                    release,
-                    epoch,
-                    arch
-                ) = splitFilename(rpm_base_filename)
+                nevra = hawkey.split_nevra(rpm_base_filename[:-len(".rpm")])
+                pkg_name = nevra.name
+                version = nevra.version
+                release = str(nevra.release)
+                epoch = str(nevra.epoch)
+                arch = nevra.arch
                 rpm_entry = {}
                 rpm_entry['rpm_file'] = rpm_file
                 rpm_entry['rpm_base_filename'] = rpm_base_filename
@@ -206,13 +204,15 @@ def main():
             continue
         pkg = os.path.realpath(base_repo_dir + repolink['link'])
         basename = os.path.basename(pkg)
-        (n, v, r, e, a) = splitFilename(basename)
-        if repolink['pkg_name'] != n:
+        nevra = hawkey.split_nevra(basename[:-len(".rpm")])
+        pkg_name = nevra.name
+        pkg_arch = nevra.arch
+        if repolink['pkg_name'] != pkg_name:
             msg = (
-                "\tA link to %s is pointing "
+                "\tA link to {} is pointing "
                 "to wrong package ({})".format(
                     repolink['link'],
-                    n,
+                    pkg_name,
                 )
             )
             ColorPrint.print_message(
@@ -224,12 +224,12 @@ def main():
             )
             ret = 3
             continue
-        if a != 'noarch':
+        if pkg_arch != 'noarch':
             msg = (
-                "\tA link to %s is pointing to a "
+                "\tA link to {} is pointing to a "
                 "package of non-noarch type ({})".format(
                     repolink['link'],
-                    a,
+                    pkg_arch,
                 )
             )
             ColorPrint.print_message(
