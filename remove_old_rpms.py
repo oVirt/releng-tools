@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2022 Red Hat, Inc.
 # Author: Lev Veyde <lveyde@redhat.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -20,11 +20,10 @@
 
 import argparse
 import glob
+import hawkey
 import os
 import rpm
 import sys
-
-from rpmUtils.miscutils import splitFilename
 
 
 def process_directory(directory, **kwargs):
@@ -79,13 +78,12 @@ def process_rpms(rpm_list, debug=False, dry_run=False, **kwargs):
 
 def process_rpm(rpm_file, **kwargs):
     rpm_base_filename = os.path.basename(rpm_file)
-    (
-        pkg_name,
-        version,
-        release,
-        epoch,
-        arch
-    ) = splitFilename(rpm_base_filename)
+    nevra = hawkey.split_nevra(rpm_base_filename[:-len(".rpm")])
+    pkg_name = nevra.name
+    version = nevra.version
+    release = str(nevra.release)
+    epoch = str(nevra.epoch)
+    arch = nevra.arch
     rpm_entry = {}
     rpm_entry['rpm_file'] = rpm_file
     rpm_entry['rpm_base_filename'] = rpm_base_filename
