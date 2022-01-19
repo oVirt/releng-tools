@@ -1,6 +1,5 @@
 #!/bin/bash -xe
-[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
-[[ -d compose-test ]] || mkdir -p compose-test
+mkdir -p exported-artifacts
 
 if git show --pretty="format:" --name-only | grep -E -q "^milestones/.*conf$"; then
     for config_file in $(git show --pretty="format:" --name-only | grep -E "^milestones/.*conf$")

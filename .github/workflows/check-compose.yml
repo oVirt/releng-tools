@@ -1,0 +1,39 @@
+---
+name: Check Compose
+
+permissions:
+  pull-requests: read
+  contents: read
+
+on:
+  push:
+    paths:
+      - "releases/*.conf"
+  pull_request:
+    paths:
+      - "releases/*.conf"
+
+jobs:
+  python-test:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream8
+    steps:
+      - name: prepare env
+        run: |
+          dnf install -y --setopt=tsflags=nodocs git 'dnf-command(copr)'
+
+      - name: enable repositories
+        run: |
+          dnf copr enable -y sbonazzo/EL8_collection centos-stream-8
+
+      - name: isntall deps
+        run: |
+          dnf copr install -y repoman
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check Compose config files
+        run: automation/compose-test.sh

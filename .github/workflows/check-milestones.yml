@@ -1,0 +1,36 @@
+---
+name: Check Milestones
+
+permissions:
+  pull-requests: read
+  contents: read
+
+on:
+  push:
+    paths:
+      - "milestones/*.conf"
+  pull_request:
+    paths:
+      - "milestones/*.conf"
+
+jobs:
+  python-test:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream8
+    steps:
+      - name: prepare env
+        run: |
+          dnf install -y --setopt=tsflags=nodocs git python3 python3-bugzilla python3-GitPython python3-jinja2
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check Milestone config files
+        run: automation/milestone-test.sh
+
+      - name: Upload artifacts
+        uses: ovirt/upload-rpms-action@main
+        with:
+          directory: exported-artifacts

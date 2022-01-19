@@ -1,0 +1,32 @@
+---
+name: Check Python
+
+permissions:
+  pull-requests: read
+  contents: read
+
+on:
+  push:
+    paths:
+      - "*.py"
+  pull_request:
+    paths:
+      - "*.py"
+
+jobs:
+  python-test:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream8
+
+    steps:
+      - name: prepare env
+        run: |
+          dnf install -y --setopt=tsflags=nodocs python3-flake8
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check Python files
+        run: flake8-3 *.py

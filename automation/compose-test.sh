@@ -1,9 +1,8 @@
 #!/bin/bash -xe
-[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
-[[ -d compose-test ]] || mkdir -p compose-test
+mkdir -p compose-test
 
-if git show --pretty="format:" --name-only | egrep -q "^releases/.*conf$"; then
-    for config_file in `git show --pretty="format:" --name-only | egrep "^releases/.*conf$"`
+if git show --pretty="format:" --name-only | grep -E -q "^releases/.*conf$"; then
+    for config_file in $(git show --pretty="format:" --name-only | grep -E "^releases/.*conf$")
     do
         if [[ -e "${config_file}" ]] ; then
             if [[ "${config_file}" =~ "alpha" ]] || [[ "${config_file}" =~ "beta" ]]; then
@@ -11,8 +10,8 @@ if git show --pretty="format:" --name-only | egrep -q "^releases/.*conf$"; then
                 repoman compose-test add conf:"${config_file}"
                 echo "Skipping git hash test being pre-release compose"
             else
-                repoman exported-artifacts add conf:"${config_file}"
-                if [[ -n `find exported-artifacts -name "*.git*.rpm"` ]] ; then
+                repoman compose-test add conf:"${config_file}"
+                if [[ -n $(find compose-test -name "*.git*.rpm") ]] ; then
                     echo "RPMs with git hash in NVR are not allowed within releases" >&2
                     exit 1
                 fi
