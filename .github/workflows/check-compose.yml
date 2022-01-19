@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: prepare env
         run: |
-          dnf install -y --setopt=tsflags=nodocs git 'dnf-command(copr)'
+          dnf install -y --setopt=tsflags=nodocs git 'dnf-command(copr)' epel-release
 
       - name: enable repositories
         run: |

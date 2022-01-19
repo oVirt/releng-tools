@@ -32,6 +32,6 @@ jobs:
         run: automation/milestone-test.sh
 
       - name: Upload artifacts
-        uses: ovirt/upload-rpms-action@main
+        uses: actions/upload-artifact@v2
         with:
           directory: exported-artifacts
