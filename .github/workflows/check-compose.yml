@@ -29,7 +29,7 @@ jobs:
 
       - name: isntall deps
         run: |
-          dnf copr install -y repoman
+          dnf install -y repoman
 
       - uses: actions/checkout@v2
         with:
