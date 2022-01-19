@@ -22,6 +22,7 @@ jobs:
     steps:
       - name: prepare env
         run: |
+          dnf install -y --setopt=tsflags=nodocs epel-release
           dnf install -y --setopt=tsflags=nodocs python3-flake8
 
       - uses: actions/checkout@v2
