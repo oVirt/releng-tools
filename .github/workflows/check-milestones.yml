@@ -14,7 +14,7 @@ on:
       - "milestones/*.conf"
 
 jobs:
-  python-test:
+  check-milestones:
     runs-on: ubuntu-latest
     container:
       image: quay.io/centos/centos:stream8

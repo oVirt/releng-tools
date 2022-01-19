@@ -14,7 +14,7 @@ on:
       - "releases/*.conf"
 
 jobs:
-  python-test:
+  check-compose:
     runs-on: ubuntu-latest
     container:
       image: quay.io/centos/centos:stream8
