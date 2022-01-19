@@ -1,6 +1,8 @@
 #!/bin/bash -xe
 mkdir -p exported-artifacts
 
+git show --pretty=format: --name-only
+
 if git show --pretty="format:" --name-only | grep -E -q "^milestones/.*conf$"; then
     for config_file in $(git show --pretty="format:" --name-only | grep -E "^milestones/.*conf$")
     do
