@@ -29,7 +29,18 @@ jobs:
           fetch-depth: 0
 
       - name: Check Milestone config files
-        run: automation/milestone-test.sh
+        run: |
+          mkdir -p exported-artifacts
+          for config_file in $(git show --pretty="format:" --name-only | grep -E "^milestones/.*conf$")
+          do
+              if [[ -e "${config_file}" ]] ; then
+                  python3 automation/check-milestone-previous.py "${config_file}"
+                  release=$(basename "${config_file/.conf/}")
+                  ./release_notes_git.py --contrib-project-list "${release}" > "exported-artifacts/${release}_notes.md"
+              else
+                  echo "Skipping ${config_file} since it has been removed."
+              fi
+          done
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
