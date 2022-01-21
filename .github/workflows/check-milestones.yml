@@ -28,10 +28,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check Milestone config files
+      - name: Create export directory
         run: |
           mkdir -p exported-artifacts
-          for config_file in $(git show --pretty="format:" --name-only | grep -E "^milestones/.*conf$")
+
+
+      - name: check git is working
+        run: git show HEAD~ >exported-artifacts/gitoutput
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: exported-artifacts
+
+
+      - name: check grep is working
+        run: egrep "^milestones/.*conf$" <exported-artifacts/gitoutput >exported-artifacts/grepoutput
+        shell: bash
+
+      - name: Check Milestone config files
+        shell: bash
+        run: |
+          mkdir -p exported-artifacts
+          for config_file in $(git show --pretty="format:" --name-only HEAD | grep -E "^milestones/.*conf$")
           do
               if [[ -e "${config_file}" ]] ; then
                   python3 automation/check-milestone-previous.py "${config_file}"

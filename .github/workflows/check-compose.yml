@@ -36,8 +36,13 @@ jobs:
           fetch-depth: 0
 
       - name: Check Compose config files
+        shell: bash
         run: |
           mkdir -p compose-test
+          git show --pretty="format:" --name-only
+          echo $?
+          git show --pretty="format:" --name-only | grep -E "^releases/.*conf$"
+          echo 4?
           for config_file in $(git show --pretty="format:" --name-only | grep -E "^releases/.*conf$")
           do
               if [[ -e "${config_file}" ]] ; then
