@@ -9,10 +9,13 @@ These won't be accepted.
 
 The patch should normally include an update to 2 files:
 
-    - to a release file (under releases/ e.g. releases/ovirt-4.2.3_rc3.conf),
-          to include the package in a specific release during it's compose.
-    - to a milestone file (under milestones/ e.g. milestones/ovirt-4.2.3.conf),
-          to update the package version information.
+- to a release file (under releases/ e.g. releases/ovirt-4.2.3_rc3.conf),
+        to include the package in a specific release during it's compose.
+        Please note that starting with oVirt 4.5 we are now using CentOS Community Build Service (CBS)
+        for delivering builds. So in this configuration file there should be only the content
+        which couldn't be shipped via CBS
+- to a milestone file (under milestones/ e.g. milestones/ovirt-4.2.3.conf),
+        to update the package version information.
 
 Important hint:
 While the release file mostly deals with links (in most cases to the Jenkins job(s) where you built
@@ -95,6 +98,8 @@ These are critical, as will cause the processing of the file to either fail or n
 
 Please note that commit(s) should include a Bug-Url meta data to point to the relevant BZ# it fixes in the form of :
 
-Bug-Url: "Bug-Url: https://bugzilla.redhat.com/NNNNNNN
+```
+Bug-Url: https://bugzilla.redhat.com/NNNNNNN
+```
 
 That allows us to get a list of the bugs that were solved by the package, since the previous version.
