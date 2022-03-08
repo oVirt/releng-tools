@@ -691,7 +691,7 @@ def generate_notes(
                     if cf_doc_type.lower() == 'no doc update':
                         proj[-1]['release_notes'] = ''
                     elif cf_doc_type.lower() != 'bug fix':
-                        proj[-1]['release_notes'] = '\n\n'.join(
+                        proj[-1]['release_notes'] = '\n'.join(
                             codecs.encode(
                                 bug.cf_release_notes,
                                 'utf-8',
@@ -784,7 +784,7 @@ def generate_notes(
                         escape(
                             ' - [BZ {id}](https://bugzilla.redhat.com/'
                             'show_bug.cgi?id={id}) '
-                            '**{summary}**\n\n'.format(**bug)
+                            '**{summary}**\n'.format(**bug)
                         )
                     )
                 else:
@@ -792,8 +792,8 @@ def generate_notes(
                         escape(
                             ' - [BZ {id}](https://bugzilla.redhat.com/'
                             'show_bug.cgi?id={id}) '
-                            '**{summary}**\n\n'
-                            '   {release_notes}\n\n'.format(**bug)
+                            '**{summary}**\n'
+                            '   {release_notes}\n'.format(**bug)
                         )
                     )
 
