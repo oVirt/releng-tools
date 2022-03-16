@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Copyright (C) 2021 Red Hat, Inc.
+# Copyright (C) 2021-2022 Red Hat, Inc.
 # Author: Lev Veyde <lveyde@redhat.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ appliance_baseurl = ('https://jenkins.ovirt.org/job/ovirt-appliance_master_'
                      'exported-artifacts/'
                      'ovirt-engine-appliance-manifest-rpm')
 
-pkg_name_width = 40
+pkg_name_width = 50
 pkg_ver_width = 40
 
 
