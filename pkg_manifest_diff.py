@@ -66,8 +66,12 @@ class ColorPrint(object):
 
 def process_list(package_list):
     packages = {}
+    gpg_pubkeys = []
     for rpm_package in package_list:
         if rpm_package.strip() != '':
+            if rpm_package .startswith('gpg-pubkey-'):
+                gpg_pubkeys.append(rpm_package)
+                continue
             subject = Subject(rpm_package)
             nevra = subject.get_nevra_possibilities(forms=hawkey.FORM_NEVRA)
             (
@@ -96,7 +100,7 @@ def process_list(package_list):
         packages[pkg_name]['release'] = release
         packages[pkg_name]['epoch'] = epoch
         packages[pkg_name]['arch'] = arch
-    return packages
+    return (packages, gpg_pubkeys)
 
 
 def version_compare(package1, package2):
@@ -297,6 +301,45 @@ def compare(package_list1, package_list2):
     return result
 
 
+def compare_gpg_keys(gpg_list1, gpg_list2):
+    not_changed = []
+    added = []
+    removed = []
+
+    gpg_list = combine_list(gpg_list1, gpg_list2)
+
+    for gpg_key in gpg_list:
+        if gpg_key in gpg_list1 and gpg_key in gpg_list2:
+            not_changed.append(gpg_key)
+        elif gpg_key in gpg_list1:
+            removed.append(gpg_key)
+        else:
+            added.append(gpg_key)
+
+    if len(removed) > 0:
+        print('GPG public keys removed: ')
+        for gpg_key in removed:
+            color = ColorPrint.Colors['red']
+            ColorPrint.print_message(
+                (
+                    color,
+                    gpg_key,
+                ),
+                '',
+            )
+    if len(added) > 0:
+        print('GPG public keys added:')
+        for gpg_key in added:
+            color = ColorPrint.Colors['green']
+            ColorPrint.print_message(
+                (
+                    color,
+                    gpg_key,
+                ),
+                '',
+            )
+
+
 def process_build_arg(arg, type):
     if os.path.isfile(os.path.abspath(arg)):
         with open(os.path.abspath(arg)) as f:
@@ -362,10 +405,11 @@ def main():
     build1_content = process_build_arg(args.first_build, args.build_type)
     build2_content = process_build_arg(args.second_build, args.build_type)
 
-    list1 = process_list(build1_content)
-    list2 = process_list(build2_content)
+    list1, gpg_list1 = process_list(build1_content)
+    list2, gpg_list2 = process_list(build2_content)
     compare(list1, list2)
-
+    print('')
+    compare_gpg_keys(gpg_list1, gpg_list2)
 
 if __name__ == '__main__':
     sys.exit(main())
