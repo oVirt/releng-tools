@@ -299,8 +299,8 @@ def compare(package_list1, package_list2):
 
 def process_build_arg(arg, type):
     if os.path.isfile(os.path.abspath(arg)):
-        with open(os.path.abspath(arg)) as f:
-            build_list = f.readlines().decode("utf-8")
+        with open(os.path.abspath(arg), encoding='utf-8') as f:
+            build_list = f.read().splitlines()
     else:
         if type == 'appliance':
             url = appliance_baseurl.format(arg)
