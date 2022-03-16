@@ -346,8 +346,8 @@ def main():
     parser.add_argument(
         '--name-width',
         type=int,
-        default=40,
-        help='package name column width. default=40'
+        default=50,
+        help='package name column width. default=50'
     )
     parser.add_argument(
         '--version-width',
