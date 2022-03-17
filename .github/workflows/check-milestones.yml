@@ -28,10 +28,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: get changed files
+        id: getfile
+        run: |
+          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }}| grep -E "^milestones/.*conf$"| xargs)"
+
       - name: Check Milestone config files
         run: |
           mkdir -p exported-artifacts
-          for config_file in $(git show --pretty="format:" --name-only | grep -E "^milestones/.*conf$")
+          for config_file in ${{ steps.getfile.outputs.files }}
           do
               if [[ -e "${config_file}" ]] ; then
                   python3 automation/check-milestone-previous.py "${config_file}"
