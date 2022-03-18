@@ -74,19 +74,20 @@ def process_list(package_list):
                 continue
             subject = Subject(rpm_package)
             nevra = subject.get_nevra_possibilities(forms=hawkey.FORM_NEVRA)
-            (
-                pkg_name,
-                version,
-                release,
-                epoch,
-                arch,
-            ) = (
-                nevra[0].name,
-                nevra[0].version,
-                nevra[0].release,
-                nevra[0].epoch,
-                nevra[0].arch,
-            )
+            if nevra:
+                (
+                    pkg_name,
+                    version,
+                    release,
+                    epoch,
+                    arch,
+                ) = (
+                    nevra[0].name,
+                    nevra[0].version,
+                    nevra[0].release,
+                    nevra[0].epoch,
+                    nevra[0].arch,
+                )
 
             if pkg_name == '':
                 print("Couldn't process package {}".format(rpm_package))
@@ -410,6 +411,7 @@ def main():
     compare(list1, list2)
     print('')
     compare_gpg_keys(gpg_list1, gpg_list2)
+
 
 if __name__ == '__main__':
     sys.exit(main())
