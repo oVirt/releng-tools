@@ -123,28 +123,39 @@ class Bugzilla(object):
     def get_bugs_in_milestone(self, milestone):
         # Excluding attachments when querying milestones.
         # https://bugzilla.redhat.com/show_bug.cgi?id=1658176
-        q = self.bz.build_query(
-            target_milestone=str(milestone),
-            exclude_fields=["attachments"]
-        )
-        retry = 5
-        r = []
-        while retry > 0:
-            try:
-                r = self.bz.query(q)
-                retry = 0
-            except IOError as ioe:
-                sys.stderr.write(
-                    "Error fetching milestone "
-                    "{milestone}: {error}, retrying\n".format(
-                        milestone=milestone,
-                        error=str(ioe)
+        offset = 0
+        results = []
+        while True:
+            q = self.bz.build_query(
+                target_milestone=str(milestone),
+                exclude_fields=["attachments"],
+            )
+            q["offset"] = offset
+            q["limit"] = 20
+            retry = 5
+            r = []
+
+            while retry > 0:
+                try:
+                    r = self.bz.query(q)
+                    retry = 0
+                except IOError as ioe:
+                    sys.stderr.write(
+                        "Error fetching milestone "
+                        "{milestone}: {error}, retrying\n".format(
+                            milestone=milestone,
+                            error=str(ioe)
+                        )
                     )
-                )
-                time.sleep(5)
-                retry -= 1
-        if r:
-            return r
+                    time.sleep(5)
+                    retry -= 1
+            if r:
+                results += r
+                offset += 20
+            else:
+                break
+        if results:
+            return results
 
     def get_bug_id_from_message(self, message):
         m = self.re_bug_id.search(message)
