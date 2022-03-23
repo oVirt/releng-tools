@@ -40,5 +40,7 @@ def main(milestone):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.exit('Please specify a milestone like: ovirt-4.5.0')
     milestone = sys.argv[1]
     main(milestone)
