@@ -58,6 +58,7 @@ To learn about features introduced before {{ milestone }}, see the
 {% if release_type -%}[release notes for previous versions](/documentation/#latest-release-notes).
 {% else %}[release notes for previous versions](/documentation/#previous-release-notes).
 {%- endif -%}
+
 {% if release_type == "rc" %}
 ## RELEASE CANDIDATE
 
@@ -71,6 +72,10 @@ In order to install this Alplha Release you will need to enable pre-release repo
 
 In order to install this Beta Release you will need to enable pre-release repository.
 {% endif %}
+
+> IMPORTANT
+> If you are going to install on RHEL 8.6 Beta please follow [Installing on RHEL](/download/install_on_rhel.html) first.
+
 ```bash
 dnf install -y centos-release-ovirt45
 ```
