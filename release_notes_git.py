@@ -242,6 +242,8 @@ class Bugzilla(object):
                     bug.resolution in (
                         'CURRENTRELEASE',
                         'ERRATA',
+                        'WONTFIX',
+                        'DEFERRED',
                     )
                 ):
                     sys.stderr.write(
