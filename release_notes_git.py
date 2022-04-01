@@ -75,6 +75,30 @@ release_notes_authors = set([
 TEMPLATE_FILE = 'release_notes.template'
 
 
+def ovirt_rebrand(original):
+    """
+    @param: original: the text to be rebranded
+    @return: text with oVirt branding
+    """
+    for k, v in {
+        "RHV-M": "oVirt Engine",
+        "RHV Manager": "oVirt Engine",
+        "RHVM": "oVirt Engine",
+        "RHV/RHHI-V": "oVirt",
+        "RHV": "oVirt",
+        "4.4 SP1": "4.5",
+        "RHV-H": "oVirt Node",
+        "https://access.redhat.com/documentation/en-us/"
+        "red_hat_virtualization/4.4/html-single/rest_api_guide":
+        "https://ovirt.github.io/ovirt-engine-api-model/4.5",
+        "https://access.redhat.com/documentation/en-us/"
+        "red_hat_virtualization/4.4/html-single/":
+        "https://ovirt.org/documentation/",
+    }.items():
+        original = original.replace(k, v)
+    return original
+
+
 class Bugzilla(object):
 
     BUGZILLA_API_URL = 'https://bugzilla.redhat.com/xmlrpc.cgi'
@@ -792,19 +816,23 @@ def generate_notes(
             for bug in generated[bug_type][project]:
                 if bug_type.lower() == 'bug fix':
                     sys.stdout.write(
-                        escape(
-                            ' - [BZ {id}](https://bugzilla.redhat.com/'
-                            'show_bug.cgi?id={id}) '
-                            '**{summary}**\n'.format(**bug)
+                        ovirt_rebrand(
+                            escape(
+                                ' - [BZ {id}](https://bugzilla.redhat.com/'
+                                'show_bug.cgi?id={id}) '
+                                '**{summary}**\n'.format(**bug)
+                            )
                         )
                     )
                 else:
                     sys.stdout.write(
-                        escape(
-                            ' - [BZ {id}](https://bugzilla.redhat.com/'
-                            'show_bug.cgi?id={id}) '
-                            '**{summary}**\n'
-                            '   {release_notes}\n'.format(**bug)
+                        ovirt_rebrand(
+                            escape(
+                                ' - [BZ {id}](https://bugzilla.redhat.com/'
+                                'show_bug.cgi?id={id}) '
+                                '**{summary}**\n'
+                                '   {release_notes}\n'.format(**bug)
+                            )
                         )
                     )
 
