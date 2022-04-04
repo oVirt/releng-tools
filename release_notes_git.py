@@ -37,6 +37,7 @@ import tempfile
 import time
 import functools
 import xmlrpc
+import textwrap
 
 from collections import OrderedDict
 from configparser import ConfigParser
@@ -85,9 +86,9 @@ def ovirt_rebrand(original):
         "RHV Manager": "oVirt Engine",
         "RHVM": "oVirt Engine",
         "RHV/RHHI-V": "oVirt",
-        "RHV": "oVirt",
         "4.4 SP1": "4.5",
         "RHV-H": "oVirt Node",
+        "RHV": "oVirt",
         "https://access.redhat.com/documentation/en-us/"
         "red_hat_virtualization/4.4/html-single/rest_api_guide":
         "https://ovirt.github.io/ovirt-engine-api-model/4.5",
@@ -816,25 +817,24 @@ def generate_notes(
         for project in generated[bug_type]:
             sys.stdout.write('#### %s\n\n' % project)
             for bug in generated[bug_type][project]:
-                if bug_type.lower() == 'bug fix':
-                    sys.stdout.write(
-                        ovirt_rebrand(
-                            escape(
-                                ' - [BZ {id}](https://bugzilla.redhat.com/'
-                                'show_bug.cgi?id={id}) '
-                                '**{summary}**\n'.format(**bug)
-                            )
+                sys.stdout.write(
+                    ovirt_rebrand(
+                        escape(
+                            ' - [BZ {id}](https://bugzilla.redhat.com/'
+                            'show_bug.cgi?id={id}) '
+                            '**{summary}**\n'.format(**bug)
                         )
                     )
-                else:
+                )
+                if bug.get("release_notes", ""):
                     sys.stdout.write(
-                        ovirt_rebrand(
-                            escape(
-                                ' - [BZ {id}](https://bugzilla.redhat.com/'
-                                'show_bug.cgi?id={id}) '
-                                '**{summary}**\n'
-                                '   {release_notes}\n'.format(**bug)
-                            )
+                        textwrap.indent(
+                            ovirt_rebrand(
+                                escape(
+                                    '\n{release_notes}\n'.format(**bug)
+                                )
+                            ),
+                            '   '
                         )
                     )
 
