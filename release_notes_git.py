@@ -578,6 +578,7 @@ def generate_notes(
         'avlitman': 'Aviv Litman',
         'bamsalem': 'Ben Amsalem',
         'Bella': 'Bella Khizgiyev',
+        'dangel101': 'Dana Elfassy',
         'emarcusRH': 'Eli Marcus',
         'emesika': 'Eli Mesika',
         'eslutsky': 'Evgeny Slutsky',
