@@ -76,10 +76,11 @@ In order to install this Beta Release you will need to enable pre-release reposi
 > IMPORTANT
 > If you are going to install on RHEL 8.6 Beta please follow [Installing on RHEL](/download/install_on_rhel.html) first.
 
+{% if release_type %}
 ```bash
 dnf install -y centos-release-ovirt45
 ```
-{% if release_type %}
+
 ```bash
 dnf install -y python3-dnf-plugins-core
 dnf config-manager --set-enabled centos-ovirt45-testing
