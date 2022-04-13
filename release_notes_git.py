@@ -76,6 +76,52 @@ release_notes_authors = set([
 TEMPLATE_FILE = 'release_notes.template'
 
 
+def sort_function(x, y):
+    priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
+
+    def get_priority_index(a):
+        if a is None:
+            return 0
+        try:
+            return priorities.index(a.strip().lower())
+        except ValueError:
+            return 0
+
+    return (
+        get_priority_index(y.get('priority')) -
+        get_priority_index(x.get('priority'))
+    )
+
+
+def section_sort_function(x, y):
+    # From lowest to highest priority
+    sections = [
+        "No Doc Update",
+        "Unclassified",
+        "Bug Fix",
+        "Rebase: Bug Fixes Only",
+        "Known Issue",
+        "Deprecated Functionality",
+        "Removed functionality",
+        "Technology Preview",
+        "Rebase: Bug Fixes and Enhancements",
+        "Rebase: Enhancements Only",
+        "Enhancement",
+        "Release Note",
+    ]
+
+    def get_section_index(a):
+        if a is None:
+            return 0
+        try:
+            return sections.index(a.strip())
+        except ValueError:
+            sys.stderr.write("%s is not a known doc_type\n" % a)
+            return 0
+
+    return (get_section_index(y) - get_section_index(x))
+
+
 def ovirt_rebrand(original):
     """
     @param: original: the text to be rebranded
@@ -98,6 +144,92 @@ def ovirt_rebrand(original):
     }.items():
         original = original.replace(k, v)
     return original
+
+
+def generate_notes_for_not_referenced_bugs(not_referenced, bug_list):
+    generated = OrderedDict()
+    for bug in bug_list:
+        if bug.id not in not_referenced:
+            continue
+        cf_doc_type = bug.cf_doc_type
+        if 'docs needed' in cf_doc_type.lower():
+            cf_doc_type = 'Unclassified'
+            doc_type = generated.setdefault(cf_doc_type, OrderedDict())
+            proj = None
+            if bug.classification == "oVirt":
+                proj = doc_type.setdefault(bug.product, [])
+            else:
+                proj = doc_type.setdefault(bug.component, [])
+            proj.append({
+                'id': bug.id,
+                'priority': bug.priority,
+                'summary': codecs.encode(
+                    bug.summary, "utf-8", "xmlcharrefreplace"
+                ).decode(encoding='utf-8', errors='strict'),
+            })
+            if cf_doc_type.lower() == 'no doc update':
+                proj[-1]['release_notes'] = ''
+            elif cf_doc_type.lower() != 'bug fix':
+                proj[-1]['release_notes'] = '\n'.join(
+                    codecs.encode(
+                        bug.cf_release_notes,
+                        'utf-8',
+                        'xmlcharrefreplace'
+                    ).decode(
+                        encoding='utf-8',
+                        errors='strict'
+                    ).replace(
+                        # kramdown, our site's processor, replaces --
+                        # with an en-dash. Escape to prevent that.
+                        # https://kramdown.gettalong.org/syntax.html
+                        ' -- ',
+                        ' \\-- '
+                    ).splitlines()
+                )
+            proj = sorted(
+                proj,
+                key=functools.cmp_to_key(sort_function)
+            )
+
+    bug_types = sorted(
+        generated.keys(),
+        key=functools.cmp_to_key(section_sort_function)
+    )
+    for bug_type in bug_types:
+        sys.stdout.write(
+            '### %s\n\n' % bug_type
+            .replace("Enhancement", "Enhancements")
+            .replace("Unclassified", "Other")
+            .replace("Bug Fix", "Bug Fixes")
+        )
+
+        for project in generated[bug_type]:
+            sys.stdout.write('#### %s\n\n' % project)
+            for bug in generated[bug_type][project]:
+                sys.stdout.write(
+                    ovirt_rebrand(
+                        escape(
+                            ' - [BZ {id}](https://bugzilla.redhat.com/'
+                            'show_bug.cgi?id={id}) '
+                            '**{summary}**\n'.format(**bug)
+                        )
+                    )
+                )
+                if bug.get("release_notes", ""):
+                    sys.stdout.write(
+                        textwrap.indent(
+                            ovirt_rebrand(
+                                escape(
+                                    '\n{release_notes}\n'.format(**bug)
+                                )
+                            ),
+                            '   '
+                        )
+                    )
+
+                bug_list.append(bug)
+
+            sys.stdout.write('\n')
 
 
 class Bugzilla(object):
@@ -388,10 +520,19 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
     for milestone in target_milestones:
         bug_list += bz.get_bugs_in_milestone(milestone)
     targeted_bugs |= set(
-        bug.id for bug in bug_list
-        if not (bug.status == 'CLOSED' and bug.resolution == 'DUPLICATE')
+        bug_entry.id for bug_entry in bug_list
+        if not (
+            (bug_entry.status == 'CLOSED')
+            and bug_entry.resolution in (
+                'DUPLICATE',
+                'INVALID',
+                'NOTABUG',
+                'WORKSFORME',
+            )
+        )
     )
-    not_referenced = targeted_bugs ^ bugs_listed_in_git_logs
+
+    not_referenced = targeted_bugs - bugs_listed_in_git_logs
     still_open = set(
         bug.id for bug in bug_list
         if bug.status in ('NEW', 'ASSIGNED', 'POST')
@@ -441,6 +582,8 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
                     'ansible',
                     'cockpit',
                     'rhvm-branding-rhv',
+                    'redhat-virtualization-host',
+                    'distribution',
                 )
             )
         )
@@ -477,17 +620,22 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
     sys.stderr.write(list_url+'\n')
 
     sys.stderr.write('\nBugs not referenced but targeted for this release:\n')
-    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
-    for bug in (
+    not_referenced_but_targeted = (
         not_referenced -
         still_open -
         downstream_rebase -
         trackers -
         downstream_only -
         test_only
-    ):
+    )
+    list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
+    for bug in not_referenced_but_targeted:
         list_url += "{id}%2C%20".format(id=bug)
     sys.stderr.write(list_url+'\n')
+
+    generate_notes_for_not_referenced_bugs(
+        not_referenced_but_targeted, bug_list
+    )
 
 
 def generate_notes(
@@ -497,50 +645,6 @@ def generate_notes(
     release_type=None,
     contrib_project_list=False
 ):
-
-    def sort_function(x, y):
-        priorities = ['unspecified', 'low', 'medium', 'high', 'urgent']
-
-        def get_priority_index(a):
-            if a is None:
-                return 0
-            try:
-                return priorities.index(a.strip().lower())
-            except ValueError:
-                return 0
-
-        return (
-            get_priority_index(y.get('priority')) -
-            get_priority_index(x.get('priority'))
-        )
-
-    def section_sort_function(x, y):
-        # From lowest to highest priority
-        sections = [
-            "No Doc Update",
-            "Unclassified",
-            "Bug Fix",
-            "Rebase: Bug Fixes Only",
-            "Known Issue",
-            "Deprecated Functionality",
-            "Removed functionality",
-            "Technology Preview",
-            "Rebase: Bug Fixes and Enhancements",
-            "Rebase: Enhancements Only",
-            "Enhancement",
-            "Release Note",
-        ]
-
-        def get_section_index(a):
-            if a is None:
-                return 0
-            try:
-                return sections.index(a.strip())
-            except ValueError:
-                sys.stderr.write("%s is not a known doc_type\n" % a)
-                return 0
-
-        return (get_section_index(y) - get_section_index(x))
 
     cp = ConfigParser()
     if not cp.read(['milestones/%s.conf' % milestone]):
@@ -851,7 +955,7 @@ def generate_notes(
     sys.stderr.write('\n\n\nBugs included in this release notes:\n')
     sys.stderr.write(list_url+'\n')
 
-    sys.stdout.write('#### Contributors\n\n')
+    sys.stdout.write('### Contributors\n\n')
     sys.stdout.write(
         '{count} people contributed to '
         'this release:\n\n'.format(count=len(authors)))
