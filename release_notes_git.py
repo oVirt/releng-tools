@@ -146,7 +146,10 @@ def ovirt_rebrand(original):
     return original
 
 
-def generate_notes_for_not_referenced_bugs(not_referenced, bug_list):
+def generate_notes_for_not_referenced_bugs(not_referenced, bug_list, cp):
+    sys.stdout.write(
+        '\n\n## Also includes\n\n'
+    )
     generated = OrderedDict()
     for bug in bug_list:
         if bug.id not in not_referenced:
@@ -154,47 +157,49 @@ def generate_notes_for_not_referenced_bugs(not_referenced, bug_list):
         cf_doc_type = bug.cf_doc_type
         if 'docs needed' in cf_doc_type.lower():
             cf_doc_type = 'Unclassified'
-            doc_type = generated.setdefault(cf_doc_type, OrderedDict())
-            proj = None
-            if bug.classification == "oVirt":
-                proj = doc_type.setdefault(bug.product, [])
-            else:
-                proj = doc_type.setdefault(bug.component, [])
-            proj.append({
-                'id': bug.id,
-                'priority': bug.priority,
-                'summary': codecs.encode(
-                    bug.summary, "utf-8", "xmlcharrefreplace"
-                ).decode(encoding='utf-8', errors='strict'),
-            })
-            if cf_doc_type.lower() == 'no doc update':
-                proj[-1]['release_notes'] = ''
-            elif cf_doc_type.lower() != 'bug fix':
-                proj[-1]['release_notes'] = '\n'.join(
-                    codecs.encode(
-                        bug.cf_release_notes,
-                        'utf-8',
-                        'xmlcharrefreplace'
-                    ).decode(
-                        encoding='utf-8',
-                        errors='strict'
-                    ).replace(
-                        # kramdown, our site's processor, replaces --
-                        # with an en-dash. Escape to prevent that.
-                        # https://kramdown.gettalong.org/syntax.html
-                        ' -- ',
-                        ' \\-- '
-                    ).splitlines()
-                )
-            proj = sorted(
-                proj,
-                key=functools.cmp_to_key(sort_function)
+        doc_type = generated.setdefault(cf_doc_type, OrderedDict())
+        prname = bug.component
+        if bug.classification == "oVirt":
+            prname = bug.product
+        if cp.has_section(prname):
+            prname = cp.get(prname, 'name')
+        proj = doc_type.setdefault(prname, [])
+        proj.append({
+            'id': bug.id,
+            'priority': bug.priority,
+            'summary': codecs.encode(
+                bug.summary, "utf-8", "xmlcharrefreplace"
+            ).decode(encoding='utf-8', errors='strict'),
+        })
+        if cf_doc_type.lower() == 'no doc update':
+            proj[-1]['release_notes'] = ''
+        elif cf_doc_type.lower() != 'bug fix':
+            proj[-1]['release_notes'] = '\n'.join(
+                codecs.encode(
+                    bug.cf_release_notes,
+                    'utf-8',
+                    'xmlcharrefreplace'
+                ).decode(
+                    encoding='utf-8',
+                    errors='strict'
+                ).replace(
+                    # kramdown, our site's processor, replaces --
+                    # with an en-dash. Escape to prevent that.
+                    # https://kramdown.gettalong.org/syntax.html
+                    ' -- ',
+                    ' \\-- '
+                ).splitlines()
             )
+        proj = sorted(
+            proj,
+            key=functools.cmp_to_key(sort_function)
+        )
 
     bug_types = sorted(
         generated.keys(),
         key=functools.cmp_to_key(section_sort_function)
     )
+
     for bug_type in bug_types:
         sys.stdout.write(
             '### %s\n\n' % bug_type
@@ -512,7 +517,7 @@ class GerritGitProject(object):
         return rv
 
 
-def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
+def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp):
     sys.stderr.write("\n\n\n------------ REPORTS ------------\n\n\n")
     bz = Bugzilla()
     targeted_bugs = set()
@@ -634,7 +639,7 @@ def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs):
     sys.stderr.write(list_url+'\n')
 
     generate_notes_for_not_referenced_bugs(
-        not_referenced_but_targeted, bug_list
+        not_referenced_but_targeted, bug_list, cp
     )
 
 
@@ -948,7 +953,7 @@ def generate_notes(
             sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     bugs_listed_in_git_logs = set(bug['id'] for bug in bug_list)
-    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs)
+    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp)
 
     for bug in bugs_listed_in_git_logs:
         list_url += "{id}%2C%20".format(id=bug)
