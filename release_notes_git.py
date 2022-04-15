@@ -261,7 +261,9 @@ class Bugzilla(object):
             use_creds=False,
         )
         self.bugs_in_milestone = {milestone: None}
-        self.bugs_in_milestone[milestone] = self.get_bugs_in_milestone(milestone)
+        self.bugs_in_milestone[milestone] = self.get_bugs_in_milestone(
+            milestone
+        )
         self.bugdict = {}
         for bug_entry in self.bugs_in_milestone[milestone]:
             self.bugdict[bug_entry.id] = bug_entry
@@ -540,7 +542,12 @@ class GerritGitProject(object):
         return rv
 
 
-def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp, bz):
+def search_for_missing_builds(
+    target_milestones,
+    bugs_listed_in_git_logs,
+    cp,
+    bz
+):
     sys.stderr.write("\n\n\n------------ REPORTS ------------\n\n\n")
     targeted_bugs = set()
     bug_list = []
@@ -975,7 +982,12 @@ def generate_notes(
             sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     bugs_listed_in_git_logs = set(bug['id'] for bug in bug_list)
-    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp, bz)
+    search_for_missing_builds(
+        target_milestones,
+        bugs_listed_in_git_logs,
+        cp,
+        bz
+    )
 
     for bug in bugs_listed_in_git_logs:
         list_url += "{id}%2C%20".format(id=bug)
