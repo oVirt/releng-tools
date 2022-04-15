@@ -154,6 +154,13 @@ def generate_notes_for_not_referenced_bugs(not_referenced, bug_list, cp):
     for bug in bug_list:
         if bug.id not in not_referenced:
             continue
+        try:
+            if bug.cf_target_upstream_version == "downstream only":
+                continue
+        except AttributeError:
+            # cf_target_upstream_version may be missing, if it happens just
+            #  continue and consider it a valid ovirt bug.
+            pass
         cf_doc_type = bug.cf_doc_type
         if 'docs needed' in cf_doc_type.lower():
             cf_doc_type = 'Unclassified'
@@ -246,19 +253,30 @@ class Bugzilla(object):
         re.IGNORECASE
     )
 
-    def __init__(self):
+    def __init__(self, milestone):
         self.bz = bugzilla.RHBugzilla(
             url=self.BUGZILLA_API_URL,
             cookiefile=None,
             tokenfile=None,
             use_creds=False,
         )
+        self.bugs_in_milestone = {milestone: None}
+        self.bugs_in_milestone[milestone] = self.get_bugs_in_milestone(milestone)
+        self.bugdict = {}
+        for bug_entry in self.bugs_in_milestone[milestone]:
+            self.bugdict[bug_entry.id] = bug_entry
 
     def get_bug(self, bug_id):
+        if bug_id in self.bugdict:
+            return self.bugdict[bug_id]
+        sys.stderr.write("bug %d not found in cache, fetching.\n" % bug_id)
+
+        # Couldn't find it in current milestone cache, fetching from bugzilla.
         # Excluding attachments when querying milestones.
         # https://bugzilla.redhat.com/show_bug.cgi?id=1658176
         q = self.bz.build_query(
             bug_id=str(bug_id),
+            include_fields=["_all"],
             exclude_fields=["attachments"]
         )
         retry = 5
@@ -280,9 +298,12 @@ class Bugzilla(object):
                 time.sleep(60)
                 retry -= 1
         if r:
+            self.bugdict[bug_id] = r[0]
             return r[0]
 
     def get_bugs_in_milestone(self, milestone):
+        if self.bugs_in_milestone.get(milestone) is not None:
+            return self.bugs_in_milestone[milestone]
         # Excluding attachments when querying milestones.
         # https://bugzilla.redhat.com/show_bug.cgi?id=1658176
         offset = 0
@@ -291,6 +312,7 @@ class Bugzilla(object):
             q = self.bz.build_query(
                 target_milestone=str(milestone),
                 exclude_fields=["attachments"],
+                include_fields=["_all"],
             )
             q["offset"] = offset
             q["limit"] = 20
@@ -317,6 +339,7 @@ class Bugzilla(object):
             else:
                 break
         if results:
+            self.bugs_in_milestone[milestone] = results
             return results
 
     def get_bug_id_from_message(self, message):
@@ -517,9 +540,8 @@ class GerritGitProject(object):
         return rv
 
 
-def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp):
+def search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp, bz):
     sys.stderr.write("\n\n\n------------ REPORTS ------------\n\n\n")
-    bz = Bugzilla()
     targeted_bugs = set()
     bug_list = []
     for milestone in target_milestones:
@@ -677,7 +699,7 @@ def generate_notes(
                 '%Y-%m-%d'
             ).strftime('%B %d, %Y')
 
-    bz = Bugzilla()
+    bz = Bugzilla(milestone)
 
     generated = OrderedDict()
     bug_list = []
@@ -953,7 +975,7 @@ def generate_notes(
             sys.stdout.write('\n')
     list_url = "%sbuglist.cgi?action=wrap&bug_id=" % BUGZILLA_HOME
     bugs_listed_in_git_logs = set(bug['id'] for bug in bug_list)
-    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp)
+    search_for_missing_builds(target_milestones, bugs_listed_in_git_logs, cp, bz)
 
     for bug in bugs_listed_in_git_logs:
         list_url += "{id}%2C%20".format(id=bug)
