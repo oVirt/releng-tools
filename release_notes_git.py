@@ -569,7 +569,7 @@ def search_for_missing_builds(
     not_referenced = targeted_bugs - bugs_listed_in_git_logs
     still_open = set(
         bug.id for bug in bug_list
-        if bug.status in ('NEW', 'ASSIGNED', 'POST')
+        if bug.status in ('NEW', 'ASSIGNED', 'POST', 'MODIFIED')
     )
 
     downstream_rebase = set(
