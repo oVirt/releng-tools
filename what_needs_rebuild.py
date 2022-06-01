@@ -8,7 +8,7 @@ import sys
 def main(milestone):
     if not os.path.exists('milestones/%s.conf' % milestone):
         sys.exit('Invalid milestone: %s' % (milestone))
-    bz = Bugzilla()
+    bz = Bugzilla(milestone)
     bug_list = bz.get_bugs_in_milestone(milestone)
     products = {}
     for bug in bug_list:
