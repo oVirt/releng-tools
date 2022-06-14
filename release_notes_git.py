@@ -691,16 +691,16 @@ def generate_notes(
     release_date = 'Not planned'
 
     if cp.has_section('default'):
-        if cp.get('default', 'target_milestones'):
+        if cp.get('default', 'target_milestones', fallback=None):
             milestones = cp.get('default', 'target_milestones')
             if milestones:
                 target_milestones = [i.strip() for i in milestones.split(',')]
-        if cp.get('default', 'development_freeze'):
+        if cp.get('default', 'development_freeze', fallback=None):
             development_freeze = datetime.strptime(
                 cp.get('default', 'development_freeze'),
                 '%Y-%m-%d'
             ).strftime('%B %d, %Y')
-        if cp.get('default', 'release_date'):
+        if cp.get('default', 'release_date', fallback=None):
             release_date = datetime.strptime(
                 cp.get('default', 'release_date'),
                 '%Y-%m-%d'
