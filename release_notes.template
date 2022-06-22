@@ -78,7 +78,7 @@ In order to install this Beta Release you will need to enable pre-release reposi
 
 {% if release_type %}
 ```bash
-dnf install -y centos-release-ovirt45
+dnf install -y centos-release-ovirt45 centos-release-ovirt45-testing
 ```
 
 ```bash
