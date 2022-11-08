@@ -24,14 +24,14 @@ jobs:
           dnf install -y --setopt=tsflags=nodocs git python3 python3-jinja2 epel-release
           dnf install -y --setopt=tsflags=nodocs python3-bugzilla python3-GitPython
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: get changed files
         id: getfile
         run: |
-          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }}| grep -E "^milestones/.*conf$"| xargs)"
+          echo "files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }}| grep -E "^milestones/.*conf$"| xargs)" >> $GITHUB_OUTPUT
 
       - name: Check Milestone config files
         run: |
@@ -48,6 +48,6 @@ jobs:
           done
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: exported-artifacts
