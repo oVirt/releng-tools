@@ -265,8 +265,9 @@ class Bugzilla(object):
             milestone
         )
         self.bugdict = {}
-        for bug_entry in self.bugs_in_milestone[milestone]:
-            self.bugdict[bug_entry.id] = bug_entry
+        if self.bugs_in_milestone[milestone]:
+            for bug_entry in self.bugs_in_milestone[milestone]:
+                self.bugdict[bug_entry.id] = bug_entry
 
     def get_bug(self, bug_id):
         if bug_id in self.bugdict:
@@ -552,7 +553,8 @@ def search_for_missing_builds(
     targeted_bugs = set()
     bug_list = []
     for milestone in target_milestones:
-        bug_list += bz.get_bugs_in_milestone(milestone)
+        if bz.get_bugs_in_milestone(milestone):
+            bug_list += bz.get_bugs_in_milestone(milestone)
     targeted_bugs |= set(
         bug_entry.id for bug_entry in bug_list
         if not (
