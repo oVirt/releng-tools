@@ -17,7 +17,7 @@ jobs:
   python-test:
     runs-on: ubuntu-latest
     container:
-      image: quay.io/centos/centos:stream8
+      image: quay.io/ovirt/buildcontainer:el9stream
 
     steps:
       - name: prepare env
@@ -25,9 +25,8 @@ jobs:
           dnf install -y --setopt=tsflags=nodocs epel-release
           dnf install -y --setopt=tsflags=nodocs python3-flake8
 
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Checkout sources
+        uses: ovirt/checkout-action@main
 
       - name: Check Python files
         run: flake8-3 *.py

@@ -15,7 +15,7 @@ The oVirt {{ milestone }} code freeze is planned for {{ development_freeze }}.
 If no critical issues are discovered while testing this compose it will be released on {{ release_date }}.
 
 It has been planned to include in this release the content from this query:
-[Bugzilla tickets targeted to {{ milestone }}](https://bugzilla.redhat.com/buglist.cgi?quicksearch=ALL%20target_milestone%3A%22ovirt-{{ milestone }}%22%20-target_milestone%3A%22ovirt-{{ milestone }}-%22)
+[Github tickets targeted to {{ milestone }}](https://github.com/oVirt/ovirt-engine/issues?q=%20milestone%3Aovirt-{{ milestone }})
 {% endif %}
 
 # oVirt {{ milestone }} Release Notes
@@ -36,7 +36,7 @@ This release is available now for CentOS Stream 8 and Red Hat Enterprise Linux 8
 To find out how to interact with oVirt developers and users and ask questions,
 visit our [community page](/community/).
 All issues or bugs should be reported via
-[Red Hat Bugzilla](https://bugzilla.redhat.com/enter_bug.cgi?classification=oVirt).
+[oVirt GitHub](https://github.com/oVirt).
 {% if release_type %}
 The oVirt Project makes no guarantees as to its suitability or usefulness.
 This pre-release should not to be used in production, and it is not feature
@@ -74,7 +74,7 @@ In order to install this Beta Release you will need to enable pre-release reposi
 {% endif %}
 
 > IMPORTANT
-> If you are going to install on RHEL 8.6 or derivatives please follow [Installing on RHEL](/download/install_on_rhel.html) first.
+> If you are going to install on RHEL or derivatives please follow [Installing on RHEL](/download/install_on_rhel.html) first.
 
 {% if release_type %}
 ```bash

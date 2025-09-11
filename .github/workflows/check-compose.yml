@@ -17,23 +17,18 @@ jobs:
   check-compose:
     runs-on: ubuntu-latest
     container:
-      image: quay.io/centos/centos:stream8
+      image: quay.io/ovirt/buildcontainer:el9stream
     steps:
       - name: prepare env
         run: |
           dnf install -y --setopt=tsflags=nodocs git 'dnf-command(copr)' epel-release
 
-      - name: enable repositories
-        run: |
-          dnf copr enable -y sbonazzo/EL8_collection
-
       - name: install deps
         run: |
           dnf install -y repoman
 
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Checkout sources
+        uses: ovirt/checkout-action@main
 
       - name: Check Compose config files
         run: |
