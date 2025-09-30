@@ -4,6 +4,21 @@ Welcome to the oVirt Release Engineering Tools source repository.
 
 This repository is hosted on [GitHub:releng-tools](https://github.com/oVirt/releng-tools).
 
+## Installation
+
+To use these tools, you'll need to install the required Python dependencies:
+
+```bash
+#optionally create and activate a venv
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Dependencies
+
+- `looseversion`: A drop-in replacement of distutils.version.LooseVersion
+
 ## How to contribute
 
 All contributions are welcome - patches, bug reports, and documentation issues.

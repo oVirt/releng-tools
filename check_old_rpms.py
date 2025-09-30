@@ -24,7 +24,7 @@ import argparse
 import collections
 import os
 from rpmUtils.miscutils import splitFilename
-from distutils.version import LooseVersion
+from looseversion import LooseVersion
 
 
 def check(basedir):
